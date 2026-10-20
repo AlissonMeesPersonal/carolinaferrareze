@@ -2,6 +2,17 @@ import { createClient } from '@supabase/supabase-js';
 import Landing from '@/components/Landing';
 import { configured, PROJECT_URL, PUBLISHABLE_KEY, fallbackSite, fallbackServices } from '@/lib/config';
 export const dynamic='force-dynamic';
+export async function generateMetadata(){
+ let s=fallbackSite;
+ if(configured){
+  try {
+   const db=createClient(PROJECT_URL,PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
+   const {data}=await db.from('cf_site').select('seo_title,seo_description,brand').eq('id','main').maybeSingle();
+   if(data)s={...s,...data};
+  } catch {}
+ }
+ return { title:s.seo_title||s.brand, description:s.seo_description, openGraph:{title:s.seo_title||s.brand,description:s.seo_description,type:'website'}, robots:{index:true,follow:true} };
+}
 export default async function Home(){
   let site=fallbackSite, services=fallbackServices, testimonials=[], faqs=[];
   if(configured){

@@ -65,7 +65,7 @@ export default function Admin(){
    setRole('admin');await loadData();
   }
   db.auth.getUser().then(({data})=>inspect(data?.user)).catch(()=>{if(active)setRole('guest')});
-  const {data:listener}=db.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_IN'||event==='SIGNED_OUT')inspect(session?.user)});
+  const {data:listener}=db.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_IN'||event==='SIGNED_OUT')setTimeout(()=>inspect(session?.user),0)});
   return ()=>{active=false;listener.subscription.unsubscribe()};
  },[db,loadData]);
 

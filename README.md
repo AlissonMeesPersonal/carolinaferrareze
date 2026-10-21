@@ -1,68 +1,31 @@
-# Carolina Ferrareze — Landing Page + Painel
+# Carolina Ferrareze — Landing Page + Neon
 
-Site único e responsivo com duas jornadas: **atendimentos individuais** e **mentorias terapêuticas**, formulário de leads e painel administrativo em `/admin`.
+Landing responsiva com caminhos para atendimento individual e mentorias, formulário de interessados e painel administrativo em `/admin`.
 
-## Stack
+## Estrutura
+- Next.js 16 App Router no GitHub `AlissonMeesPersonal/carolineferrareze`
+- Neon PostgreSQL (driver `@neondatabase/serverless` com conexão **exclusiva do servidor**)
+- Vercel (deploy automático a cada commit em `main`)
+- Painel protegido por e-mail, hash de senha scrypt e cookie HttpOnly/secure; sessões revogáveis e gravadas no próprio Neon
 
-Next.js (App Router), React, Supabase Auth, Database e Storage. Deploy pela Vercel conectada ao GitHub (branch `main`).
+## Ativar Neon
+1. Acesse [console.neon.tech](https://console.neon.tech) e crie ou escolha um projeto, banco e branch. Prefira região próxima da Vercel. Banco dedicado recomendado.
+2. Em **Connect**, copie a string PostgreSQL **pooled**. Adicione em Vercel > Project > Settings > Environment Variables como `DATABASE_URL`, com tipo **Sensitive/Encrypted** e destino Production (e Preview caso haja banco de teste).
+3. No Neon SQL Editor execute `neon/schema.sql`; confirme a existência das tabelas `cf_site`, `cf_services`, `cf_faqs`, `cf_testimonials`, `cf_leads`, `cf_admin_sessions` e `cf_request_limits`.
+4. Configurar `ADMIN_EMAIL` com o e-mail autorizado da Carolina; gerar hash da senha localmente rodando `npm run hash-password` e inserir seu resultado em `ADMIN_PASSWORD_HASH` na Vercel (nunca enviar a senha ou connection string para o chat ou GitHub).
+5. Execute Redeploy na Vercel **após** configurar as variáveis para que o novo deploy use a conexão.
+6. Abra `/admin` e teste login, conteúdo e envio do formulário.
 
-## 1. Criar tabelas no Supabase
+## Separação de responsabilidades
+O Neon armazena **dados estruturados**, incluindo URLs de imagens, mas não recebe upload de arquivos neste projeto. Neste estágio a Carolina pode editar URLs de fotos hospedadas em um serviço externo confiável ou caminhos estáticos versionados no GitHub (pasta `public`). Upload pelo painel poderá ser integrado posteriormente a Vercel Blob, Cloudinary ou Object Storage, mediante escolha do fornecedor.
 
-Projeto indicado: `efahamylmoueniflnvzl` (`https://efahamylmoueniflnvzl.supabase.co`).
+## Segurança
+- `DATABASE_URL`, `ADMIN_EMAIL` e `ADMIN_PASSWORD_HASH` são somente do servidor, sem prefixo `NEXT_PUBLIC_`.
+- O navegador nunca recebe SQL, conexão ao banco ou dados de leads de usuários não autorizados.
+- Operações administrativas exigem cookie de sessão validado no banco; mutações também verificam origem HTTP.
+- O login e o formulário possuem limite de requisições persistente no banco.
+- Site continua com conteúdo de demonstração até o Neon ser configurado (o formulário retorna erro de indisponibilidade se faltar o banco).
+- A política de privacidade precisa ser complementada com informações reais antes de divulgação.
 
-1. Acesse o [SQL Editor do projeto](https://supabase.com/dashboard/project/efahamylmoueniflnvzl/sql).
-2. Execute **apenas** o arquivo `supabase/schema.sql`, conferindo que o projeto ativo é `efahamylmoueniflnvzl`.
-3. Ele cria **cf_site, cf_services, cf_testimonials, cf_faqs, cf_leads e cf_admins**, com RLS, políticas e bucket `cf-media`. Todas as tabelas têm prefixo `cf_` para não interferir em outros aplicativos.
-
-**Atenção:** o projeto não estava acessível nas contas Supabase conectadas quando o código foi criado. O SQL foi salvo no GitHub, mas não aplicado automaticamente ao banco.
-
-## 2. Administradora
-
-1. No Supabase: Authentication > Users > Invite user (ou criar um usuário e enviar recuperação de senha). Use **o e-mail real da Carolina**, jamais adicione credenciais padrão ao código.
-2. Copie o UUID do usuário criado.
-3. No SQL Editor execute: `insert into public.cf_admins (user_id) values ('UUID_DA_USUARIA') on conflict do nothing;`
-4. Acesse `/admin` e entre com esse e-mail e senha.
-
-**Segurança:** não existe autoinscrição para administradores. Mesmo um usuário autenticado sem registro em `cf_admins` não pode consultar leads ou alterar conteúdo.
-
-## 3. Variáveis de ambiente
-
-Copie `.env.example` para `.env.local`, preenchendo os valores do **mesmo** projeto Supabase. Configure também as mesmas variáveis na Vercel para Production (e Preview se desejar):
-
-- `NEXT_PUBLIC_SUPABASE_URL` — URL do projeto.
-- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` — chave pública/publishable do projeto (não é segredo).
-- `SUPABASE_SERVICE_ROLE_KEY` — chave secreta **somente servidor**. Nunca use prefixo `NEXT_PUBLIC_`.
-- `SITE_URL` — URL exata da produção, por exemplo `https://dominio.com.br`.
-- `TURNSTILE_SECRET_KEY` — opcional; se configurada, configure também um componente Turnstile no formulário antes de ativá-la (não habilitar somente o secret, pois bloqueia envios).
-- `NEXT_PUBLIC_TURNSTILE_SITE_KEY` — reservada para integração posterior.
-
-O formulário não grava dados até que o SQL seja aplicado e a chave de servidor configurada. Sem variáveis, a landing exibe texto de demonstração; não declara envios falsos.
-
-## 4. Rodar localmente
-
-```bash
-npm install
-npm run dev
-```
-
-Abra `http://localhost:3000`. Para produção, conecte o repositório à Vercel (Framework: Next.js; Production branch: main), configure variáveis, e publique. Depois dessa **conexão**, novos commits em `main` disparam builds/deploys automaticamente. Apenas criar commits no GitHub **não configura** a integração Vercel.
-
-## 5. Personalização da Carolina
-
-Acesso `/admin`:
-- Editar hero, títulos, descrição, fotos, apresentação e dados de contato.
-- Criar, publicar, ocultar e editar atendimentos e mentorias.
-- Organizar depoimentos autorizados e perguntas frequentes.
-- Conferir leads, filtrar contatos e mudar status.
-- Editar campos de SEO.
-- Subir imagens JPG, PNG, WebP ou AVIF (até 5 MB) no bucket próprio.
-
-O editor salva conteúdo no Supabase e **não precisa de novo commit** para atualizar o site.
-
-## 6. Antes de divulgar
-
-- Confirmar com Carolina fotos reais, currículo, termos dos serviços e descrições exatas das mentorias. Os textos iniciais são demonstrativos. Não publicar credenciais/alegações clínicas não verificadas.
-- Completar a política de privacidade com controlador, contato, retenção e fornecedores; observar a LGPD.
-- Implementar proteção anti-spam robusta com Turnstile e/ou rate limit persistente (a limitação em memória do servidor é apenas best effort), além de monitoramento de abusos.
-- Validar na produção: autorização de admin, upload de mídia, envios e persistência dos leads, responsividade e acessibilidade.
-- Não armazenar informações médicas ou relatos pessoais sensíveis no formulário público.
+## Antes de divulgar
+Confirme conteúdos e imagens autorizados da Carolina. Faça testes completos na produção, revise logs e retenção LGPD e habilite proteção anti-bots adequada ao volume de acessos. A edição de conteúdo via painel ocorre diretamente no Neon, sem necessidade de novos commits ou deploys.

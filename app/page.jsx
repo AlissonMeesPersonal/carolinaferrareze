@@ -1,34 +1,29 @@
-import { createClient } from '@supabase/supabase-js';
 import Landing from '@/components/Landing';
-import { configured, PROJECT_URL, PUBLISHABLE_KEY, fallbackSite, fallbackServices } from '@/lib/config';
+import { fallbackSite, fallbackServices } from '@/lib/config';
+import { getDb } from '@/lib/db';
 export const dynamic='force-dynamic';
-export async function generateMetadata(){
- let s=fallbackSite;
- if(configured){
-  try {
-   const db=createClient(PROJECT_URL,PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
-   const {data}=await db.from('cf_site').select('seo_title,seo_description,brand').eq('id','main').maybeSingle();
-   if(data)s={...s,...data};
-  } catch {}
+
+async function siteData(){
+ const sql=getDb();
+ if(!sql)return {site:fallbackSite,services:fallbackServices,testimonials:[],faqs:[]};
+ try{
+  const [s,v,t,f]=await Promise.all([
+   sql`SELECT * FROM cf_site WHERE id='main' LIMIT 1`,
+   sql`SELECT * FROM cf_services WHERE is_published=TRUE ORDER BY position`,
+   sql`SELECT * FROM cf_testimonials WHERE is_published=TRUE AND permission_confirmed=TRUE ORDER BY position`,
+   sql`SELECT * FROM cf_faqs WHERE is_published=TRUE ORDER BY position`
+  ]);
+  return {site:s[0]||fallbackSite,services:v,testimonials:t,faqs:f};
+ }catch(err){
+  console.error('Neon site data unavailable',err?.code||'not-ready');
+  return {site:fallbackSite,services:fallbackServices,testimonials:[],faqs:[]};
  }
- return { title:s.seo_title||s.brand, description:s.seo_description, openGraph:{title:s.seo_title||s.brand,description:s.seo_description,type:'website'}, robots:{index:true,follow:true} };
+}
+export async function generateMetadata(){
+ const {site:s}=await siteData();
+ return {title:s.seo_title||s.brand,description:s.seo_description,openGraph:{title:s.seo_title||s.brand,description:s.seo_description,type:'website'},robots:{index:true,follow:true}};
 }
 export default async function Home(){
-  let site=fallbackSite, services=fallbackServices, testimonials=[], faqs=[];
-  if(configured){
-    try {
-      const db=createClient(PROJECT_URL,PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
-      const [s,v,t,f]=await Promise.all([
-        db.from('cf_site').select('*').eq('id','main').maybeSingle(),
-        db.from('cf_services').select('*').eq('is_published',true).order('position'),
-        db.from('cf_testimonials').select('*').eq('is_published',true).eq('permission_confirmed',true).order('position'),
-        db.from('cf_faqs').select('*').eq('is_published',true).order('position')
-      ]);
-      if(s.data) site=s.data;
-      if(v.data?.length) services=v.data;
-      if(t.data) testimonials=t.data;
-      if(f.data) faqs=f.data;
-    } catch { /* fallback until DB is connected */ }
-  }
-  return <Landing site={site} services={services} testimonials={testimonials} faqs={faqs}/>;
+ const data=await siteData();
+ return <Landing {...data}/>;
 }

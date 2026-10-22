@@ -3,6 +3,12 @@ import { ArrowRight, ArrowUpRight, Heart, Leaf, Sparkles, Instagram, MessageCirc
 import { useState } from 'react';
 import LeadForm from './LeadForm';
 import { whatsappUrl } from '@/lib/config';
+// Ícone oficial de forma vetorial, sem dependência de imagens externas.
+function WhatsAppIcon({size=24}) {
+ return <svg aria-hidden="true" focusable="false" width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.966-.273-.099-.471-.148-.67.15-.198.297-.767.966-.94 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.058-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.297-.496.1-.198.05-.372-.025-.52-.074-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.009-.372-.011-.57-.011-.198 0-.52.074-.792.372-.273.297-1.04 1.016-1.04 2.479s1.064 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.625.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.936 9.936 0 0 1-5.031-1.377l-.361-.214-3.741.981.999-3.648-.235-.374a9.933 9.933 0 0 1-1.522-5.292c.002-5.478 4.46-9.936 9.939-9.936a9.88 9.88 0 0 1 7.03 2.91 9.88 9.88 0 0 1 2.907 7.03c-.002 5.48-4.46 9.937-9.94 9.937m8.452-18.387A11.88 11.88 0 0 0 12.096 0C5.548 0 .22 5.328.217 11.876a11.87 11.87 0 0 0 1.586 5.945L.118 24l6.32-1.657a11.9 11.9 0 0 0 5.655 1.441h.005c6.548 0 11.877-5.328 11.88-11.876a11.82 11.82 0 0 0-3.476-8.392"/>
+ </svg>;
+}
 // Fotografia original, sem compactacao, colagem ou recorte de arquivo.
 // O painel pode substituir as URLs do hero e da apresentacao.
 const DEFAULT_PHOTOS = {
@@ -30,6 +36,8 @@ export default function Landing({site,services,testimonials,faqs}){
  const atendimento=services.filter(s=>s.category==='atendimento');
  const mentorias=services.filter(s=>s.category==='mentoria');
  const wa=whatsappUrl(site.whatsapp);
+ const hasWhatsApp=Boolean((site.whatsapp||'').replace(/\D/g,''));
+ const waProps=hasWhatsApp?{target:'_blank',rel:'noopener noreferrer'}:{};
  const topicEntries=(site.accompaniment_topics||'').split('\n').map(line=>line.trim()).filter(Boolean).map(line=>{const [name,...desc]=line.split('|');return {name,description:desc.join('|')}});
  const formatEntries=(site.accompaniment_format||'').split('\n').map(line=>line.trim()).filter(Boolean);
  const packageEntries=(site.accompaniment_packages||'').split('\n').map(line=>line.trim()).filter(Boolean);
@@ -95,8 +103,14 @@ export default function Landing({site,services,testimonials,faqs}){
    </section>
    {testimonials.length>0&&<section className="section testimonials"><div className="section-heading centered"><span className="eyebrow">PALAVRAS QUE ACOLHEM</span><h2>Histórias compartilhadas.</h2></div><div className="testimonial-cards">{testimonials.map(t=><blockquote key={t.id}><Quote size={23}/><p>“{t.quote}”</p><cite>— {t.display_name}</cite></blockquote>)}</div></section>}
    {faqs.length>0&&<section id="duvidas" className="section faq"><div className="section-copy"><span className="eyebrow">05 · DÚVIDAS FREQUENTES</span><h2>Talvez você esteja se perguntando...</h2><p>Algumas respostas para ajudar no seu próximo passo.</p></div><div className="faq-list">{faqs.map(f=><details key={f.id}><summary>{f.question}<span>+</span></summary><p>{f.answer}</p></details>)}</div></section>}
-   <section id="contato" className="contact-section"><div className="contact-copy"><span className="eyebrow">SEU PRÓXIMO PASSO</span><h2>Vamos começar<br/><em>uma conversa?</em></h2><p>Preencha o formulário e a Carolina poderá entrar em contato com você para conversar sobre o que procura.</p><div className="contact-side"><MessageCircle size={23}/><div><strong>Prefere o WhatsApp?</strong><a href={wa} target="_blank" rel="noreferrer">Iniciar uma conversa <ArrowUpRight size={16}/></a></div></div></div><div className="form-panel"><span className="eyebrow">FALE COMIGO</span><h3>Conte um pouco sobre seu interesse.</h3><LeadForm/></div></section>
+   <section id="contato" className="contact-section"><div className="contact-copy"><span className="eyebrow">SEU PRÓXIMO PASSO</span><h2>Vamos começar<br/><em>uma conversa?</em></h2><p>Preencha o formulário e a Carolina poderá entrar em contato com você para conversar sobre o que procura.</p><div className="contact-side"><span className="contact-whatsapp-mark"><WhatsAppIcon size={25}/></span><div><strong>Prefere o WhatsApp?</strong><a href={wa} {...waProps}>{hasWhatsApp?'Iniciar uma conversa':'Deixe seu contato pelo formulário'} <ArrowUpRight size={16}/></a></div></div></div><div className="form-panel"><span className="eyebrow">FALE COMIGO</span><h3>Conte um pouco sobre seu interesse.</h3><LeadForm/></div></section>
   </main>
-  <footer className="footer"><div><a className="brand footer-brand" href="#inicio"><span className="brand-mark">C<span>F</span></span><span>{site.brand}<small>{site.subtitle}</small></span></a><p>{site.footer_note}</p></div><div className="footer-social">{site.instagram&&<a href={site.instagram} aria-label="Instagram" target="_blank" rel="noreferrer"><Instagram size={20}/></a>}{site.whatsapp&&<a href={wa} aria-label="WhatsApp" target="_blank" rel="noreferrer"><MessageCircle size={20}/></a>}{site.contact_email&&<a href={'mailto:'+site.contact_email} aria-label="Email" style={{width:'auto',padding:'0 12px',fontSize:12}}>E-mail</a>}</div><div className="footer-bottom"><span>© {new Date().getFullYear()} {site.brand}. Todos os direitos reservados.</span><a href="/privacy">Privacidade</a></div></footer>
+  <footer className="footer"><div><a className="brand footer-brand" href="#inicio"><span className="brand-mark">C<span>F</span></span><span>{site.brand}<small>{site.subtitle}</small></span></a><p>{site.footer_note}</p></div><div className="footer-social">{site.instagram&&<a href={site.instagram} aria-label="Instagram" target="_blank" rel="noreferrer"><Instagram size={20}/></a>}{hasWhatsApp&&<a href={wa} aria-label="WhatsApp da Carolina" {...waProps}><WhatsAppIcon size={20}/></a>}{site.contact_email&&<a href={'mailto:'+site.contact_email} aria-label="Email" style={{width:'auto',padding:'0 12px',fontSize:12}}>E-mail</a>}</div><div className="footer-bottom"><span>© {new Date().getFullYear()} {site.brand}. Todos os direitos reservados.</span><a href="/privacy">Privacidade</a></div></footer>
+  <a className="floating-whatsapp" href={wa} {...waProps}
+   aria-label={hasWhatsApp?'Conversar com Carolina pelo WhatsApp':'Ir para o formulário de contato'}
+   title={hasWhatsApp?'Conversar pelo WhatsApp':'Enviar contato pelo formulário'}>
+   <WhatsAppIcon size={31}/>
+   <span className="floating-whatsapp-tooltip" aria-hidden="true">{hasWhatsApp?'Fale comigo pelo WhatsApp':'Entre em contato'}</span>
+  </a>
  </div>
 }

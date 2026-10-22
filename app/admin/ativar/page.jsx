@@ -1,8 +1,8 @@
 'use client';
-import {useEffect,useState} from 'react';
-import '../../admin.css';
+import {useEffect,useState,Suspense} from 'react';
+import '../admin.css';
 import {useRouter,useSearchParams} from 'next/navigation';
-export default function Activate(){
+function ActivationForm(){
  const router=useRouter(),params=useSearchParams(),token=params.get('token')||'';
  const [state,setState]=useState('loading'),[user,setUser]=useState(null),[password,setPassword]=useState(''),[confirm,setConfirm]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState('');
  useEffect(()=>{
@@ -42,3 +42,5 @@ export default function Activate(){
   </>}
  </div></main>;
 }
+
+export default function Activate(){return <Suspense fallback={<main className="admin-body"><div className="admin-login">Carregando...</div></main>}><ActivationForm/></Suspense>}

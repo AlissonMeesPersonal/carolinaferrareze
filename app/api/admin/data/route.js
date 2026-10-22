@@ -67,12 +67,12 @@ export async function PUT(req){
    if(typeof status==='string' && statuses.includes(status)){
     const rows=await sql`UPDATE cf_leads SET status=${status} WHERE id=${id} RETURNING id,status`;
     if(rows.length)await auditAction(await sessionInfo(),'leads.status',id);
-    if(rows.length)await auditAction(await sessionInfo(),'leads.notes',id);
     return rows.length?reply({item:rows[0]}):reply({error:'Contato não encontrado.'},404);
    }
    if(typeof item?.admin_notes==='string'){
     const notes=item.admin_notes.slice(0,2500);
     const rows=await sql`UPDATE cf_leads SET admin_notes=${notes} WHERE id=${id} RETURNING id,admin_notes`;
+    if(rows.length)await auditAction(await sessionInfo(),'leads.notes',id);
     return rows.length?reply({item:rows[0]}):reply({error:'Contato não encontrado.'},404);
    }
    return reply({error:'Dados inválidos.'},400);

@@ -1,5 +1,19 @@
 # Carolina Ferrareze — Landing Page + Neon
 
+## Acesso administrativo individual — proprietário e suporte técnico
+
+O painel oferece **duas contas independentes** no Neon, sem senhas fixas no GitHub:
+
+- **Suporte técnico** — e-mail inicial `alissonyagomees@gmail.com`. Pode editar conteúdo, fotos e acompanhar leads durante o suporte. Seu perfil não aparece no site público, mas aparece na aba **Acessos e segurança**.
+- **Proprietária** — e-mail da Carolina será cadastrado por convite quando estiver definido. Quando ativo, pode consultar auditoria e suspender suporte, revogando imediatamente as sessões da conta de suporte.
+
+A ativação é feita por **convite de uso único com expiração de 48 horas**, gerado no banco. O destinatário escolhe senha pessoal (mínimo de 14 caracteres). A senha nunca deve ser enviada por mensagem ou commit. Cookies de sessão HttpOnly + Secure, bloqueio por tentativas e registros de ações no Neon.
+
+A URL para a tela de entrada permanece `https://carolineferrareze.vercel.app/admin`. A ativação usa `/admin/ativar?token=...` e, depois, o próprio login.
+
+A primeira conta de suporte já consta na base, mas só permite entrada após completar a ativação. O suporte pode convidar a primeira proprietária pela aba de acessos; depois disso, somente a proprietária pode convidar outros usuários. Todos os perfis privilegiados continuam auditáveis e podem ser revistos pela responsável.
+
+
 Landing responsiva com caminhos para atendimento individual e mentorias, formulário de interessados e painel administrativo em `/admin`.
 
 ## Estrutura

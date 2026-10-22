@@ -8,7 +8,7 @@ const definitions={
  testimonials:{table:'cf_testimonials',fields:['display_name','quote','permission_confirmed','is_published','position']},
  faqs:{table:'cf_faqs',fields:['question','answer','is_published','position']}
 };
-const siteFields=['brand','subtitle','hero_eyebrow','hero_title','hero_description','hero_image_url','about_image_url','about_title','about_text','journey_title','journey_text','whatsapp','instagram','contact_email','seo_title','seo_description','footer_note'];
+const siteFields=['brand','subtitle','hero_eyebrow','hero_title','hero_description','hero_image_url','about_image_url','about_title','about_text','journey_title','journey_text','whatsapp','instagram','contact_email','seo_title','seo_description','footer_note','accompaniment_title','accompaniment_intro','accompaniment_goal','accompaniment_topics','accompaniment_format','accompaniment_packages'];
 const statuses=['novo','em_contato','agendado','concluido','descartado'];
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const noAccess=()=>reply({error:'Não autorizado.'},401);

@@ -59,3 +59,39 @@
  .story-text{padding:75px 26px}
  .story-portrait{min-height:480px}
 }
+
+/* Acompanhamento terapêutico — conteúdo baseado no material aprovado pela cliente. */
+.accompaniment-section{display:grid;grid-template-columns:.94fr 1.06fr;background:#f4f1e8;gap:8vw;padding:110px max(7vw,25px);scroll-margin-top:90px}
+.accompaniment-intro{display:flex;flex-direction:column;align-items:flex-start}
+.accompaniment-intro h2{margin:24px 0 28px;max-width:650px}
+.accompaniment-intro p{font-size:15px;line-height:1.9;color:#705d50;max-width:560px;white-space:pre-line}
+.accompaniment-intro .btn{margin-top:25px}
+.accompaniment-detail{background:#fff;padding:48px 44px;border:1px solid #e8dccb;align-self:start}
+.accompaniment-detail h3{font:35px/1.2 'Radley',Georgia,serif;margin:0 0 30px;color:#321d14}
+.topic-list{display:grid;gap:0}
+.topic-item{display:flex;gap:18px;border-top:1px solid #eadfce;padding:22px 0}
+.topic-number{font:italic 25px 'Radley',serif;color:#9c752f;flex-shrink:0}
+.topic-item h4{margin:0 0 7px;font-size:15px;color:#321d14}
+.topic-item p{margin:0;line-height:1.75;font-size:13px;color:#705d50}
+.accompaniment-format{border-top:1px solid #dac6ab;margin-top:12px;padding-top:32px}
+.accompaniment-format h3{font-size:29px;margin-bottom:20px}
+.accompaniment-format ul{margin:0;padding-left:19px;display:grid;gap:12px}
+.accompaniment-format li{font-size:14px;color:#705d50;line-height:1.6}
+.accompaniment-options{padding:90px max(7vw,25px);display:grid;grid-template-columns:1fr 1.25fr;gap:8vw;align-items:center;background:#fff}
+.accompaniment-options h2{font-size:clamp(2.6rem,4vw,4.2rem);margin:20px 0}
+.accompaniment-options p{color:#705d50;line-height:1.8;max-width:470px}
+.accompaniment-plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:15px}
+.accompaniment-plan{border:1px solid #dfd2bf;background:#fbf9f5;min-height:245px;padding:28px;display:flex;flex-direction:column}
+.accompaniment-plan>span{font:italic 34px 'Radley',serif;color:#aa8b62}
+.accompaniment-plan h3{font:29px/1.16 'Radley',serif;margin:25px 0 30px;color:#321d14}
+.accompaniment-plan a{display:flex;justify-content:space-between;gap:10px;border-top:1px solid #d9c6ac;padding-top:15px;margin-top:auto;font-size:12px;font-weight:700;color:#321d14}
+.testimonials-showcase{padding:105px max(7vw,25px);background:#f4f1e8;scroll-margin-top:90px}
+.testimonials-showcase .section-heading p{max-width:670px}
+.testimonials-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;max-width:1280px;margin:58px auto 0}
+.testimonial-image-card{display:block;background:#fff;border:1px solid #e2d6c7;overflow:hidden;transition:transform .2s ease,box-shadow .2s ease}
+.testimonial-image-card:hover{transform:translateY(-3px);box-shadow:0 15px 40px #321d141a}
+.testimonial-image-card img{display:block;width:100%;height:auto;aspect-ratio:760/560;object-fit:contain;background:#fff}
+.testimonial-image-card span{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 19px;color:#321d14;font-size:12px;font-weight:700}
+.testimonial-disclaimer{max-width:850px;margin:35px auto 0;text-align:center;line-height:1.7;font-size:12px;color:#7b6958}
+@media(max-width:1100px){.accompaniment-section{gap:5vw}.accompaniment-detail{padding:34px}.testimonials-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.accompaniment-section,.accompaniment-options{grid-template-columns:1fr;padding:75px 24px;gap:35px}.accompaniment-options h2{font-size:2.8rem}.accompaniment-detail{padding:28px 24px}.testimonials-showcase{padding:80px 22px}.testimonials-gallery{gap:12px;grid-template-columns:1fr;margin-top:35px}.testimonial-image-card img{max-height:420px;object-fit:contain}}

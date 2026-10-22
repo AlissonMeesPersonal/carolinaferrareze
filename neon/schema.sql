@@ -93,3 +93,12 @@ WHERE NOT EXISTS (SELECT 1 FROM public.cf_services WHERE category='mentoria');
 
 -- A aplicação deve usar DATABASE_URL apenas em rotas do SERVIDOR.
 -- Use um usuário de banco restrito, se possível; nunca exponha DATABASE_URL no navegador.
+
+-- Migration 2026-10-22: editor de Acompanhamento Terapêutico
+ALTER TABLE public.cf_site
+ ADD COLUMN IF NOT EXISTS accompaniment_title text NOT NULL DEFAULT 'Acompanhamento Terapêutico',
+ ADD COLUMN IF NOT EXISTS accompaniment_intro text NOT NULL DEFAULT 'Para quem deseja desbloquear travas emocionais e desenvolver uma mentalidade mais forte, compreendendo melhor a vida que quer viver e os caminhos para os próprios objetivos.',
+ ADD COLUMN IF NOT EXISTS accompaniment_goal text NOT NULL DEFAULT 'O propósito é fortalecer sua estrutura emocional e encontrar mais tranquilidade para lidar com a vida, mesmo quando as circunstâncias ainda não estão como você gostaria.',
+ ADD COLUMN IF NOT EXISTS accompaniment_topics text NOT NULL DEFAULT E'Mundo interno|Olhar para suas sombras, a maneira como você vê o mundo, autoestima e merecimento.\\nDesbloqueio emocional|Reconhecer feridas, traumas e bloqueios que podem estar limitando sua prosperidade.\\nMentalidade|Desenvolver recursos para lidar com situações e cultivar mais paz mental.',
+ ADD COLUMN IF NOT EXISTS accompaniment_format text NOT NULL DEFAULT E'Frequência mensal ou quinzenal.\\nSessões de uma hora.\\nAtendimento online via Zoom ou WhatsApp.',
+ ADD COLUMN IF NOT EXISTS accompaniment_packages text NOT NULL DEFAULT E'Pacote de 3 sessões\\nPacote de 6 sessões';

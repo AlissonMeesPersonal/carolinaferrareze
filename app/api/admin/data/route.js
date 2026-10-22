@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { sessionValid, originAllowed } from '@/lib/auth';
+import { sessionValid, originAllowed, sessionInfo, auditAction } from '@/lib/auth';
 import { getDb } from '@/lib/db';
 export const runtime='nodejs';
 const reply=(data,status=200)=>NextResponse.json(data,{status,headers:{'Cache-Control':'no-store'}});
@@ -52,6 +52,7 @@ export async function POST(req){
   const keys=def.fields, values=keys.map(k=>convert(k,item[k]));
   const columns=keys.join(','), placeholders=keys.map((_,i)=>'$'+(i+1)).join(',');
   const rows=await sql.query('INSERT INTO '+def.table+' ('+columns+') VALUES('+placeholders+') RETURNING *',values);
+  await auditAction(await sessionInfo(),type+'.created',rows[0]?.id||type);
   return reply({item:rows[0]},201);
  }catch(e){console.error('Admin insert',e?.code||'error');return reply({error:'Não foi possível salvar.'},500)}
 }
@@ -65,6 +66,8 @@ export async function PUT(req){
    if(!uuid.test(id||''))return reply({error:'Identificador inválido.'},400);
    if(typeof status==='string' && statuses.includes(status)){
     const rows=await sql`UPDATE cf_leads SET status=${status} WHERE id=${id} RETURNING id,status`;
+    if(rows.length)await auditAction(await sessionInfo(),'leads.status',id);
+    if(rows.length)await auditAction(await sessionInfo(),'leads.notes',id);
     return rows.length?reply({item:rows[0]}):reply({error:'Contato não encontrado.'},404);
    }
    if(typeof item?.admin_notes==='string'){
@@ -79,6 +82,7 @@ export async function PUT(req){
    const values=siteFields.map(k=>convert(k,item[k]));
    const setters=siteFields.map((k,i)=>k+'=$'+(i+1)).join(',');
    const rows=await sql.query('UPDATE cf_site SET '+setters+',updated_at=now() WHERE id=\'main\' RETURNING *',values);
+   if(rows.length)await auditAction(await sessionInfo(),'site.updated','main');
    return reply({item:rows[0]});
   }
   const def=definitions[type];
@@ -86,6 +90,7 @@ export async function PUT(req){
   const keys=def.fields,values=keys.map(k=>convert(k,item[k]));
   const setters=keys.map((k,i)=>k+'=$'+(i+1)).join(',');
   const rows=await sql.query('UPDATE '+def.table+' SET '+setters+' WHERE id=$'+(values.length+1)+' RETURNING *',[...values,id]);
+  if(rows.length)await auditAction(await sessionInfo(),type+'.updated',id);
   return rows.length?reply({item:rows[0]}):reply({error:'Registro não encontrado.'},404);
  }catch(e){console.error('Admin update',e?.code||'error');return reply({error:'Não foi possível atualizar.'},500)}
 }
@@ -98,6 +103,7 @@ export async function DELETE(req){
   const def=definitions[type];
   if(!def||!uuid.test(id||''))return reply({error:'Identificador inválido.'},400);
   await sql.query('DELETE FROM '+def.table+' WHERE id=$1',[id]);
+  await auditAction(await sessionInfo(),type+'.deleted',id);
   return reply({ok:true});
  }catch(e){console.error('Admin delete',e?.code||'error');return reply({error:'Não foi possível excluir.'},500)}
 }

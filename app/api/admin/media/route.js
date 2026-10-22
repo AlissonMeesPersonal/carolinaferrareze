@@ -1,7 +1,7 @@
 import {NextResponse} from 'next/server';
 import {randomUUID} from 'node:crypto';
 import {PutObjectCommand,S3Client} from '@aws-sdk/client-s3';
-import {sessionValid,originAllowed} from '@/lib/auth';
+import {sessionValid,originAllowed,sessionInfo,auditAction} from '@/lib/auth';
 
 export const runtime='nodejs';
 const MAX_BYTES=8*1024*1024;
@@ -48,6 +48,7 @@ export async function POST(req){
   }));
   const base=endpoint.replace(/\/$/,'');
   const url=base+'/'+encodeURIComponent(bucket)+'/'+key.split('/').map(encodeURIComponent).join('/');
+  await auditAction(await sessionInfo(),'media.uploaded',type.mime);
   return reply({url,bytes:buffer.length,mime:type.mime},201);
  }catch(e){
   console.error('Media upload',e?.name||e?.code||'storage_error');

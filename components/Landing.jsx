@@ -5,7 +5,9 @@ import LeadForm from './LeadForm';
 import { whatsappUrl } from '@/lib/config';
 function EditorialPhoto({src,variant='hero',alt}) {
  if(src) return <img src={src} alt={alt} className="editorial-original" loading={variant==='hero'?'eager':'lazy'}/>;
- return <div role="img" aria-label={alt} className={'editorial-photo editorial-photo--'+variant}/>;
+ return <div role="img" aria-label="Espaço reservado para a fotografia profissional de Carolina Ferrareze" className={'editorial-photo editorial-photo--'+variant}>
+  <span aria-hidden="true">CF</span>
+ </div>;
 }
 export default function Landing({site,services,testimonials,faqs}){
  const [mobile,setMobile]=useState(false);

@@ -35,3 +35,26 @@
  .story-portrait{min-height:460px}
  .editorial-photo{background-size:200% 200%}
 }
+
+/* Fotos individuais extraídas da montagem autorizada.
+   O segundo layer preserva visualização se arquivos individuais ainda não gerados. */
+.editorial-photo--hero{
+  background-image:url('/images/carolina-hero.webp'),url('/images/carolina-editorial.avif');
+  background-size:cover,200% 200%;
+  background-position:center 38%,0 0;
+}
+.editorial-photo--about{
+  background-image:url('/images/carolina-sobre.webp'),url('/images/carolina-editorial.avif');
+  background-size:cover,200% 200%;
+  background-position:center 33%,100% 0;
+}
+.editorial-photo--consultorio{
+  background-image:url('/images/carolina-mentorias.webp'),url('/images/carolina-editorial.avif');
+  background-size:cover,200% 200%;
+  background-position:center 35%,0 100%;
+}
+.editorial-photo--perfil{
+  background-image:url('/images/carolina-perfil.webp'),url('/images/carolina-editorial.avif');
+  background-size:cover,200% 200%;
+  background-position:center 28%,100% 100%;
+}

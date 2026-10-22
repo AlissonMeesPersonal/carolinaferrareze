@@ -117,7 +117,7 @@ export default function Admin(){
   ['SEO',[['seo_title','Título das buscas'],['seo_description','Descrição das buscas']]]
  ];
  const type=(tab==='atendimento'||tab==='mentoria')?'services':tab;
- const local={services,setServices,testimonials,setTestimonials,faqs,setFaqs};
+ const local={services,setServices,testimonials,setTestimonials,faqs,setFaqs,gallery,setGallery};
  const changeLocal=(id,key,value)=>edit(local['set'+type[0].toUpperCase()+type.slice(1)],id,key,value);
  return <div className="admin-body">
  <header className="admin-header"><div><strong>Carolina Ferrareze</strong><small>PAINEL ADMINISTRATIVO · NEON</small></div><div className="admin-header-right"><a href="/" target="_blank" rel="noreferrer">Ver site <ArrowUpRight size={14}/></a><button className="admin-btn secondary" onClick={signOut}><LogOut size={14}/> Sair</button></div></header>

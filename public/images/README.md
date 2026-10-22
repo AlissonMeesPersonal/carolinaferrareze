@@ -1,14 +1,16 @@
-# Fotografias oficiais da Carolina
+# Fotografias oficiais de Carolina Ferrareze
 
-O site utiliza exclusivamente as quatro fotografias fornecidas pela Carolina na conversa, processadas em um sprite AVIF em `public/images/carolina-editorial.avif` (duas colunas × duas linhas).
+As quatro fotografias enviadas pelo responsável foram incorporadas ao repositório e são exibidas exclusivamente como conteúdo visual do site.
 
-Posições das imagens:
-- canto superior esquerdo: Carolina sentada na poltrona com a marca — hero;
-- canto superior direito: Carolina sentada no sofá — Sobre;
-- canto inferior esquerdo: Carolina em pé no consultório — mentorias;
-- canto inferior direito: Carolina de perfil — seção editorial.
+| Arquivo | Utilização |
+|---|---|
+| `carolina-hero.webp` | Hero: Carolina sentada na poltrona com a marca ao fundo |
+| `carolina-sobre.webp` | Sobre: Carolina sentada no sofá |
+| `carolina-mentorias.webp` | Mentorias: Carolina em pé no consultório |
+| `carolina-perfil.webp` | Editorial: retrato lateral com iluminação natural |
 
-As regras CSS ficam em `app/globals.css` e são compatíveis com o mobile.
-As imagens definidas manualmente em `hero_image_url` ou `about_image_url` no painel têm prioridade.
+`carolina-editorial.avif` é a montagem otimizada de origem utilizada para gerar os quatro cortes. O fluxo `.github/workflows/carolina-photos.yml` mantém os cortes versionados. O CSS `app/globals.css` prioriza arquivos WebP individuais para manter as proporções naturais e usa o AVIF como reserva enquanto novos recortes são gerados.
 
-**Nota de qualidade:** o sprite é uma versão otimizada para teste. A troca por imagens individuais AVIF/WebP maiores, com arquivos originais, é recomendada para exibição em telas de alta densidade.
+As imagens foram reduzidas para um primeiro teste web. Para produção definitiva em telas de alta densidade, recomenda-se substituir os arquivos WebP por versões individuais exportadas diretamente das imagens originais em resolução superior.
+
+O painel administrativo permite substituir hero e foto Sobre por URLs específicas sem alterar o código.

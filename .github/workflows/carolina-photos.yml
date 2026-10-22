@@ -15,13 +15,22 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: true
+      - name: Preparar processamento de imagem
+        run: |
+          python3 -m pip install --quiet --break-system-packages Pillow pillow-avif-plugin
       - name: Extrair retratos mantendo proporção
         run: |
-          set -euo pipefail
-          ffmpeg -hide_banner -loglevel error -y -i public/images/carolina-editorial.avif -vf "crop=360:540:0:0" -frames:v 1 public/images/carolina-hero.webp
-          ffmpeg -hide_banner -loglevel error -y -i public/images/carolina-editorial.avif -vf "crop=360:540:360:0" -frames:v 1 public/images/carolina-sobre.webp
-          ffmpeg -hide_banner -loglevel error -y -i public/images/carolina-editorial.avif -vf "crop=360:540:0:540" -frames:v 1 public/images/carolina-mentorias.webp
-          ffmpeg -hide_banner -loglevel error -y -i public/images/carolina-editorial.avif -vf "crop=360:540:360:540" -frames:v 1 public/images/carolina-perfil.webp
+          python3 - <<'PY'
+          from PIL import Image
+          import pillow_avif
+          from pathlib import Path
+          source=Image.open("public/images/carolina-editorial.avif").convert("RGB")
+          assert source.size==(720,1080), f"Unexpected asset dimensions: {source.size}"
+          names=[("carolina-hero.webp",0,0),("carolina-sobre.webp",360,0),
+                 ("carolina-mentorias.webp",0,540),("carolina-perfil.webp",360,540)]
+          for name,x,y in names:
+              source.crop((x,y,x+360,y+540)).save(Path("public/images")/name, "WEBP", quality=87, method=6)
+          PY
       - name: Versionar arquivos gerados
         run: |
           git config user.name "github-actions[bot]"

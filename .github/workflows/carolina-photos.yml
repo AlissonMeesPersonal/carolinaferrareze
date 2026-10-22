@@ -1,0 +1,33 @@
+name: Gerar imagens da Carolina
+on:
+  push:
+    branches: [main]
+    paths:
+      - public/images/carolina-editorial.avif
+      - .github/workflows/carolina-photos.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Extrair retratos mantendo proporção
+        run: |
+          set -euo pipefail
+          ffmpeg -hide_banner -loglevel error -y -i public/images/carolina-editorial.avif -vf "crop=360:540:0:0" -frames:v 1 public/images/carolina-hero.webp
+          ffmpeg -hide_banner -loglevel error -y -i public/images/carolina-editorial.avif -vf "crop=360:540:360:0" -frames:v 1 public/images/carolina-sobre.webp
+          ffmpeg -hide_banner -loglevel error -y -i public/images/carolina-editorial.avif -vf "crop=360:540:0:540" -frames:v 1 public/images/carolina-mentorias.webp
+          ffmpeg -hide_banner -loglevel error -y -i public/images/carolina-editorial.avif -vf "crop=360:540:360:540" -frames:v 1 public/images/carolina-perfil.webp
+      - name: Versionar arquivos gerados
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/images/carolina-*.webp
+          if ! git diff --cached --quiet; then
+            git commit -m "assets: extract four Carolina portraits for responsive site"
+            git push
+          fi

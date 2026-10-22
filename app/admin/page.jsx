@@ -3,7 +3,7 @@ import './admin.css';
 import { useState,useEffect,useCallback } from 'react';
 import { fallbackSite } from '@/lib/config';
 import MediaUploader from '@/components/admin/MediaUploader';
-import { ArrowUpRight,Save,Plus,LogOut,RefreshCw,Trash2,Menu,X,LayoutDashboard,FilePenLine,HeartHandshake,Sparkles,MessageSquareQuote,Images,CircleHelp,Users,ShieldCheck,ExternalLink,ChevronRight,ImagePlus,Download,PanelLeftClose } from 'lucide-react';
+import { ArrowUpRight,Save,Plus,LogOut,RefreshCw,Trash2,Menu,X,LayoutDashboard,FilePenLine,HeartHandshake,Sparkles,MessageSquareQuote,Images,CircleHelp,Users,ShieldCheck,ExternalLink,ChevronRight,Download } from 'lucide-react';
 
 const sections=[['dashboard','Visão geral'],['site','Editor do site'],['atendimento','Atendimentos'],['mentoria','Mentorias'],['testimonials','Depoimentos'],['gallery','Fotos de depoimentos'],['faqs','Perguntas frequentes'],['leads','Contatos recebidos'],['acessos','Acessos e segurança']];
 const navIcons={dashboard:LayoutDashboard,site:FilePenLine,atendimento:HeartHandshake,mentoria:Sparkles,testimonials:MessageSquareQuote,gallery:Images,faqs:CircleHelp,leads:Users,acessos:ShieldCheck};
@@ -226,8 +226,12 @@ export default function Admin(){
   const wide=['hero_title','hero_description','about_text','journey_text','seo_description','hero_image_url','about_image_url','mentoring_image_url','editorial_image_url','accompaniment_intro','accompaniment_goal','accompaniment_topics','accompaniment_format','accompaniment_packages'].includes(key);
   const textarea=['hero_description','about_text','journey_text','seo_description','accompaniment_intro','accompaniment_goal','accompaniment_topics','accompaniment_format','accompaniment_packages'].includes(key);
   return <div className={wide?'wide':''} key={key}>
-   <Field label={label} value={site[key]} onChange={value=>changeSite(key,value)} textarea={textarea}/>
-   {key.endsWith('_image_url')&&<MediaUploader label={label} url={site[key]} onUploaded={url=>changeSite(key,url)}/>}
+   {key.endsWith('_image_url')?
+    <><div className="admin-field-label">{label}</div>
+      <MediaUploader label={label} url={site[key]} onUploaded={url=>changeSite(key,url)}/>
+      <details className="admin-advanced-url"><summary>Endereço da imagem <span>(avançado)</span></summary><Field label="URL da fotografia" value={site[key]} onChange={value=>changeSite(key,value)}/></details>
+    </>
+    :<Field label={label} value={site[key]} onChange={value=>changeSite(key,value)} textarea={textarea}/>}
   </div>;
  })}</div></section>)}
  <div className="admin-sticky-save">
@@ -236,8 +240,7 @@ export default function Admin(){
  </div></>}
  {(tab==='atendimento'||tab==='mentoria')&&<section className="admin-panel"><div className="admin-heading-row"><h2>{tab==='atendimento'?'Atendimentos':'Mentorias'}</h2><button className="admin-btn" onClick={()=>addItem('services')}><Plus size={15}/> Adicionar</button></div>
  {services.filter(x=>x.category===tab).map(item=><div key={item.id} className="admin-card"><div className="admin-card-head"><h3>{item.title||'Novo serviço'}</h3><button className="admin-btn danger" onClick={()=>removeItem('services',item)}><Trash2 size={14}/> Excluir</button></div>
- <div className="admin-grid"><Field label="Nome" value={item.title} onChange={v=>changeLocal(item.id,'title',v)}/><Field label="Etiqueta" value={item.label} onChange={v=>changeLocal(item.id,'label',v)}/><Field label="Descrição" wide textarea value={item.description} onChange={v=>changeLocal(item.id,'description',v)}/><Field label="Detalhes" wide textarea value={item.details} onChange={v=>changeLocal(item.id,'details',v)}/><Field label="URL da imagem" value={item.image_url} onChange={v=>changeLocal(item.id,'image_url',v)} wide/>
- <div className="wide"><MediaUploader url={item.image_url} label={'Imagem de '+item.title} onUploaded={v=>changeLocal(item.id,'image_url',v)}/></div>
+ <div className="admin-grid"><Field label="Nome" value={item.title} onChange={v=>changeLocal(item.id,'title',v)}/><Field label="Etiqueta" value={item.label} onChange={v=>changeLocal(item.id,'label',v)}/><Field label="Descrição" wide textarea value={item.description} onChange={v=>changeLocal(item.id,'description',v)}/><Field label="Detalhes" wide textarea value={item.details} onChange={v=>changeLocal(item.id,'details',v)}/><div className="wide"><div className="admin-field-label">Imagem do serviço</div><MediaUploader url={item.image_url} label={'Imagem de '+item.title} onUploaded={v=>changeLocal(item.id,'image_url',v)}/><details className="admin-advanced-url"><summary>Endereço da imagem <span>(avançado)</span></summary><Field label="URL da imagem" value={item.image_url} onChange={v=>changeLocal(item.id,'image_url',v)}/></details></div>
  <Field label="Posição" type="number" value={item.position} onChange={v=>changeLocal(item.id,'position',v)}/><label className="admin-check"><input type="checkbox" checked={item.is_published} onChange={e=>changeLocal(item.id,'is_published',e.target.checked)}/>Publicado</label></div>
  <div className="admin-toolbar"><button className="admin-btn" disabled={busy||!item.title?.trim()} onClick={()=>saveItem('services',item)}><Save size={14}/> Salvar</button></div></div>)}
  {!services.some(x=>x.category===tab)&&<p className="admin-empty">Nenhum serviço cadastrado.</p>}</section>}

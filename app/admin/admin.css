@@ -508,3 +508,6 @@
  .admin-btn,.admin-sidebar,.admin-nav-item{transition:none!important}
  .spin{animation:none!important}
 }
+
+.admin-field-label{display:block;color:#4d3427;font-size:13px;font-weight:700;margin:0 0 10px}
+.admin-advanced-url input{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px}

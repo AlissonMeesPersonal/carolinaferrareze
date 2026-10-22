@@ -63,3 +63,8 @@ Observação: o bucket é público apenas para leitura de imagens publicadas. **
 
 ## Antes de divulgar
 Confirme conteúdos e imagens autorizados da Carolina. Faça testes completos na produção, revise logs e retenção LGPD e habilite proteção anti-bots adequada ao volume de acessos. A edição de conteúdo via painel ocorre diretamente no Neon, sem necessidade de novos commits ou deploys.
+
+## Encerramento do suporte técnico
+Na aba **Acessos e segurança**, o suporte pode clicar em **Encerrar meu acesso**, revogando todas as sessões e inutilizando convites pendentes. A conta deixa de aparecer na relação de **acessos ativos**, mas o histórico administrativo é mantido para transparência e prestação de contas.
+
+A proprietária pode desativar uma conta de suporte ativa. Não existe conta escondida nem privilégio permanente contra a vontade da proprietária. Reativação após encerramento exige novo processo administrativo autorizado, não apenas alterar o sinalizador `active`.

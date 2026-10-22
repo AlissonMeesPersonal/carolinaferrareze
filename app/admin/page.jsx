@@ -123,12 +123,22 @@ export default function Admin(){
   finally{setBusy(false)}
  }
  async function toggleSupport(user){
-  if(!window.confirm((user.active?'Desativar':'Reativar')+' o acesso de suporte de '+user.email+'?'))return;
+  if(!window.confirm('Desativar o acesso de suporte de '+user.email+' e encerrar todas as sessões?'))return;
   try{
-   await api('/api/admin/users','PATCH',{id:user.id,active:!user.active});
-   setMessage('Acesso atualizado. Sessões encerradas quando o suporte é desativado.');
+   await api('/api/admin/users','PATCH',{id:user.id,active:false});
+   setMessage('Acesso revogado. O usuário foi retirado da lista de acessos ativos; a auditoria foi preservada.');
    await refreshAccess();
   }catch(err){setMessage('Erro: '+err.message)}
+ }
+ async function selfEndSupport(){
+  if(viewer?.role!=='support')return;
+  if(!window.confirm('Encerrar permanentemente seu acesso de suporte? Você perderá o acesso imediatamente, inclusive em outros dispositivos.'))return;
+  setBusy(true);setMessage('');
+  try{
+   await api('/api/admin/users','DELETE');
+   setRole('guest');setViewer(null);setPassword('');setTab('dashboard');
+  }catch(err){setMessage('Erro: '+err.message)}
+  finally{setBusy(false)}
  }
 
  if(role==='loading')return <main className="admin-body"><div className="admin-login">Carregando painel...</div></main>;
@@ -213,7 +223,12 @@ export default function Admin(){
  <div className="admin-toolbar"><button className="admin-btn" disabled={busy||!item.question.trim()||!item.answer.trim()} onClick={()=>saveItem('faqs',item)}>Salvar</button><button className="admin-btn danger" onClick={()=>removeItem('faqs',item)}>Excluir</button></div></div>)}</section>}
  {tab==='acessos'&&<section className="admin-panel">
  <h2>Usuários autorizados</h2>
- <p className="admin-note">Os acessos não aparecem no site público. A proprietária pode consultar os registros de ações e suspender o suporte técnico quando desejar.</p>
+ <p className="admin-note">Aqui aparecem somente as contas ativas. A proprietária pode revogar o suporte; os registros de auditoria permanecem disponíveis depois do encerramento do acesso.</p>
+ {viewer?.role==='support'&&<div className="admin-card">
+  <h3>Encerrar meu acesso de suporte</h3>
+  <p className="admin-note">Use esta opção ao entregar o projeto. Sua conta será desativada, as sessões serão encerradas e seu nome sairá da lista de acessos ativos. O registro histórico de alterações continuará disponível para a proprietária.</p>
+  <button type="button" className="admin-btn danger" disabled={busy} onClick={selfEndSupport}>Encerrar meu acesso</button>
+ </div>}
  <div className="admin-table-wrap">
   <table className="admin-table"><thead><tr><th>E-mail</th><th>Perfil</th><th>Situação</th><th>Último acesso</th><th>Controle</th></tr></thead><tbody>
   {accounts.map(user=><tr key={user.id}>
@@ -221,7 +236,7 @@ export default function Admin(){
     <td>{user.role==='owner'?'Proprietária':'Suporte técnico'}</td>
     <td>{!user.active?'Desativado':!user.activated?'Aguardando ativação':'Ativo'}</td>
     <td>{when(user.last_login_at)}</td>
-    <td>{viewer?.role==='owner'&&user.role==='support'?<button className="admin-btn secondary" onClick={()=>toggleSupport(user)}>{user.active?'Desativar suporte':'Reativar suporte'}</button>:<span>—</span>}</td>
+    <td>{viewer?.role==='owner'&&user.role==='support'?<button className="admin-btn secondary" onClick={()=>toggleSupport(user)}>Desativar suporte</button>:<span>—</span>}</td>
    </tr>)}</tbody></table>
  </div>
  <div className="admin-card admin-access-create">

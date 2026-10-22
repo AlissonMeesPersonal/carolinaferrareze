@@ -9,7 +9,7 @@ export async function GET(){
  const user=await sessionInfo();if(!user)return reply({error:'Não autorizado.'},401);
  const sql=getDb();
  const [users,audit]=await Promise.all([
-  sql`SELECT id,email,role,active,created_at,last_login_at,CASE WHEN password_hash IS NULL THEN false ELSE true END AS activated FROM cf_admin_users ORDER BY created_at`,
+  sql`SELECT id,email,role,active,created_at,last_login_at,CASE WHEN password_hash IS NULL THEN false ELSE true END AS activated FROM cf_admin_users WHERE active=true ORDER BY created_at`,
   sql`SELECT a.action,a.subject,a.created_at,u.email FROM cf_admin_audit a LEFT JOIN cf_admin_users u ON u.id=a.user_id ORDER BY a.created_at DESC LIMIT 40`
  ]);
  return reply({users,audit,viewer:{email:user.email,role:user.role}});
@@ -46,11 +46,37 @@ export async function PATCH(req){
  const user=await sessionInfo();if(!user)return reply({error:'Não autorizado.'},401);
  if(user.role!=='owner')return reply({error:'Somente a proprietária pode gerenciar acessos.'},403);
  const {id,active}=await req.json();
- if(!uuid.test(id||'')||typeof active!=='boolean'||id===user.id)return reply({error:'Alteração inválida.'},400);
+ if(!uuid.test(id||'')||active!==false||id===user.id)return reply({error:'Somente a revogação de suporte é permitida.'},400);
  const sql=getDb();
- const [account]=await sql`UPDATE cf_admin_users SET active=${active} WHERE id=${id} AND role='support' RETURNING email,id`;
+ const [account]=await sql`UPDATE cf_admin_users SET active=false WHERE id=${id} AND role='support' AND active=true RETURNING email,id`;
  if(!account)return reply({error:'Somente acessos de suporte podem ser alterados por esta ação.'},404);
- if(!active)await sql`DELETE FROM cf_admin_sessions WHERE account_id=${id}`;
- await auditAction(user,active?'admin.support_enabled':'admin.support_disabled',account.email);
+ await sql`DELETE FROM cf_admin_sessions WHERE account_id=${id}`;
+ await sql`UPDATE cf_admin_invites SET used_at=now() WHERE user_id=${id} AND used_at IS NULL`;
+ await auditAction(user,'admin.support_disabled',account.email);
  return reply({ok:true});
+}
+
+/**
+ * Encerramento voluntário de suporte.
+ * Não apaga auditoria e não cria exceções de acesso oculto.
+ */
+export async function DELETE(req){
+ if(!originAllowed(req))return reply({error:'Origem inválida.'},403);
+ const user=await sessionInfo();
+ if(!user)return reply({error:'Não autorizado.'},401);
+ if(user.role!=='support')return reply({error:'Apenas usuários de suporte podem usar esta ação.'},403);
+ const sql=getDb();if(!sql)return reply({error:'Banco indisponível.'},503);
+ try{
+  const [account]=await sql`UPDATE cf_admin_users SET active=false WHERE id=${user.id} AND role='support' AND active=true RETURNING email`;
+  if(!account)return reply({error:'Sua conta já está desativada.'},409);
+  await sql`DELETE FROM cf_admin_sessions WHERE account_id=${user.id}`;
+  await sql`UPDATE cf_admin_invites SET used_at=now() WHERE user_id=${user.id} AND used_at IS NULL`;
+  await auditAction(user,'admin.support_self_ended',account.email);
+  const response=reply({ok:true,message:'Suporte encerrado e todas as sessões revogadas.'});
+  response.cookies.set(process.env.NODE_ENV==='production'?'__Host-cf_admin_session':'cf_admin_session','',{maxAge:0,path:'/',httpOnly:true,secure:process.env.NODE_ENV==='production',sameSite:'strict'});
+  return response;
+ }catch(err){
+  console.error('Support self deactivation failed',err?.code||'error');
+  return reply({error:'Não foi possível encerrar o suporte.'},500);
+ }
 }

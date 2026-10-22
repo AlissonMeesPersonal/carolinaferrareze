@@ -5,7 +5,7 @@ import { fallbackSite } from '@/lib/config';
 import MediaUploader from '@/components/admin/MediaUploader';
 import { ArrowUpRight,Save,Plus,LogOut,RefreshCw,Trash2 } from 'lucide-react';
 
-const sections=[['dashboard','Visão geral'],['site','Editor do site'],['atendimento','Atendimentos'],['mentoria','Mentorias'],['testimonials','Depoimentos'],['gallery','Fotos de depoimentos'],['faqs','Perguntas frequentes'],['leads','Contatos recebidos']];
+const sections=[['dashboard','Visão geral'],['site','Editor do site'],['atendimento','Atendimentos'],['mentoria','Mentorias'],['testimonials','Depoimentos'],['gallery','Fotos de depoimentos'],['faqs','Perguntas frequentes'],['leads','Contatos recebidos'],['acessos','Acessos e segurança']];
 const labels={novo:'Novo',em_contato:'Em contato',agendado:'Agendado',concluido:'Concluído',descartado:'Descartado'};
 const kinds={atendimento:'Atendimento',mentoria:'Mentoria',informacoes:'Informações'};
 const when=(s)=>s?new Date(s).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}):'—';
@@ -22,20 +22,31 @@ function Field({label,value,onChange,textarea=false,type='text',wide=false,place
 export default function Admin(){
  const [role,setRole]=useState('loading'),[login,setLogin]=useState(''),[password,setPassword]=useState(''),[tab,setTab]=useState('dashboard');
  const [busy,setBusy]=useState(false),[message,setMessage]=useState(''),[authError,setAuthError]=useState('');
+ const [viewer,setViewer]=useState(null),[accounts,setAccounts]=useState([]),[audit,setAudit]=useState([]);
+ const [newEmail,setNewEmail]=useState(''),[newRole,setNewRole]=useState('owner'),[inviteUrl,setInviteUrl]=useState('');
  const [site,setSite]=useState(fallbackSite),[services,setServices]=useState([]),[testimonials,setTestimonials]=useState([]),[faqs,setFaqs]=useState([]),[gallery,setGallery]=useState([]),[leads,setLeads]=useState([]),[query,setQuery]=useState(''),[leadStatusFilter,setLeadStatusFilter]=useState('todos');
  const refresh=useCallback(async()=>{
   const data=await api('/api/admin/data');
   setSite(data.site||fallbackSite);setServices(data.services||[]);setTestimonials(data.testimonials||[]);setFaqs(data.faqs||[]);setGallery(data.gallery||[]);setLeads(data.leads||[]);
  },[]);
+ const refreshAccess=useCallback(async()=>{
+  const data=await api('/api/admin/users');
+  setAccounts(data.users||[]);setAudit(data.audit||[]);
+ },[]);
  useEffect(()=>{
   let active=true;
   api('/api/admin/session').then(async data=>{
    if(!active)return;
-   setRole(data.configured?(data.authenticated?'admin':'guest'):'unconfigured');
+   setRole(data.configured?(data.authenticated?'admin':'guest'):'unconfigured');setViewer(data.user||null);
    if(data.authenticated){try{await refresh()}catch(e){if(active)setMessage('Erro: '+e.message)}}
   }).catch(()=>{if(active)setRole('unconfigured')});
   return ()=>{active=false};
  },[refresh]);
+ useEffect(()=>{
+  if(tab==='acessos'&&role==='admin'){
+   refreshAccess().catch(e=>setMessage('Erro: '+e.message));
+  }
+ },[tab,role,refreshAccess]);
  const run=async(fn)=>{
   setBusy(true);setMessage('');
   try{await fn();setMessage('Alterações salvas com sucesso.')}catch(e){setMessage('Erro: '+e.message)}
@@ -43,12 +54,12 @@ export default function Admin(){
  };
  async function signIn(e){
   e.preventDefault();setBusy(true);setAuthError('');
-  try{await api('/api/admin/session','POST',{email:login,password});setPassword('');setRole('admin');await refresh()}
+  try{const result=await api('/api/admin/session','POST',{email:login,password});setPassword('');setViewer(result.user||null);setRole('admin');await refresh()}
   catch(e){setAuthError(e.message)}
   finally{setBusy(false)}
  }
  async function signOut(){
-  await api('/api/admin/session','DELETE');setRole('guest');setMessage('');setPassword('');
+  await api('/api/admin/session','DELETE');setRole('guest');setViewer(null);setMessage('');setPassword('');
  }
  const changeSite=(name,value)=>setSite(s=>({...s,[name]:value}));
  const edit=(setter,id,key,value)=>setter(rows=>rows.map(x=>x.id===id?{...x,[key]:value}:x));
@@ -100,6 +111,26 @@ export default function Admin(){
   const link=document.createElement('a');link.href=objectUrl;link.download='carolina-contatos-'+new Date().toISOString().slice(0,10)+'.csv';
   document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(objectUrl),1500);
  }
+
+ async function inviteAccount(e){
+  e.preventDefault();setBusy(true);setMessage('');setInviteUrl('');
+  try{
+   const result=await api('/api/admin/users','POST',{email:newEmail.trim().toLowerCase(),role:newRole});
+   setInviteUrl(result.inviteUrl);setNewEmail('');
+   setMessage('Convite gerado. Compartilhe o link de forma privada com a pessoa.');
+   await refreshAccess();
+  }catch(err){setMessage('Erro: '+err.message)}
+  finally{setBusy(false)}
+ }
+ async function toggleSupport(user){
+  if(!window.confirm((user.active?'Desativar':'Reativar')+' o acesso de suporte de '+user.email+'?'))return;
+  try{
+   await api('/api/admin/users','PATCH',{id:user.id,active:!user.active});
+   setMessage('Acesso atualizado. Sessões encerradas quando o suporte é desativado.');
+   await refreshAccess();
+  }catch(err){setMessage('Erro: '+err.message)}
+ }
+
  if(role==='loading')return <main className="admin-body"><div className="admin-login">Carregando painel...</div></main>;
  if(role!=='admin')return <main className="admin-body"><div className="admin-login"><a className="admin-back" href="/">← Voltar ao site</a><h1>Espaço Carolina</h1><p>Painel exclusivo para editar a página e acompanhar interessados.</p>
  {role==='unconfigured'?<p className="admin-alert admin-error">Configure o banco Neon e as variáveis de acesso no servidor da Vercel para ativar este painel.</p>:<form onSubmit={signIn}>
@@ -120,7 +151,7 @@ export default function Admin(){
  const local={services,setServices,testimonials,setTestimonials,faqs,setFaqs,gallery,setGallery};
  const changeLocal=(id,key,value)=>edit(local['set'+type[0].toUpperCase()+type.slice(1)],id,key,value);
  return <div className="admin-body">
- <header className="admin-header"><div><strong>Carolina Ferrareze</strong><small>PAINEL ADMINISTRATIVO · NEON</small></div><div className="admin-header-right"><a href="/" target="_blank" rel="noreferrer">Ver site <ArrowUpRight size={14}/></a><button className="admin-btn secondary" onClick={signOut}><LogOut size={14}/> Sair</button></div></header>
+ <header className="admin-header"><div><strong>Carolina Ferrareze</strong><small>PAINEL ADMINISTRATIVO · {viewer?.role==='owner'?'PROPRIETÁRIA':'SUPORTE TÉCNICO'} {viewer?.email?'· '+viewer.email:''}</small></div><div className="admin-header-right"><a href="/" target="_blank" rel="noreferrer">Ver site <ArrowUpRight size={14}/></a><button className="admin-btn secondary" onClick={signOut}><LogOut size={14}/> Sair</button></div></header>
  <div className="admin-layout">
  <nav className="admin-sidebar" aria-label="Navegação administrativa">{sections.map(([id,label])=><button className={tab===id?'active':''} key={id} onClick={()=>{setTab(id);setMessage('')}}>{label}</button>)}</nav>
  <main className="admin-main">
@@ -180,6 +211,48 @@ export default function Admin(){
  <Field label="Posição" type="number" value={item.position} onChange={v=>changeLocal(item.id,'position',v)}/>
  <label className="admin-check"><input type="checkbox" checked={item.is_published} onChange={e=>changeLocal(item.id,'is_published',e.target.checked)}/>Publicado</label></div>
  <div className="admin-toolbar"><button className="admin-btn" disabled={busy||!item.question.trim()||!item.answer.trim()} onClick={()=>saveItem('faqs',item)}>Salvar</button><button className="admin-btn danger" onClick={()=>removeItem('faqs',item)}>Excluir</button></div></div>)}</section>}
+ {tab==='acessos'&&<section className="admin-panel">
+ <h2>Usuários autorizados</h2>
+ <p className="admin-note">Os acessos não aparecem no site público. A proprietária pode consultar os registros de ações e suspender o suporte técnico quando desejar.</p>
+ <div className="admin-table-wrap">
+  <table className="admin-table"><thead><tr><th>E-mail</th><th>Perfil</th><th>Situação</th><th>Último acesso</th><th>Controle</th></tr></thead><tbody>
+  {accounts.map(user=><tr key={user.id}>
+    <td><strong>{user.email}</strong></td>
+    <td>{user.role==='owner'?'Proprietária':'Suporte técnico'}</td>
+    <td>{!user.active?'Desativado':!user.activated?'Aguardando ativação':'Ativo'}</td>
+    <td>{when(user.last_login_at)}</td>
+    <td>{viewer?.role==='owner'&&user.role==='support'?<button className="admin-btn secondary" onClick={()=>toggleSupport(user)}>{user.active?'Desativar suporte':'Reativar suporte'}</button>:<span>—</span>}</td>
+   </tr>)}</tbody></table>
+ </div>
+ <div className="admin-card admin-access-create">
+  <h3>Convidar uma pessoa</h3>
+  <p className="admin-note">O sistema gera um convite temporário válido por 48 horas. Envie o link diretamente à pessoa; ela define a própria senha. Não existe cadastro público.</p>
+  <form onSubmit={inviteAccount} className="admin-grid">
+   <Field label="E-mail do novo acesso" type="email" value={newEmail} onChange={setNewEmail} placeholder="email@exemplo.com"/>
+   <label className="admin-field">Perfil
+    <select value={newRole} onChange={e=>setNewRole(e.target.value)}>
+     <option value="owner">Proprietária</option>
+     {viewer?.role==='owner'&&<option value="support">Suporte técnico</option>}
+    </select>
+   </label>
+   <div className="wide"><button className="admin-btn" disabled={busy||!newEmail.includes('@')}>Gerar convite</button></div>
+  </form>
+  {inviteUrl&&<div className="admin-invite-result">
+   <strong>Link de ativação — compartilhe em particular:</strong>
+   <input readOnly value={inviteUrl} onFocus={e=>e.target.select()} aria-label="Link de ativação de uso único"/>
+   <button className="admin-btn secondary" onClick={()=>navigator.clipboard?.writeText(inviteUrl)}>Copiar link</button>
+   <small>Este link dá acesso ao cadastro de senha. Não publique ou envie a terceiros.</small>
+  </div>}
+ </div>
+ <h3>Histórico de atividades administrativas</h3>
+ <p className="admin-note">Todas as alterações relevantes são registradas com o usuário responsável. Não são exibidos dados de contatos neste histórico.</p>
+ <div className="admin-table-wrap">
+  <table className="admin-table"><thead><tr><th>Quando</th><th>Usuário</th><th>Ação</th><th>Item</th></tr></thead><tbody>
+   {audit.map((entry,i)=><tr key={i}><td>{when(entry.created_at)}</td><td>{entry.email||'Conta antiga'}</td><td>{entry.action}</td><td>{entry.subject||'—'}</td></tr>)}
+  </tbody></table>
+  {audit.length===0&&<p className="admin-empty">Ainda não há atividades registradas.</p>}
+ </div>
+ </section>}
  {tab==='leads'&&<section className="admin-panel"><div className="admin-heading-row"><h2>Contatos recebidos <span className="admin-count">{leads.length}</span></h2><button className="admin-btn secondary" onClick={()=>run(refresh)}><RefreshCw size={14}/> Atualizar</button></div>
  <div className="admin-toolbar">
   <input className="admin-search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar nome, telefone ou serviço"/>

@@ -5,15 +5,16 @@ export const dynamic='force-dynamic';
 
 async function siteData(){
  const sql=getDb();
- if(!sql)return {site:fallbackSite,services:fallbackServices,testimonials:[],faqs:[]};
+ if(!sql)return {site:fallbackSite,services:fallbackServices,testimonials:[],faqs:[],gallery:[]};
  try{
-  const [s,v,t,f]=await Promise.all([
+  const [s,v,t,f,g]=await Promise.all([
    sql`SELECT * FROM cf_site WHERE id='main' LIMIT 1`,
    sql`SELECT * FROM cf_services WHERE is_published=TRUE ORDER BY position`,
    sql`SELECT * FROM cf_testimonials WHERE is_published=TRUE AND permission_confirmed=TRUE ORDER BY position`,
-   sql`SELECT * FROM cf_faqs WHERE is_published=TRUE ORDER BY position`
+   sql`SELECT * FROM cf_faqs WHERE is_published=TRUE ORDER BY position`,
+   sql`SELECT * FROM cf_gallery_media WHERE is_published=TRUE AND consent_confirmed=TRUE ORDER BY position,created_at DESC`
   ]);
-  return {site:s[0]||fallbackSite,services:v,testimonials:t,faqs:f};
+  return {site:s[0]||fallbackSite,services:v,testimonials:t,faqs:f,gallery:g};
  }catch(err){
   console.error('Neon site data unavailable',err?.code||'not-ready');
   return {site:fallbackSite,services:fallbackServices,testimonials:[],faqs:[]};

@@ -6,9 +6,10 @@ const reply=(data,status=200)=>NextResponse.json(data,{status,headers:{'Cache-Co
 const definitions={
  services:{table:'cf_services',fields:['category','title','description','details','image_url','label','is_published','position']},
  testimonials:{table:'cf_testimonials',fields:['display_name','quote','permission_confirmed','is_published','position']},
- faqs:{table:'cf_faqs',fields:['question','answer','is_published','position']}
+ faqs:{table:'cf_faqs',fields:['question','answer','is_published','position']},
+ gallery:{table:'cf_gallery_media',fields:['url','caption','alt_text','position','consent_confirmed','is_published']}
 };
-const siteFields=['brand','subtitle','hero_eyebrow','hero_title','hero_description','hero_image_url','about_image_url','about_title','about_text','journey_title','journey_text','whatsapp','instagram','contact_email','seo_title','seo_description','footer_note','accompaniment_title','accompaniment_intro','accompaniment_goal','accompaniment_topics','accompaniment_format','accompaniment_packages'];
+const siteFields=['brand','subtitle','hero_eyebrow','hero_title','hero_description','hero_image_url','about_image_url','about_title','about_text','journey_title','journey_text','whatsapp','instagram','contact_email','seo_title','seo_description','footer_note','accompaniment_title','accompaniment_intro','accompaniment_goal','accompaniment_topics','accompaniment_format','accompaniment_packages','mentoring_image_url','editorial_image_url'];
 const statuses=['novo','em_contato','agendado','concluido','descartado'];
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const noAccess=()=>reply({error:'Não autorizado.'},401);
@@ -23,20 +24,22 @@ function validate(type,body){
  if(type==='services')return ['atendimento','mentoria'].includes(body.category)&&typeof body.title==='string'&&body.title.trim().length>0;
  if(type==='testimonials')return typeof body.display_name==='string'&&body.display_name.trim()!==''&&typeof body.quote==='string'&&body.quote.trim()!=='';
  if(type==='faqs')return typeof body.question==='string'&&body.question.trim()!==''&&typeof body.answer==='string'&&body.answer.trim()!=='';
+ if(type==='gallery')return typeof body.url==='string' && (body.url.startsWith('https://') || body.url.startsWith('/images/')) && body.url.length<3000;
  return false;
 }
 export async function GET(){
  if(!await sessionValid())return noAccess();
  const sql=getDb();if(!sql)return notReady();
  try{
-  const [site,services,testimonials,faqs,leads]=await Promise.all([
+  const [site,services,testimonials,faqs,leads,gallery]=await Promise.all([
    sql`SELECT * FROM cf_site WHERE id='main' LIMIT 1`,
    sql`SELECT * FROM cf_services ORDER BY position`,
    sql`SELECT * FROM cf_testimonials ORDER BY position`,
    sql`SELECT * FROM cf_faqs ORDER BY position`,
-   sql`SELECT * FROM cf_leads ORDER BY created_at DESC LIMIT 1000`
+   sql`SELECT * FROM cf_leads ORDER BY created_at DESC LIMIT 1000`,
+   sql`SELECT * FROM cf_gallery_media ORDER BY position,created_at DESC`
   ]);
-  return reply({site:site[0]||null,services,testimonials,faqs,leads});
+  return reply({site:site[0]||null,services,testimonials,faqs,leads,gallery});
  }catch(e){console.error('Admin read',e?.code||'error');return reply({error:'Não foi possível carregar o painel.'},500)}
 }
 export async function POST(req){
@@ -59,9 +62,17 @@ export async function PUT(req){
  try{
   const {type,item,id,status}=await req.json();
   if(type==='leads'){
-   if(!uuid.test(id||'')||!statuses.includes(status))return reply({error:'Dados inválidos.'},400);
-   const rows=await sql`UPDATE cf_leads SET status=${status} WHERE id=${id} RETURNING id,status`;
-   return rows.length?reply({item:rows[0]}):reply({error:'Contato não encontrado.'},404);
+   if(!uuid.test(id||''))return reply({error:'Identificador inválido.'},400);
+   if(typeof status==='string' && statuses.includes(status)){
+    const rows=await sql`UPDATE cf_leads SET status=${status} WHERE id=${id} RETURNING id,status`;
+    return rows.length?reply({item:rows[0]}):reply({error:'Contato não encontrado.'},404);
+   }
+   if(typeof item?.admin_notes==='string'){
+    const notes=item.admin_notes.slice(0,2500);
+    const rows=await sql`UPDATE cf_leads SET admin_notes=${notes} WHERE id=${id} RETURNING id,admin_notes`;
+    return rows.length?reply({item:rows[0]}):reply({error:'Contato não encontrado.'},404);
+   }
+   return reply({error:'Dados inválidos.'},400);
   }
   if(type==='site'){
    if(!item||typeof item!=='object')return reply({error:'Dados inválidos.'},400);

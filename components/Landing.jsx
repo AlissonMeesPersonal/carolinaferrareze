@@ -31,7 +31,7 @@ function EditorialPhoto({src,variant='hero',alt}) {
   fetchPriority={variant==='hero'?'high':'auto'}
  />;
 }
-export default function Landing({site,services,testimonials,faqs}){
+export default function Landing({site,services,testimonials,faqs,gallery=[]}){
  const [mobile,setMobile]=useState(false);
  const atendimento=services.filter(s=>s.category==='atendimento');
  const mentorias=services.filter(s=>s.category==='mentoria');
@@ -54,7 +54,7 @@ export default function Landing({site,services,testimonials,faqs}){
    <section className="intro-band"><span>acolher</span><i/> <span>compreender</span><i/><span>ressignificar</span><i/><span>florescer</span></section>
    <section id="sobre" className="section about"><div className="about-visual"><EditorialPhoto src={site.about_image_url} variant="about" alt="Retrato profissional de Carolina Ferrareze sentada no sofá do consultório"/><div className="about-badge"><Heart size={17}/> Um olhar individual</div></div><div className="section-copy"><span className="eyebrow">01 · SOBRE MIM</span><h2>{site.about_title}</h2><div className="accent-line"/><p>{site.about_text}</p><a className="underlined-link" href="#contato">Entre em contato <ArrowUpRight size={18}/></a></div></section>
    <section className="section paths" id="atendimentos"><div className="section-heading centered"><span className="eyebrow">02 · ATENDIMENTOS</span><h2>Um espaço para<br/><em>se reconectar.</em></h2><p>Conheça os atendimentos individuais e encontre uma possibilidade de cuidado que faça sentido para você.</p></div>
-    <div className="cards">{atendimento.map((item,index)=><article className="service-card" key={item.id}><div className="service-number">0{index+1} <Leaf size={19}/></div><span className="service-tag">{item.label||'ATENDIMENTO'}</span><h3>{item.title}</h3><p>{item.description}</p>{item.details&&<div className="service-details">{item.details}</div>}<a href="#contato" className="card-link">Tenho interesse <ArrowUpRight size={19}/></a></article>)}</div>
+    <div className="cards">{atendimento.map((item,index)=><article className="service-card" key={item.id}>{item.image_url&&<div className="service-visual"><img src={item.image_url} loading="lazy" alt={item.title}/></div>}<div className="service-number">0{index+1} <Leaf size={19}/></div><span className="service-tag">{item.label||'ATENDIMENTO'}</span><h3>{item.title}</h3><p>{item.description}</p>{item.details&&<div className="service-details">{item.details}</div>}<a href="#contato" className="card-link">Tenho interesse <ArrowUpRight size={19}/></a></article>)}</div>
    </section>
    <section className="accompaniment-section" id="acompanhamento">
     <div className="accompaniment-intro">
@@ -79,24 +79,25 @@ export default function Landing({site,services,testimonials,faqs}){
     <div><span className="eyebrow">ESCOLHA SEU PROCESSO</span><h2>Um acompanhamento no seu ritmo.</h2><p>Você pode conhecer as opções de acompanhamento e conversar diretamente com a Carolina para saber sobre o investimento.</p></div>
     <div className="accompaniment-plans">{packageEntries.map((plan,i)=><div className="accompaniment-plan" key={i}><span>0{i+1}</span><h3>{plan}</h3><a href="#contato">Consultar investimento <ArrowUpRight size={18}/></a></div>)}</div>
    </section>
-   <section id="mentorias" className="mentoring"><div className="mentoring-decor"><EditorialPhoto variant="consultorio" alt="Carolina Ferrareze em pé no consultório, diante da identidade visual"/><span className="mentoring-photo-label">Cuidado com presença e propósito.</span></div><div className="mentoring-content"><span className="eyebrow">03 · MENTORIAS TERAPÊUTICAS</span><h2>{site.journey_title}</h2><p>{site.journey_text}</p>{mentorias.map(item=><div className="mentoring-item" key={item.id}><span><Sparkles size={19}/></span><div><h3>{item.title}</h3><p>{item.description}</p>{item.details&&<small>{item.details}</small>}</div></div>)}<a className="btn btn-light" href="#contato">Quero saber mais <ArrowUpRight size={17}/></a></div></section>
+   <section id="mentorias" className="mentoring"><div className="mentoring-decor"><EditorialPhoto src={site.mentoring_image_url} variant="consultorio" alt="Carolina Ferrareze em pé no consultório, diante da identidade visual"/><span className="mentoring-photo-label">Cuidado com presença e propósito.</span></div><div className="mentoring-content"><span className="eyebrow">03 · MENTORIAS TERAPÊUTICAS</span><h2>{site.journey_title}</h2><p>{site.journey_text}</p>{mentorias.map(item=><div className="mentoring-item" key={item.id}><span><Sparkles size={19}/></span><div><h3>{item.title}</h3><p>{item.description}</p>{item.details&&<small>{item.details}</small>}</div></div>)}<a className="btn btn-light" href="#contato">Quero saber mais <ArrowUpRight size={17}/></a></div></section>
    <section className="editorial-story" aria-label="Uma mensagem da Carolina">
     <div className="story-text"><span className="eyebrow">UM CONVITE PARA VOCÊ</span><h2>O seu processo merece <em>ser vivido com presença.</em></h2><p>Não é sobre fazer tudo de uma vez. É sobre dar espaço para compreender sua história e descobrir novos caminhos.</p><a className="underlined-link" href="#contato">Conversar com a Carolina <ArrowUpRight size={17}/></a></div>
-    <div className="story-portrait"><EditorialPhoto variant="perfil" alt="Retrato em perfil de Carolina Ferrareze com luz natural"/></div>
+    <div className="story-portrait"><EditorialPhoto src={site.editorial_image_url} variant="perfil" alt="Retrato em perfil de Carolina Ferrareze com luz natural"/></div>
    </section>
    <section className="section process"><div className="section-heading centered"><span className="eyebrow">04 · COMO FUNCIONA</span><h2>O primeiro passo pode<br/><em>ser simples.</em></h2></div><div className="steps"><div><span>01</span><h3>Escolha seu caminho</h3><p>Explore as opções de atendimentos e mentorias.</p></div><div><span>02</span><h3>Entre em contato</h3><p>Preencha o formulário para receber informações.</p></div><div><span>03</span><h3>Converse com a Carolina</h3><p>Entenda disponibilidade, condições e próximos passos.</p></div></div></section>
    <section id="depoimentos" className="testimonials-showcase">
      <div className="section-heading centered"><span className="eyebrow">EXPERIÊNCIAS COMPARTILHADAS</span><h2>Palavras de quem <em>viveu esse processo.</em></h2><p>Trechos de mensagens compartilhadas por pessoas atendidas, com a identidade preservada. Cada experiência é única.</p></div>
      <div className="testimonials-gallery" aria-label="Depoimentos recebidos">
-      {[
-       ['relato-1.svg','Percebo outra visão de mundo e de mim mesma'],
-       ['relato-2.svg','Muita diferença em tão pouco tempo'],
-       ['relato-3.svg','Minha energia mudou nos últimos dias'],
-       ['relato-4.svg','Foi algo muito além e mais profundo'],
-       ['relato-5.svg','A experiência trouxe uma sensação de leveza']
-      ].map(([file,alt],i)=><a key={file} className="testimonial-image-card" href={'/images/depoimentos/'+file} target="_blank" rel="noreferrer" aria-label={'Abrir depoimento '+(i+1)+': '+alt}>
-       <img src={'/images/depoimentos/'+file} loading="lazy" alt={'Trecho de depoimento: '+alt} width="760" height="560"/>
-       <span>Ver depoimento completo <ArrowUpRight size={15}/></span>
+      {(gallery.length>0?gallery.map(g=>({id:g.id,url:g.url,alt:g.alt_text||g.caption||'Depoimento',caption:g.caption})):
+      [
+       {id:'relato-1',url:'/images/depoimentos/relato-1.svg',alt:'Depoimento anônimo 1'},
+       {id:'relato-2',url:'/images/depoimentos/relato-2.svg',alt:'Depoimento anônimo 2'},
+       {id:'relato-3',url:'/images/depoimentos/relato-3.svg',alt:'Depoimento anônimo 3'},
+       {id:'relato-4',url:'/images/depoimentos/relato-4.svg',alt:'Depoimento anônimo 4'},
+       {id:'relato-5',url:'/images/depoimentos/relato-5.svg',alt:'Depoimento anônimo 5'}
+      ]).map((photo,i)=><a key={photo.id} className="testimonial-image-card" href={photo.url} target="_blank" rel="noopener noreferrer" aria-label={'Abrir depoimento '+(i+1)}>
+       <img src={photo.url} loading="lazy" alt={photo.alt} width="760" height="560"/>
+       <span>{photo.caption||'Ver depoimento completo'} <ArrowUpRight size={15}/></span>
       </a>)}
      </div>
      <p className="testimonial-disclaimer">Mensagens compartilhadas para ilustrar experiências pessoais. Os resultados não são garantidos e variam de pessoa para pessoa.</p>

@@ -3,11 +3,27 @@ import { ArrowRight, ArrowUpRight, Heart, Leaf, Sparkles, Instagram, MessageCirc
 import { useState } from 'react';
 import LeadForm from './LeadForm';
 import { whatsappUrl } from '@/lib/config';
+// Fotografia original, sem compactacao, colagem ou recorte de arquivo.
+// O painel pode substituir as URLs do hero e da apresentacao.
+const DEFAULT_PHOTOS = {
+ hero: { src: '/images/originais/hero.jpeg', width: 1066, height: 1600 },
+ about: { src: '/images/originais/sobre.jpeg', width: 1066, height: 1600 },
+ consultorio: { src: '/images/originais/mentorias.jpeg', width: 1600, height: 1066 },
+ perfil: { src: '/images/originais/perfil.jpeg', width: 1066, height: 1600 },
+};
 function EditorialPhoto({src,variant='hero',alt}) {
- if(src) return <img src={src} alt={alt} className="editorial-original" loading={variant==='hero'?'eager':'lazy'}/>;
- return <div role="img" aria-label="Espaço reservado para a fotografia profissional de Carolina Ferrareze" className={'editorial-photo editorial-photo--'+variant}>
-  <span aria-hidden="true">CF</span>
- </div>;
+ const photo=DEFAULT_PHOTOS[variant] || DEFAULT_PHOTOS.hero;
+ const actualSrc=(typeof src==='string' && src.trim()) ? src.trim() : photo.src;
+ return <img
+  className={'editorial-original editorial-original--'+variant}
+  src={actualSrc}
+  width={photo.width}
+  height={photo.height}
+  alt={alt}
+  loading={variant==='hero'?'eager':'lazy'}
+  decoding="async"
+  fetchPriority={variant==='hero'?'high':'auto'}
+ />;
 }
 export default function Landing({site,services,testimonials,faqs}){
  const [mobile,setMobile]=useState(false);

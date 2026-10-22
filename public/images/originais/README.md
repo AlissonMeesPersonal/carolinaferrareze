@@ -1,19 +1,14 @@
-# Fotografias originais — Carolina Ferrareze
+# Fotografias originais da Carolina Ferrareze
 
-Esta é a pasta de **upload das fotografias originais em alta qualidade** para a landing page. Envie os arquivos **diretamente aqui pelo GitHub**, sem compactar as fotos em uma colagem, sem aplicar cortes e sem diminuir a resolução.
+As quatro imagens JPEG foram recebidas e vinculadas à landing page, em qualidade original: os arquivos não são recomprimidos nem redimensionados no repositório.
 
-## Sugestão de nomes
-- `hero.jpg` — Carolina na poltrona, com a identidade do consultório ao fundo (capa da página).
-- `sobre.jpg` — Carolina sentada no sofá (apresentação).
-- `mentorias.jpg` — Carolina em pé no consultório (seção mentorias).
-- `perfil.jpg` — Carolina de perfil, com luz natural (seção editorial).
+| Arquivo | Dimensão | Seção |
+|---|---:|---|
+| `hero.jpeg` | 1066 × 1600 px | Hero (Carolina na poltrona) |
+| `sobre.jpeg` | 1066 × 1600 px | Sobre mim |
+| `mentorias.jpeg` | 1600 × 1066 px | Mentorias (imagem horizontal completa) |
+| `perfil.jpeg` | 1066 × 1600 px | Seção editorial |
 
-Outros arquivos podem ser enviados e mapeados posteriormente.
+A página utiliza diretamente os arquivos individuais de `public/images/originais/`; não existem mais sprites nem imagens de 360 px. O navegador dimensiona a exibição via CSS, preservando a proporção da foto. Fotos de retrato usam `object-fit:cover` (podendo haver corte visual nas bordas em telas diferentes). A foto horizontal de mentorias usa `object-fit:contain` para aparecer inteira.
 
-## Como enviar
-1. Entre nesta pasta no GitHub e clique em **Add file → Upload files**.
-2. Arraste os arquivos **JPG/JPEG, PNG ou WebP** com a melhor qualidade disponível.
-3. Clique em **Commit changes** na branch `main`.
-4. Avise no ChatGPT que adicionou as fotos: o projeto será atualizado para exibir os arquivos reais.
-
-Não usamos o sprite ou as imagens 360×540 anteriormente geradas. O site mostra uma composição neutra até a substituição definitiva. As imagens ficam versionadas no GitHub, e a Vercel publica novos commits automaticamente.
+O painel administrativo permite sobrescrever as fotos de Hero e Sobre por URL, sem alterar o GitHub. Para atualizar qualquer fotografia original, substitua o arquivo de mesmo nome nesta pasta e publique um commit.

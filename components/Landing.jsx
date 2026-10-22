@@ -1,5 +1,5 @@
 'use client';
-import { ArrowRight, ArrowUpRight, Heart, Sparkles, Instagram, MessageCircle, Quote, Menu, X } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Heart, Leaf, Sparkles, Instagram, MessageCircle, Quote, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import LeadForm from './LeadForm';
 import { whatsappUrl } from '@/lib/config';

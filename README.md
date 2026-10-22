@@ -9,7 +9,7 @@ O painel oferece **duas contas independentes** no Neon, sem senhas fixas no GitH
 
 A ativação é feita por **convite de uso único com expiração de 48 horas**, gerado no banco. O destinatário escolhe senha pessoal (mínimo de 14 caracteres). A senha nunca deve ser enviada por mensagem ou commit. Cookies de sessão HttpOnly + Secure, bloqueio por tentativas e registros de ações no Neon.
 
-A URL para a tela de entrada permanece `https://carolineferrareze.vercel.app/admin`. A ativação usa `/admin/ativar?token=...` e, depois, o próprio login.
+A URL para a tela de entrada permanece `https://carolinaferrareze.vercel.app/admin`. A ativação usa `/admin/ativar?token=...` e, depois, o próprio login.
 
 A primeira conta de suporte já consta na base, mas só permite entrada após completar a ativação. O suporte pode convidar a primeira proprietária pela aba de acessos; depois disso, somente a proprietária pode convidar outros usuários. Todos os perfis privilegiados continuam auditáveis e podem ser revistos pela responsável.
 
@@ -17,7 +17,7 @@ A primeira conta de suporte já consta na base, mas só permite entrada após co
 Landing responsiva com caminhos para atendimento individual e mentorias, formulário de interessados e painel administrativo em `/admin`.
 
 ## Estrutura
-- Next.js 16 App Router no GitHub `AlissonMeesPersonal/carolineferrareze`
+- Next.js 16 App Router conectado ao GitHub e publicado automaticamente na Vercel
 - Neon PostgreSQL (driver `@neondatabase/serverless` com conexão **exclusiva do servidor**)
 - Vercel (deploy automático a cada commit em `main`)
 - Painel protegido por e-mail, hash de senha scrypt e cookie HttpOnly/secure; sessões revogáveis e gravadas no próprio Neon
@@ -68,3 +68,13 @@ Confirme conteúdos e imagens autorizados da Carolina. Faça testes completos na
 Na aba **Acessos e segurança**, o suporte pode clicar em **Encerrar meu acesso**, revogando todas as sessões e inutilizando convites pendentes. A conta deixa de aparecer na relação de **acessos ativos**, mas o histórico administrativo é mantido para transparência e prestação de contas.
 
 A proprietária pode desativar uma conta de suporte ativa. Não existe conta escondida nem privilégio permanente contra a vontade da proprietária. Reativação após encerramento exige novo processo administrativo autorizado, não apenas alterar o sinalizador `active`.
+
+## Nome e domínio oficial
+
+- **Nome oficial**: Carolina Ferrareze.
+- **Projeto Vercel**: `carolinaferrareze`.
+- **Domínio principal**: https://carolinaferrareze.vercel.app.
+- **Domínio anterior**: `carolineferrareze.vercel.app`, mantido como redirecionamento permanente para o novo endereço.
+- **Metadata canônica**: apontando para o domínio correto, evitando endereços duplicados nos buscadores.
+
+A mudança de nome do repositório GitHub é independente da Vercel e deve ser feita nas configurações de repositório pelo proprietário. Após renomear o repositório, conferir vínculo da integração na Vercel.

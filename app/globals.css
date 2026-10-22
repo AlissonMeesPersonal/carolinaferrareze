@@ -4,3 +4,34 @@
 @media(max-width:1050px){.topbar{padding:0 28px}.nav{gap:14px}.nav a{font-size:11px}.hero{min-height:650px}.hero h1{font-size:clamp(3rem,5vw,5rem)}.hero-content{padding-left:6vw}.about{gap:6vw}.section{padding:95px 5vw}.mentoring-content{padding:65px 5vw}.contact-section{padding:95px 5vw;gap:5vw}}
 @media(max-width:760px){.topbar{height:75px;padding:0 20px}.brand{font-size:20px}.brand-mark{width:40px;height:40px}.brand small{font-size:8px}.nav-toggle{display:block}.nav{position:absolute;top:75px;left:0;right:0;padding:24px;display:none;flex-direction:column;align-items:stretch;background:white;box-shadow:0 14px 22px #00000014}.nav.open{display:flex}.nav a{font-size:15px;padding:6px 0}.nav .nav-contact{justify-content:space-between}.hero{grid-template-columns:1fr}.hero-content{padding:72px 28px 60px;min-height:490px}.hero h1{font-size:clamp(3.25rem,11vw,5rem)}.hero-desc{font-size:14px}.hero-signature{margin-top:43px}.hero-art{min-height:470px}.floating-note{left:18px;bottom:20px}.intro-band{height:auto;padding:32px 10px;gap:13px;flex-wrap:wrap;font-size:18px}.section{padding:80px 25px}.about,.faq{grid-template-columns:1fr}.about-visual{height:440px;max-width:480px}.about-badge{right:-12px;bottom:22px}.about .section-copy{padding-top:20px}.section-copy h2,h2{font-size:clamp(2.7rem,10vw,4rem)}.cards{margin-top:37px}.service-card{min-height:350px}.mentoring{grid-template-columns:1fr}.mentoring-decor{min-height:280px}.mentoring-content{padding:70px 25px}.mentoring-monogram{top:7%;left:30%}.steps{grid-template-columns:1fr;gap:22px;margin-top:40px}.steps>div{padding-top:20px}.steps h3{margin:15px 0 5px}.contact-section{grid-template-columns:1fr;padding:80px 24px;gap:35px}.contact-side{margin-top:35px}.form-panel{padding:28px 23px}.footer{padding:55px 25px 23px}.footer-bottom{gap:15px;flex-direction:column}.hero-actions .btn{width:100%}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* Identidade fotográfica Carolina Ferrareze: quatro retratos autorizados,
+   organizados em sprite AVIF leve (2 colunas x 2 linhas). */
+.hero-art,.about-visual,.mentoring-decor,.story-portrait{position:relative;overflow:hidden}
+.editorial-photo,.editorial-original{position:absolute;inset:0;width:100%;height:100%}
+.editorial-original{display:block;object-fit:cover;object-position:center 30%}
+.editorial-photo{background-image:url('/images/carolina-editorial.avif');background-repeat:no-repeat;background-size:200% 200%;background-color:#e6d9c8}
+.editorial-photo--hero{background-position:0 0}
+.editorial-photo--about{background-position:100% 0}
+.editorial-photo--consultorio{background-position:0 100%}
+.editorial-photo--perfil{background-position:100% 100%}
+.hero-art{background:#e6d9c8}
+.floating-note{z-index:2}
+.about-visual .editorial-original{object-position:center 35%}
+.mentoring-decor{background:#4d3024}
+.mentoring-photo-label{position:absolute;bottom:28px;left:35px;z-index:1;padding:11px 16px;background:#f4f1e8ec;color:#321d14;font:italic 22px 'Radley',serif;max-width:260px}
+.editorial-story{display:grid;grid-template-columns:53% 47%;min-height:610px;background:#f4f1e8}
+.story-text{padding:90px 8vw 90px max(7vw,26px);display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+.story-text h2{max-width:570px;font-size:clamp(2.5rem,4.6vw,5rem);margin:25px 0 22px}
+.story-text p{color:#705d50;line-height:1.9;max-width:490px}
+.story-portrait{min-height:610px;background:#e8dfd4}
+.story-portrait .editorial-original{object-position:center 35%}
+@media(max-width:760px){
+ .hero-art{min-height:520px}
+ .hero-art .editorial-photo{background-position:0 0}
+ .mentoring-decor{min-height:500px}
+ .editorial-story{grid-template-columns:1fr}
+ .story-text{padding:75px 26px}
+ .story-portrait{min-height:460px}
+ .editorial-photo{background-size:200% 200%}
+}

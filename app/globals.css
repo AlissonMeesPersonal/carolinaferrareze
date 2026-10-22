@@ -164,3 +164,90 @@
 @media(prefers-reduced-motion:reduce){
  .floating-whatsapp,.floating-whatsapp-tooltip{transition:none}
 }
+
+
+/* Identidade visual oficial: logos JPEG originais (claro/escuro), sem recomprimir.
+   O enquadramento CSS oculta as grandes margens dos JPEGs sem cortar a escrita.
+   Branca no header chocolate, preta quando o header ganha fundo claro. */
+.site-shell{overflow:clip;padding-top:95px}
+.topbar{
+ position:fixed;top:0;left:0;right:0;
+ z-index:90;
+ background:#543426;
+ border-bottom:1px solid rgba(255,255,255,.14);
+ transition:background-color .4s ease,border-color .4s ease,box-shadow .4s ease;
+}
+.topbar.is-scrolled{
+ background:#fff;
+ border-bottom-color:#eadfd3;
+ box-shadow:0 8px 32px rgba(50,29,20,.075);
+}
+.brand-with-logo{flex-shrink:0;display:inline-flex;align-items:center;line-height:0}
+.brand-logo-frame{
+ position:relative;display:block;overflow:hidden;
+ width:250px;height:89px;
+ flex:0 0 250px;
+ background:#543426;
+ transition:background-color .4s ease;
+}
+.brand-image{
+ position:absolute;
+ left:50%;top:50%;
+ display:block;
+ width:400px;height:auto;max-width:none;
+ object-fit:contain;
+ transform:translate(-50%,-50%);
+ pointer-events:none;
+ transition:opacity .43s ease;
+}
+.brand-image-white{opacity:1}
+.brand-image-dark{opacity:0}
+.topbar.is-scrolled .brand-logo-frame{background:#fff}
+.topbar.is-scrolled .brand-image-white{opacity:0}
+.topbar.is-scrolled .brand-image-dark{opacity:1}
+.topbar:not(.is-scrolled) .nav>a{color:#f4f1e8}
+.topbar:not(.is-scrolled) .nav>a:hover{color:#ebd2a3}
+.topbar:not(.is-scrolled) .nav .nav-contact{
+ background:#f4f1e8;color:#321d14;
+}
+.topbar:not(.is-scrolled) .nav-toggle{color:#f4f1e8}
+.topbar.is-scrolled .nav-toggle{color:#321d14}
+.footer-brand .brand-logo-frame--footer{
+ width:250px;height:90px;
+ background:#fff;
+}
+.footer-brand .brand-image-dark{opacity:1}
+.footer-brand .brand-image-white{opacity:0}
+/* Breakpoint antecipado: evita menu comprimido em notebook e tablet. */
+@media(max-width:1200px){
+ .nav-toggle{
+  display:flex;align-items:center;justify-content:center;
+  flex:0 0 42px;width:42px;height:42px;
+ }
+ .nav{
+  position:absolute;top:95px;left:0;right:0;
+  display:none;align-items:stretch;flex-direction:column;gap:0;
+  padding:18px max(5.5vw,24px) 26px;
+  background:#fff;
+  box-shadow:0 17px 25px rgba(35,31,32,.13);
+ }
+ .nav.open{display:flex}
+ .nav a,.topbar:not(.is-scrolled) .nav>a{font-size:14px;color:#321d14;padding:10px 0}
+ .nav .nav-contact,.topbar:not(.is-scrolled) .nav .nav-contact{
+  justify-content:space-between;padding:14px 17px;margin-top:8px;
+  background:#f4f1e8;color:#321d14;
+ }
+}
+@media(max-width:760px){
+ .site-shell{padding-top:75px}
+ .brand-logo-frame{width:204px;height:70px;flex-basis:204px}
+ .brand-image{width:329px}
+ .nav{top:75px;padding:18px 22px 24px}
+}
+@media(max-width:375px){
+ .brand-logo-frame{width:180px;flex-basis:180px;height:68px}
+ .brand-image{width:300px}
+}
+@media(prefers-reduced-motion:reduce){
+ .topbar,.brand-logo-frame,.brand-image{transition:none}
+}

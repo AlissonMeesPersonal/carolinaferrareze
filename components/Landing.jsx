@@ -1,6 +1,6 @@
 'use client';
 import { ArrowRight, ArrowUpRight, Heart, Leaf, Sparkles, Instagram, MessageCircle, Quote, Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import LeadForm from './LeadForm';
 import { whatsappUrl } from '@/lib/config';
 // Ícone oficial de forma vetorial, sem dependência de imagens externas.
@@ -33,6 +33,13 @@ function EditorialPhoto({src,variant='hero',alt}) {
 }
 export default function Landing({site,services,testimonials,faqs,gallery=[]}){
  const [mobile,setMobile]=useState(false);
+ const [scrolled,setScrolled]=useState(false);
+ useEffect(()=>{
+  const check=()=>setScrolled(window.scrollY>44);
+  check();
+  window.addEventListener('scroll',check,{passive:true});
+  return ()=>window.removeEventListener('scroll',check);
+ },[]);
  const atendimento=services.filter(s=>s.category==='atendimento');
  const mentorias=services.filter(s=>s.category==='mentoria');
  const wa=whatsappUrl(site.whatsapp);
@@ -43,9 +50,15 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
  const packageEntries=(site.accompaniment_packages||'').split('\n').map(line=>line.trim()).filter(Boolean);
  const close=()=>setMobile(false);
  return <div className="site-shell">
-  <header className="topbar"><a className="brand" href="#inicio" onClick={close}><span className="brand-mark">C<span>F</span></span><span>{site.brand}<small>{site.subtitle}</small></span></a>
+  <header className={'topbar'+(scrolled||mobile?' is-scrolled':'')}>
+   <a className="brand brand-with-logo" href="#inicio" onClick={close} aria-label="Carolina Ferrareze — voltar ao início">
+    <span className="brand-logo-frame" aria-hidden="true">
+     <img className="brand-image brand-image-white" src="/images/originais/logo_branca.jpeg" alt="" width="1200" height="675" fetchPriority="high" decoding="async"/>
+     <img className="brand-image brand-image-dark" src="/images/originais/logo_preta.jpeg" alt="" width="1200" height="675" decoding="async"/>
+    </span>
+   </a>
    <nav className={mobile?'nav open':'nav'} aria-label="Navegação principal"><a onClick={close} href="#sobre">Sobre mim</a><a onClick={close} href="#atendimentos">Atendimentos</a><a onClick={close} href="#acompanhamento">Acompanhamento</a><a onClick={close} href="#mentorias">Mentorias</a><a onClick={close} href="#depoimentos">Depoimentos</a>{faqs.length>0&&<a onClick={close} href="#duvidas">Dúvidas</a>}<a onClick={close} className="nav-contact" href="#contato">Vamos conversar <ArrowUpRight size={16}/></a></nav>
-   <button className="nav-toggle" aria-label={mobile?'Fechar menu':'Abrir menu'} onClick={()=>setMobile(!mobile)}>{mobile?<X/>:<Menu/>}</button>
+   <button type="button" className="nav-toggle" aria-label={mobile?'Fechar menu':'Abrir menu'} aria-expanded={mobile} onClick={()=>setMobile(!mobile)}>{mobile?<X/>:<Menu/>}</button>
   </header>
   <main>
    <section id="inicio" className="hero"><div className="hero-content"><span className="eyebrow"><span className="eyebrow-dot"/> {site.hero_eyebrow}</span><h1>{site.hero_title}</h1><p className="hero-desc">{site.hero_description}</p><div className="hero-actions"><a className="btn btn-dark" href="#acompanhamento">Conhecer o acompanhamento <ArrowUpRight size={18}/></a><a className="btn btn-ghost" href="#mentorias">Explorar mentorias <ArrowRight size={18}/></a></div><div className="hero-signature"><span className="line"/> Um convite para olhar para dentro.</div></div>
@@ -106,7 +119,11 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
    {faqs.length>0&&<section id="duvidas" className="section faq"><div className="section-copy"><span className="eyebrow">05 · DÚVIDAS FREQUENTES</span><h2>Talvez você esteja se perguntando...</h2><p>Algumas respostas para ajudar no seu próximo passo.</p></div><div className="faq-list">{faqs.map(f=><details key={f.id}><summary>{f.question}<span>+</span></summary><p>{f.answer}</p></details>)}</div></section>}
    <section id="contato" className="contact-section"><div className="contact-copy"><span className="eyebrow">SEU PRÓXIMO PASSO</span><h2>Vamos começar<br/><em>uma conversa?</em></h2><p>Preencha o formulário e a Carolina poderá entrar em contato com você para conversar sobre o que procura.</p><div className="contact-side"><span className="contact-whatsapp-mark"><WhatsAppIcon size={25}/></span><div><strong>Prefere o WhatsApp?</strong><a href={wa} {...waProps}>{hasWhatsApp?'Iniciar uma conversa':'Deixe seu contato pelo formulário'} <ArrowUpRight size={16}/></a></div></div></div><div className="form-panel"><span className="eyebrow">FALE COMIGO</span><h3>Conte um pouco sobre seu interesse.</h3><LeadForm/></div></section>
   </main>
-  <footer className="footer"><div><a className="brand footer-brand" href="#inicio"><span className="brand-mark">C<span>F</span></span><span>{site.brand}<small>{site.subtitle}</small></span></a><p>{site.footer_note}</p></div><div className="footer-social">{site.instagram&&<a href={site.instagram} aria-label="Instagram" target="_blank" rel="noreferrer"><Instagram size={20}/></a>}{hasWhatsApp&&<a href={wa} aria-label="WhatsApp da Carolina" {...waProps}><WhatsAppIcon size={20}/></a>}{site.contact_email&&<a href={'mailto:'+site.contact_email} aria-label="Email" style={{width:'auto',padding:'0 12px',fontSize:12}}>E-mail</a>}</div><div className="footer-bottom"><span>© {new Date().getFullYear()} {site.brand}. Todos os direitos reservados.</span><a href="/privacy">Privacidade</a></div></footer>
+  <footer className="footer"><div><a className="brand footer-brand brand-with-logo" href="#inicio" aria-label="Carolina Ferrareze — voltar ao início">
+    <span className="brand-logo-frame brand-logo-frame--footer" aria-hidden="true">
+     <img className="brand-image brand-image-dark" src="/images/originais/logo_preta.jpeg" alt="" width="1200" height="675" loading="lazy" decoding="async"/>
+    </span>
+   </a><p>{site.footer_note}</p></div><div className="footer-social">{site.instagram&&<a href={site.instagram} aria-label="Instagram" target="_blank" rel="noreferrer"><Instagram size={20}/></a>}{hasWhatsApp&&<a href={wa} aria-label="WhatsApp da Carolina" {...waProps}><WhatsAppIcon size={20}/></a>}{site.contact_email&&<a href={'mailto:'+site.contact_email} aria-label="Email" style={{width:'auto',padding:'0 12px',fontSize:12}}>E-mail</a>}</div><div className="footer-bottom"><span>© {new Date().getFullYear()} {site.brand}. Todos os direitos reservados.</span><a href="/privacy">Privacidade</a></div></footer>
   <a className="floating-whatsapp" href={wa} {...waProps}
    aria-label={hasWhatsApp?'Conversar com Carolina pelo WhatsApp':'Ir para o formulário de contato'}
    title={hasWhatsApp?'Conversar pelo WhatsApp':'Enviar contato pelo formulário'}>

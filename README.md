@@ -16,8 +16,28 @@ Landing responsiva com caminhos para atendimento individual e mentorias, formul�
 5. Execute Redeploy na Vercel **após** configurar as variáveis para que o novo deploy use a conexão.
 6. Abra `/admin` e teste login, conteúdo e envio do formulário.
 
-## Separação de responsabilidades
-O Neon armazena **dados estruturados**, incluindo URLs de imagens, mas não recebe upload de arquivos neste projeto. Neste estágio a Carolina pode editar URLs de fotos hospedadas em um serviço externo confiável ou caminhos estáticos versionados no GitHub (pasta `public`). Upload pelo painel poderá ser integrado posteriormente a Vercel Blob, Cloudinary ou Object Storage, mediante escolha do fornecedor.
+## Personalização e fotos pelo painel
+A Carolina acessa `/admin` depois da configuração das credenciais `ADMIN_EMAIL` e `ADMIN_PASSWORD_HASH`.
+
+- **Editor do site**: edita textos, informações de contato, capa, apresentação, fotos de mentorias e seção editorial. Fotos JPEG, PNG, WebP ou AVIF são enviadas diretamente pelo painel (até 8 MB cada, sem recompressão automática). Após o upload, clique em **Salvar site** para publicar.
+- **Atendimentos e mentorias**: editar descrições, ordem, publicação e imagem de cada serviço.
+- **Fotos de depoimentos**: criar nova imagem, escrever legenda, confirmar consentimento da pessoa retratada ou que escreveu a mensagem e publicar/ocultar.
+- **Contatos recebidos**: somente contas autenticadas podem consultar nome, WhatsApp, interesse, data, status e anotações internas. Há busca, filtro de situação e exportação CSV.
+- **Depoimentos e FAQ**: publicar, editar e remover textos.
+
+## Armazenamento de mídia Neon
+Bucket `carolina-midias` criado no Neon Object Storage na branch principal em modo `public_read`. O navegador **não recebe as credenciais**; `POST /api/admin/media` valida login, origem, tamanho e assinatura real do arquivo antes de gravar no bucket. As URLs dos arquivos são armazenadas no PostgreSQL e servidas publicamente.
+
+Variáveis apenas de servidor na Vercel Production:
+- `DATABASE_URL`
+- `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` — segredos do Neon Storage
+- `AWS_ENDPOINT_URL_S3`, `AWS_REGION`, `NEON_MEDIA_BUCKET`
+- `ADMIN_EMAIL` — e-mail real da Carolina
+- `ADMIN_PASSWORD_HASH` — hash scrypt derivado por `npm run hash-password`
+
+**O armazenamento já foi provisionado.** O login continuará desabilitado até `ADMIN_EMAIL` e `ADMIN_PASSWORD_HASH` serem definidos na Vercel. Não criar credenciais padrão nem colocá-las no GitHub.
+
+Observação: o bucket é público apenas para leitura de imagens publicadas. **Não envie imagens com dados pessoais sensíveis**; para prints de depoimentos, oculte nomes, números de telefone e outras informações identificáveis antes de enviar. Confirme autorização antes de ativar a publicação. O conteúdo estático original em `public/images/originais` continua no GitHub sem alteração.
 
 ## Segurança
 - `DATABASE_URL`, `ADMIN_EMAIL` e `ADMIN_PASSWORD_HASH` são somente do servidor, sem prefixo `NEXT_PUBLIC_`.

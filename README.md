@@ -4,7 +4,7 @@
 
 O painel oferece **duas contas independentes** no Neon, sem senhas fixas no GitHub:
 
-- **Suporte técnico** — e-mail inicial `alissonyagomees@gmail.com`. Pode editar conteúdo, fotos e acompanhar leads durante o suporte. Seu perfil não aparece no site público, mas aparece na aba **Acessos e segurança**.
+- **Suporte técnico** — e-mail inicial `alissonmeespersonal@gmail.com`. Pode editar conteúdo, fotos e acompanhar leads durante o suporte. Seu perfil não aparece no site público, mas aparece na aba **Acessos e segurança**.
 - **Proprietária** — e-mail da Carolina será cadastrado por convite quando estiver definido. Quando ativo, pode consultar auditoria e suspender suporte, revogando imediatamente as sessões da conta de suporte.
 
 A ativação é feita por **convite de uso único com expiração de 48 horas**, gerado no banco. O destinatário escolhe senha pessoal (mínimo de 14 caracteres). A senha nunca deve ser enviada por mensagem ou commit. Cookies de sessão HttpOnly + Secure, bloqueio por tentativas e registros de ações no Neon.

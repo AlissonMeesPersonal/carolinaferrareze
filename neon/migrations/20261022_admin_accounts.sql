@@ -29,5 +29,5 @@ CREATE TABLE IF NOT EXISTS public.cf_admin_audit (
  created_at timestamptz NOT NULL DEFAULT now()
 );
 INSERT INTO public.cf_admin_users(email,role,active)
- VALUES ('alissonyagomees@gmail.com','support',true)
+ VALUES ('alissonmeespersonal@gmail.com','support',true)
  ON CONFLICT(email) DO NOTHING;

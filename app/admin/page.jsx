@@ -5,7 +5,6 @@ import {
   ArrowUpRight,
   ChevronRight,
   CircleHelp,
-  Download,
   ExternalLink,
   FilePenLine,
   HeartHandshake,
@@ -15,7 +14,6 @@ import {
   Menu,
   MessageSquareQuote,
   Plus,
-  RefreshCw,
   Save,
   ShieldCheck,
   Sparkles,
@@ -24,6 +22,8 @@ import {
   X,
 } from 'lucide-react';
 
+import AccessPanel from '@/components/admin/panels/AccessPanel';
+import LeadsPanel from '@/components/admin/panels/LeadsPanel';
 import Field from '@/components/admin/Field';
 import MediaUploader from '@/components/admin/MediaUploader';
 import { adminApi as api } from '@/lib/admin/api-client';
@@ -465,65 +465,38 @@ export default function Admin(){
  <Field label="Posição" type="number" value={item.position} onChange={v=>changeLocal(item.id,'position',v)}/>
  <label className="admin-check"><input type="checkbox" checked={item.is_published} onChange={e=>changeLocal(item.id,'is_published',e.target.checked)}/>Publicado</label></div>
  <div className="admin-toolbar"><button className="admin-btn" disabled={busy||!item.question?.trim()||!item.answer?.trim()} onClick={()=>saveItem('faqs',item)}>Salvar</button><button className="admin-btn danger" onClick={()=>removeItem('faqs',item)}>Excluir</button></div></div>)}</section>}
- {tab==='acessos'&&<section className="admin-panel">
- <h2>Usuários autorizados</h2>
- <p className="admin-note">Aqui aparecem somente as contas ativas. A proprietária pode revogar o suporte; os registros de auditoria permanecem disponíveis depois do encerramento do acesso.</p>
- {viewer?.role==='support'&&<div className="admin-card">
-  <h3>Encerrar meu acesso de suporte</h3>
-  <p className="admin-note">Use esta opção ao entregar o projeto. Sua conta será desativada, as sessões serão encerradas e seu nome sairá da lista de acessos ativos. O registro histórico de alterações continuará disponível para a proprietária.</p>
-  <button type="button" className="admin-btn danger" disabled={busy} onClick={selfEndSupport}>Encerrar meu acesso</button>
- </div>}
- <div className="admin-table-wrap">
-  <table className="admin-table"><thead><tr><th>E-mail</th><th>Perfil</th><th>Situação</th><th>Último acesso</th><th>Controle</th></tr></thead><tbody>
-  {accounts.map(user=><tr key={user.id}>
-    <td data-label="Conta"><strong>{user.email}</strong></td>
-    <td data-label="Perfil">{user.role==='owner'?'Proprietária':'Suporte técnico'}</td>
-    <td data-label="Situação">{!user.active?'Desativado':!user.activated?'Aguardando ativação':'Ativo'}</td>
-    <td data-label="Último acesso">{when(user.last_login_at)}</td>
-    <td data-label="Ação">{viewer?.role==='owner'&&user.role==='support'?<button className="admin-btn secondary" onClick={()=>toggleSupport(user)}>Desativar suporte</button>:<span>—</span>}</td>
-   </tr>)}</tbody></table>
- </div>
- <div className="admin-card admin-access-create">
-  <h3>Convidar uma pessoa</h3>
-  <p className="admin-note">O sistema gera um convite temporário válido por 48 horas. Envie o link diretamente à pessoa; ela define a própria senha. Não existe cadastro público.</p>
-  <form onSubmit={inviteAccount} className="admin-grid">
-   <Field label="E-mail do novo acesso" type="email" value={newEmail} onChange={setNewEmail} placeholder="email@exemplo.com"/>
-   <label className="admin-field">Perfil
-    <select value={newRole} onChange={e=>setNewRole(e.target.value)}>
-     <option value="owner">Proprietária</option>
-     {viewer?.role==='owner'&&<option value="support">Suporte técnico</option>}
-    </select>
-   </label>
-   <div className="wide"><button className="admin-btn" disabled={busy||!newEmail.includes('@')}>Gerar convite</button></div>
-  </form>
-  {inviteUrl&&<div className="admin-invite-result">
-   <strong>Link de ativação — compartilhe em particular:</strong>
-   <input readOnly value={inviteUrl} onFocus={e=>e.target.select()} aria-label="Link de ativação de uso único"/>
-   <button className="admin-btn secondary" onClick={()=>navigator.clipboard?.writeText(inviteUrl)}>Copiar link</button>
-   <small>Este link dá acesso ao cadastro de senha. Não publique ou envie a terceiros.</small>
-  </div>}
- </div>
- <h3>Histórico de atividades administrativas</h3>
- <p className="admin-note">Todas as alterações relevantes são registradas com o usuário responsável. Não são exibidos dados de contatos neste histórico.</p>
- <div className="admin-table-wrap">
-  <table className="admin-table"><thead><tr><th>Quando</th><th>Usuário</th><th>Ação</th><th>Item</th></tr></thead><tbody>
-   {audit.map((entry,i)=><tr key={i}><td data-label="Quando">{when(entry.created_at)}</td><td data-label="Usuário">{entry.email||'Conta antiga'}</td><td data-label="Ação">{entry.action}</td><td data-label="Item">{entry.subject||'—'}</td></tr>)}
-  </tbody></table>
-  {audit.length===0&&<p className="admin-empty">Ainda não há atividades registradas.</p>}
- </div>
- </section>}
- {tab==='leads'&&<section className="admin-panel"><div className="admin-heading-row"><h2>Contatos recebidos <span className="admin-count">{leads.length}</span></h2><button className="admin-btn secondary" onClick={()=>run(refresh,'Dados atualizados com sucesso.')}><RefreshCw size={14}/> Atualizar</button></div>
- <div className="admin-toolbar admin-lead-toolbar">
-  <div className="admin-search-wrapper"><Users size={18}/><input className="admin-search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar nome, telefone ou serviço" aria-label="Buscar contatos"/></div>
-  <select className="admin-search" value={leadStatusFilter} onChange={e=>setLeadStatusFilter(e.target.value)} aria-label="Filtrar por status">
-   <option value="todos">Todos os status</option>{Object.entries(labels).map(([k,v])=><option value={k} key={k}>{v}</option>)}
-  </select>
-  <button type="button" className="admin-btn secondary" onClick={exportLeads}><Download size={16}/> Exportar CSV</button>
- </div>
- <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Contato</th><th>Interesse</th><th>Data</th><th>Situação</th><th>WhatsApp</th><th>Anotações privadas</th></tr></thead><tbody>{filteredLeads.map(l=><tr key={l.id}>
- <td data-label="Contato"><strong>{l.full_name}</strong><small>{l.whatsapp}</small></td><td data-label="Interesse">{kinds[l.interest]}</td><td data-label="Data">{when(l.created_at)}</td>
- <td data-label="Situação"><select value={l.status} aria-label={'Status de '+l.full_name} onChange={e=>updateLead(l.id,e.target.value)}>{Object.entries(labels).map(([key,label])=><option key={key} value={key}>{label}</option>)}</select></td>
- <td data-label="WhatsApp"><a href={'https://wa.me/'+l.whatsapp.replace(/\D/g,'')} target="_blank" rel="noopener noreferrer">Abrir ↗</a></td>
- <td data-label="Anotações"><div className="lead-note-editor"><textarea aria-label={'Observação de '+l.full_name} value={l.admin_notes||''} maxLength={2500} onChange={e=>setLeads(rows=>rows.map(x=>x.id===l.id?{...x,admin_notes:e.target.value}:x))} placeholder="Histórico do contato, retorno combinado..."/><button className="admin-btn secondary" onClick={()=>saveLeadNote(l.id,l.admin_notes||'')}>Salvar</button></div></td></tr>)}</tbody></table>{filteredLeads.length===0&&<p className="admin-empty">{leads.length===0?'Nenhum interessado ainda.':'Nenhum contato encontrado com os filtros selecionados.'}</p>}</div></section>}
+ {tab==='acessos'&&<AccessPanel
+  viewer={viewer}
+  accounts={accounts}
+  audit={audit}
+  busy={busy}
+  when={when}
+  newEmail={newEmail}
+  setNewEmail={setNewEmail}
+  newRole={newRole}
+  setNewRole={setNewRole}
+  inviteUrl={inviteUrl}
+  onInviteAccount={inviteAccount}
+  onToggleSupport={toggleSupport}
+  onSelfEndSupport={selfEndSupport}
+ />}
+ {tab==='leads'&&<LeadsPanel
+  leads={leads}
+  filteredLeads={filteredLeads}
+  query={query}
+  setQuery={setQuery}
+  leadStatusFilter={leadStatusFilter}
+  setLeadStatusFilter={setLeadStatusFilter}
+  labels={labels}
+  kinds={kinds}
+  when={when}
+  busy={busy}
+  onRefresh={()=>run(refresh,'Dados atualizados com sucesso.')}
+  onExport={exportLeads}
+  onUpdateStatus={updateLead}
+  onUpdateNote={(id,value)=>setLeads(rows=>rows.map(contact=>contact.id===id?{...contact,admin_notes:value}:contact))}
+  onSaveNote={saveLeadNote}
+ />}
+
  </main></div></div>;
 }

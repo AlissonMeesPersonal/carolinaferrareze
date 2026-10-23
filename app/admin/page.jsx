@@ -1,33 +1,118 @@
 'use client';
-import './admin.css';
-import { useState,useEffect,useCallback } from 'react';
+
+import { useCallback, useEffect, useState } from 'react';
+import {
+  ArrowUpRight,
+  ChevronRight,
+  CircleHelp,
+  Download,
+  ExternalLink,
+  FilePenLine,
+  HeartHandshake,
+  Images,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  MessageSquareQuote,
+  Plus,
+  RefreshCw,
+  Save,
+  ShieldCheck,
+  Sparkles,
+  Trash2,
+  Users,
+  X,
+} from 'lucide-react';
+
+import Field from '@/components/admin/Field';
+import MediaUploader from '@/components/admin/MediaUploader';
+import { adminApi as api } from '@/lib/admin/api-client';
+import { createLeadsCsv, filterLeads, formatLeadDate as when } from '@/lib/admin/leads.mjs';
 import { fallbackSite } from '@/lib/config';
 import { DEFAULT_MANTRA_WORDS, parseMantraWords } from '@/lib/mantra';
-import MediaUploader from '@/components/admin/MediaUploader';
-import { ArrowUpRight,Save,Plus,LogOut,RefreshCw,Trash2,Menu,X,LayoutDashboard,FilePenLine,HeartHandshake,Sparkles,MessageSquareQuote,Images,CircleHelp,Users,ShieldCheck,ExternalLink,ChevronRight,Download } from 'lucide-react';
+import './admin.css';
 
-const sections=[['dashboard','Visão geral'],['site','Editor do site'],['atendimento','Atendimentos'],['mentoria','Mentorias'],['testimonials','Depoimentos'],['gallery','Fotos de depoimentos'],['faqs','Perguntas frequentes'],['leads','Contatos recebidos'],['acessos','Acessos e segurança']];
-const navIcons={dashboard:LayoutDashboard,site:FilePenLine,atendimento:HeartHandshake,mentoria:Sparkles,testimonials:MessageSquareQuote,gallery:Images,faqs:CircleHelp,leads:Users,acessos:ShieldCheck};
-const navDescriptions={dashboard:'O que está acontecendo no seu site',site:'Textos, fotos e identidade visual',atendimento:'Serviços e modalidades disponíveis',mentoria:'Acompanhamentos e programas',testimonials:'Relatos escritos de clientes',gallery:'Imagens e prints autorizados',faqs:'Respostas para as dúvidas comuns',leads:'Pessoas interessadas nos serviços',acessos:'Pessoas com permissão de acesso'};
-const labels={novo:'Novo',em_contato:'Em contato',agendado:'Agendado',concluido:'Concluído',descartado:'Descartado'};
-const kinds={atendimento:'Atendimento',mentoria:'Mentoria',informacoes:'Informações'};
-const when=(s)=>s?new Date(s).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}):'—';
-async function api(path,method='GET',data){
- const r=await fetch(path,{method,credentials:'same-origin',cache:'no-store',headers:{...(data?{'Content-Type':'application/json'}:{})},...(data?{body:JSON.stringify(data)}:{})});
- let result;try{result=await r.json()}catch{result={error:'Resposta inválida do servidor.'}}
- if(!r.ok)throw new Error(result.error||'Não foi possível completar a ação.');
- return result;
-}
-function Field({label,value,onChange,textarea=false,type='text',wide=false,placeholder=''}) {
- return <label className={'admin-field '+(wide?'wide':'')}>{label}
- {textarea?<textarea value={value??''} placeholder={placeholder} onChange={e=>onChange(e.target.value)}/>:<input type={type} value={value??''} placeholder={placeholder} onChange={e=>onChange(e.target.value)}/>}</label>;
-}
+// Cada seção do menu abre uma área de gestão sem recarregar a página.
+const sections = [
+  ['dashboard', 'Visão geral'],
+  ['site', 'Editor do site'],
+  ['atendimento', 'Atendimentos'],
+  ['mentoria', 'Mentorias'],
+  ['testimonials', 'Depoimentos'],
+  ['gallery', 'Fotos de depoimentos'],
+  ['faqs', 'Perguntas frequentes'],
+  ['leads', 'Contatos recebidos'],
+  ['acessos', 'Acessos e segurança'],
+];
+
+const navIcons = {
+  dashboard: LayoutDashboard,
+  site: FilePenLine,
+  atendimento: HeartHandshake,
+  mentoria: Sparkles,
+  testimonials: MessageSquareQuote,
+  gallery: Images,
+  faqs: CircleHelp,
+  leads: Users,
+  acessos: ShieldCheck,
+};
+
+const navDescriptions = {
+  dashboard: 'O que está acontecendo no seu site',
+  site: 'Textos, fotos e identidade visual',
+  atendimento: 'Serviços e modalidades disponíveis',
+  mentoria: 'Acompanhamentos e programas',
+  testimonials: 'Relatos escritos de clientes',
+  gallery: 'Imagens e prints autorizados',
+  faqs: 'Respostas para as dúvidas comuns',
+  leads: 'Pessoas interessadas nos serviços',
+  acessos: 'Pessoas com permissão de acesso',
+};
+
+const labels = {
+  novo: 'Novo',
+  em_contato: 'Em contato',
+  agendado: 'Agendado',
+  concluido: 'Concluído',
+  descartado: 'Descartado',
+};
+
+const kinds = {
+  atendimento: 'Atendimento',
+  mentoria: 'Mentoria',
+  informacoes: 'Informações',
+};
+
 export default function Admin(){
- const [role,setRole]=useState('loading'),[login,setLogin]=useState(''),[password,setPassword]=useState(''),[tab,setTab]=useState('dashboard'),[navOpen,setNavOpen]=useState(false);
- const [busy,setBusy]=useState(false),[message,setMessage]=useState(''),[authError,setAuthError]=useState('');
- const [viewer,setViewer]=useState(null),[accounts,setAccounts]=useState([]),[audit,setAudit]=useState([]);
- const [newEmail,setNewEmail]=useState(''),[newRole,setNewRole]=useState('owner'),[inviteUrl,setInviteUrl]=useState('');
- const [site,setSite]=useState(fallbackSite),[services,setServices]=useState([]),[testimonials,setTestimonials]=useState([]),[faqs,setFaqs]=useState([]),[gallery,setGallery]=useState([]),[leads,setLeads]=useState([]),[query,setQuery]=useState(''),[leadStatusFilter,setLeadStatusFilter]=useState('todos');
+ // Sessão do usuário autenticado.
+ const [role, setRole] = useState('loading');
+ const [login, setLogin] = useState('');
+ const [password, setPassword] = useState('');
+ const [authError, setAuthError] = useState('');
+ const [viewer, setViewer] = useState(null);
+
+ // Navegação e retorno visual das operações.
+ const [tab, setTab] = useState('dashboard');
+ const [navOpen, setNavOpen] = useState(false);
+ const [busy, setBusy] = useState(false);
+ const [message, setMessage] = useState('');
+
+ // Conteúdo editável do site.
+ const [site, setSite] = useState(fallbackSite);
+ const [services, setServices] = useState([]);
+ const [testimonials, setTestimonials] = useState([]);
+ const [faqs, setFaqs] = useState([]);
+ const [gallery, setGallery] = useState([]);
+
+ // Contatos, filtros e usuários administrativos.
+ const [leads, setLeads] = useState([]);
+ const [query, setQuery] = useState('');
+ const [leadStatusFilter, setLeadStatusFilter] = useState('todos');
+ const [accounts, setAccounts] = useState([]);
+ const [audit, setAudit] = useState([]);
+ const [newEmail, setNewEmail] = useState('');
+ const [newRole, setNewRole] = useState('owner');
+ const [inviteUrl, setInviteUrl] = useState('');
  const refresh=useCallback(async()=>{
   const data=await api('/api/admin/data');
   setSite(data.site||fallbackSite);setServices(data.services||[]);setTestimonials(data.testimonials||[]);setFaqs(data.faqs||[]);setGallery(data.gallery||[]);setLeads(data.leads||[]);
@@ -42,7 +127,7 @@ export default function Admin(){
    if(!active)return;
    setRole(data.configured?(data.authenticated?'admin':'guest'):'unconfigured');setViewer(data.user||null);
    if(data.authenticated){try{await refresh()}catch(e){if(active)setMessage('Erro: '+e.message)}}
-  }).catch(()=>{if(active)setRole('unconfigured')});
+  }).catch(()=>{if(active){setRole('guest');setAuthError('Não foi possível verificar a sessão. Tente novamente.')}});
   return ()=>{active=false};
  },[refresh]);
  useEffect(()=>{
@@ -60,24 +145,89 @@ export default function Admin(){
   setTab(next);setMessage('');setNavOpen(false);
   window.scrollTo({top:0,behavior:'smooth'});
  };
- const run=async(fn)=>{
-  setBusy(true);setMessage('');
-  try{await fn();setMessage('Alterações salvas com sucesso.')}catch(e){setMessage('Erro: '+e.message)}
-  finally{setBusy(false)}
+ async function run(action, successMessage = 'Alterações salvas com sucesso.') {
+  setBusy(true);
+  setMessage('');
+
+  try {
+   await action();
+   setMessage(successMessage);
+  } catch (error) {
+   setMessage('Erro: ' + (error instanceof Error ? error.message : 'Falha inesperada.'));
+  } finally {
+   setBusy(false);
+  }
+ }
+ async function signIn(event) {
+  event.preventDefault();
+  setBusy(true);
+  setAuthError('');
+  try {
+   const result = await api('/api/admin/session', 'POST', { email: login, password });
+   setPassword('');
+   setViewer(result.user || null);
+   setRole('admin');
+   // A falha ao carregar conteúdo não equivale a uma falha na senha.
+   try {
+    await refresh();
+   } catch (error) {
+    setMessage('Erro ao carregar os dados: ' + error.message);
+   }
+  } catch (error) {
+   setAuthError(error.message);
+  } finally {
+   setBusy(false);
+  }
+ }
+
+ async function signOut() {
+  if(busy) return;
+  setBusy(true);
+  setMessage('');
+  try {
+   await api('/api/admin/session', 'DELETE');
+   setRole('guest');
+   setViewer(null);
+   setPassword('');
+   setAuthError('');
+   setInviteUrl('');
+   setTab('dashboard');
+   setNavOpen(false);
+   // Limpa da memória os dados pessoais recebidos das APIs.
+   setSite(fallbackSite);
+   setServices([]);
+   setTestimonials([]);
+   setFaqs([]);
+   setGallery([]);
+   setLeads([]);
+   setAccounts([]);
+   setAudit([]);
+  } catch(error) {
+   setMessage('Erro ao sair: ' + error.message);
+  } finally {
+   setBusy(false);
+  }
+ }
+ const changeSite = (name, value) => setSite((current) => ({ ...current, [name]: value }));
+
+ // Mapa explícito: muito mais fácil de seguir no depurador do VS Code.
+ const collectionSetters = {
+  services: setServices,
+  testimonials: setTestimonials,
+  faqs: setFaqs,
+  gallery: setGallery,
  };
- async function signIn(e){
-  e.preventDefault();setBusy(true);setAuthError('');
-  try{const result=await api('/api/admin/session','POST',{email:login,password});setPassword('');setViewer(result.user||null);setRole('admin');await refresh()}
-  catch(e){setAuthError(e.message)}
-  finally{setBusy(false)}
- }
- async function signOut(){
-  await api('/api/admin/session','DELETE');setRole('guest');setViewer(null);setMessage('');setPassword('');
- }
- const changeSite=(name,value)=>setSite(s=>({...s,[name]:value}));
- const edit=(setter,id,key,value)=>setter(rows=>rows.map(x=>x.id===id?{...x,[key]:value}:x));
- async function saveSite(){
-  await run(async()=>{await api('/api/admin/data','PUT',{type:'site',item:site});await refresh()});
+ const updateListItem = (collection, id, field, value) => {
+  const setter = collectionSetters[collection];
+  setter?.((items) => items.map((item) =>
+   item.id === id ? { ...item, [field]: value } : item
+  ));
+ };
+ async function saveSite() {
+  await run(async () => {
+   const response = await api('/api/admin/data', 'PUT', { type: 'site', item: site });
+   if (response?.item) setSite(response.item);
+  }, 'Site atualizado com sucesso.');
  }
  function addItem(type){
   const id='draft_'+Date.now().toString(16)+'_'+Math.random().toString(16).slice(2);
@@ -86,19 +236,38 @@ export default function Admin(){
   if(type==='faqs')setFaqs(p=>[...p,{id,question:'',answer:'',is_published:false,position:p.length+1}]);
   if(type==='gallery')setGallery(p=>[...p,{id,url:'',caption:'',alt_text:'',consent_confirmed:false,is_published:false,position:p.length+1}]);
  }
- async function saveItem(type,item){
-  await run(async()=>{const fresh=item.id.startsWith('draft_');await api('/api/admin/data',fresh?'POST':'PUT',{type,item,id:item.id});await refresh()});
+ async function saveItem(type, item) {
+  await run(async () => {
+   const isDraft = item.id.startsWith('draft_');
+   const response = await api('/api/admin/data', isDraft ? 'POST' : 'PUT', {
+    type,
+    item,
+    id: item.id,
+   });
+
+   // Atualiza apenas o item salvo: evita perder rascunhos de outros formulários.
+   if (response?.item) {
+    collectionSetters[type]?.((items) =>
+     items.map((current) =>
+      current.id === item.id ? response.item : current
+     )
+    );
+   }
+  }, 'Item salvo com sucesso.');
  }
- async function removeItem(type,item){
-  if(!window.confirm('Deseja realmente excluir este item?'))return;
-  if(item.id.startsWith('draft_')){
-   if(type==='services')setServices(p=>p.filter(x=>x.id!==item.id));
-   if(type==='testimonials')setTestimonials(p=>p.filter(x=>x.id!==item.id));
-   if(type==='faqs')setFaqs(p=>p.filter(x=>x.id!==item.id));
-   if(type==='gallery')setGallery(p=>p.filter(x=>x.id!==item.id));
+ async function removeItem(type, item) {
+  if (!window.confirm('Deseja realmente excluir este item?')) return;
+  const removeFromList = () => collectionSetters[type]?.(
+   (items) => items.filter((current) => current.id !== item.id)
+  );
+  if (item.id.startsWith('draft_')) {
+   removeFromList();
    return;
   }
-  await run(async()=>{await api('/api/admin/data?type='+type+'&id='+encodeURIComponent(item.id),'DELETE');await refresh()});
+  await run(async () => {
+   await api('/api/admin/data?type=' + type + '&id=' + encodeURIComponent(item.id), 'DELETE');
+   removeFromList();
+  }, 'Item excluído com sucesso.');
  }
  async function updateLead(id,status){
   try{await api('/api/admin/data','PUT',{type:'leads',id,status});setLeads(rows=>rows.map(x=>x.id===id?{...x,status}:x))}
@@ -111,18 +280,19 @@ export default function Admin(){
    setMessage('Observação salva com sucesso.');
   }catch(e){setMessage('Erro: '+e.message);}
  }
- function exportLeads(){
-  const columns=['Data','Nome','WhatsApp','Interesse','Status','Observações'];
-  const filtered=leads.filter(l=>{
-   const text=[l.full_name,l.whatsapp,kinds[l.interest]].join(' ').toLowerCase();
-   return text.includes(query.toLowerCase())&&(leadStatusFilter==='todos'||l.status===leadStatusFilter);
-  });
-  const escapeCSV=(value)=>'"'+String(value??'').replace(/^[=+@-]/,'\'').replace(/"/g,'""')+'"';
-  const rows=[columns,...filtered.map(l=>[when(l.created_at),l.full_name,l.whatsapp,kinds[l.interest],labels[l.status],l.admin_notes||''])];
-  const csv='\uFEFF'+rows.map(r=>r.map(escapeCSV).join(';')).join('\r\n');
-  const objectUrl=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
-  const link=document.createElement('a');link.href=objectUrl;link.download='carolina-contatos-'+new Date().toISOString().slice(0,10)+'.csv';
-  document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(objectUrl),1500);
+ function exportLeads() {
+  // Exporta exatamente os mesmos contatos que o filtro exibe.
+  const csv = createLeadsCsv(filteredLeads, labels, kinds);
+  const file = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const objectUrl = URL.createObjectURL(file);
+  const link = document.createElement('a');
+
+  link.href = objectUrl;
+  link.download = 'carolina-contatos-' + new Date().toISOString().slice(0, 10) + '.csv';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(objectUrl), 1500);
  }
 
  async function inviteAccount(e){
@@ -154,6 +324,11 @@ export default function Admin(){
   finally{setBusy(false)}
  }
 
+ // Valores derivados do estado, reutilizados no painel e na exportação CSV.
+ const filteredLeads = filterLeads(leads, query, leadStatusFilter, kinds);
+ const newLeadsCount = leads.filter((lead) => lead.status === 'novo').length;
+ const scheduledLeadsCount = leads.filter((lead) => lead.status === 'agendado').length;
+
  if(role==='loading')return <main className="admin-body admin-auth-screen"><div className="admin-login"><div className="admin-auth-monogram">CF</div><p>Carregando seu espaço...</p></div></main>;
  if(role!=='admin')return <main className="admin-body admin-auth-screen"><div className="admin-login"><div className="admin-auth-monogram">CF</div><a className="admin-back" href="/">← Voltar ao site</a><h1>Espaço Carolina</h1><p>Painel exclusivo para editar a página e acompanhar interessados.</p>
  {role==='unconfigured'?<p className="admin-alert admin-error">Configure o banco Neon e as variáveis de acesso no servidor da Vercel para ativar este painel.</p>:<form onSubmit={signIn}>
@@ -173,8 +348,7 @@ export default function Admin(){
  ];
  const mantraPreview=parseMantraWords(site.mantra_words ?? DEFAULT_MANTRA_WORDS);
  const type=(tab==='atendimento'||tab==='mentoria')?'services':tab;
- const local={services,setServices,testimonials,setTestimonials,faqs,setFaqs,gallery,setGallery};
- const changeLocal=(id,key,value)=>edit(local['set'+type[0].toUpperCase()+type.slice(1)],id,key,value);
+ const changeLocal = (id, field, value) => updateListItem(type, id, field, value);
  return <div className="admin-body">
  <header className="admin-header">
   <div className="admin-header-brand">
@@ -187,7 +361,7 @@ export default function Admin(){
   <div className="admin-header-right">
    <div className="admin-header-account"><span className="admin-account-dot"/><span>{viewer?.email}</span></div>
    <a className="admin-btn secondary admin-view-site" href="/" target="_blank" rel="noopener noreferrer"><ExternalLink size={17}/><span>Ver site</span></a>
-   <button type="button" className="admin-btn admin-signout" onClick={signOut} aria-label="Sair da administração" title="Sair"><LogOut size={17}/><span>Sair</span></button>
+   <button type="button" className="admin-btn admin-signout" onClick={signOut} disabled={busy} aria-label="Sair da administração" title="Sair"><LogOut size={17}/><span>Sair</span></button>
   </div>
  </header>
  {navOpen&&<button type="button" className="admin-nav-backdrop" aria-label="Fechar menu de navegação" onClick={()=>setNavOpen(false)}/>}
@@ -200,7 +374,7 @@ export default function Admin(){
       return <button type="button" className={'admin-nav-item'+(tab===id?' active':'')} aria-current={tab===id?'page':undefined} key={id} onClick={()=>chooseTab(id)}>
        <Icon size={18} strokeWidth={1.9}/>
        <span>{label}</span>
-       {id==='leads'&&leads.filter(item=>item.status==='novo').length>0&&<span className="admin-nav-count">{leads.filter(item=>item.status==='novo').length}</span>}
+       {id==='leads'&&newLeadsCount>0&&<span className="admin-nav-count">{newLeadsCount}</span>}
        {tab===id&&<ChevronRight size={15} className="admin-nav-chevron"/>}
       </button>;
     })}
@@ -220,8 +394,8 @@ export default function Admin(){
  {tab==='dashboard'&&<>
  <div className="admin-stats">
   <div className="admin-stat"><div className="admin-stat-header"><span>Contatos recebidos</span><Users size={20}/></div><strong>{leads.length}</strong><small>Pessoas que preencheram o formulário</small></div>
-  <div className="admin-stat"><div className="admin-stat-header"><span>Novos contatos</span><MessageSquareQuote size={20}/></div><strong>{leads.filter(x=>x.status==='novo').length}</strong><small>Interesses que aguardam retorno</small></div>
-  <div className="admin-stat"><div className="admin-stat-header"><span>Agendamentos</span><HeartHandshake size={20}/></div><strong>{leads.filter(x=>x.status==='agendado').length}</strong><small>Contatos com atendimento agendado</small></div>
+  <div className="admin-stat"><div className="admin-stat-header"><span>Novos contatos</span><MessageSquareQuote size={20}/></div><strong>{newLeadsCount}</strong><small>Interesses que aguardam retorno</small></div>
+  <div className="admin-stat"><div className="admin-stat-header"><span>Agendamentos</span><HeartHandshake size={20}/></div><strong>{scheduledLeadsCount}</strong><small>Contatos com atendimento agendado</small></div>
  </div>
  <div className="admin-panel"><h2>Últimos contatos</h2>{leads.length?leads.slice(0,5).map(l=><p className="admin-mini" key={l.id}><strong>{l.full_name}</strong> · {kinds[l.interest]} · {when(l.created_at)}</p>):<p className="admin-empty">Nenhum contato recebido até agora.</p>}
  <button className="admin-btn secondary" onClick={()=>chooseTab('leads')}>Ver interessados</button></div></>}
@@ -266,7 +440,7 @@ export default function Admin(){
  <Field label="Depoimento" wide textarea value={item.quote} onChange={v=>changeLocal(item.id,'quote',v)}/>
  <label className="admin-check"><input type="checkbox" checked={item.permission_confirmed} onChange={e=>changeLocal(item.id,'permission_confirmed',e.target.checked)}/>Autorização confirmada</label>
  <label className="admin-check"><input type="checkbox" checked={item.is_published} onChange={e=>changeLocal(item.id,'is_published',e.target.checked)}/>Publicado</label></div>
- <div className="admin-toolbar"><button className="admin-btn" disabled={busy||!item.quote.trim()||!item.display_name.trim()} onClick={()=>saveItem('testimonials',item)}>Salvar</button><button className="admin-btn danger" onClick={()=>removeItem('testimonials',item)}>Excluir</button></div></div>)}</section>}
+ <div className="admin-toolbar"><button className="admin-btn" disabled={busy||!item.quote?.trim()||!item.display_name?.trim()} onClick={()=>saveItem('testimonials',item)}>Salvar</button><button className="admin-btn danger" onClick={()=>removeItem('testimonials',item)}>Excluir</button></div></div>)}</section>}
  {tab==='gallery'&&<section className="admin-panel">
   <div className="admin-heading-row"><h2>Imagens dos depoimentos</h2><button className="admin-btn" onClick={()=>addItem('gallery')}><Plus size={14}/> Adicionar imagem</button></div>
   <p className="admin-note">Envie os prints ou imagens, ocultando nomes, números e qualquer dado pessoal. Cada imagem só será publicada se houver autorização de divulgação confirmada. Os cinco cartões de demonstração serão substituídos pelas imagens autorizadas publicadas aqui.</p>
@@ -290,7 +464,7 @@ export default function Admin(){
  <Field label="Resposta" wide textarea value={item.answer} onChange={v=>changeLocal(item.id,'answer',v)}/>
  <Field label="Posição" type="number" value={item.position} onChange={v=>changeLocal(item.id,'position',v)}/>
  <label className="admin-check"><input type="checkbox" checked={item.is_published} onChange={e=>changeLocal(item.id,'is_published',e.target.checked)}/>Publicado</label></div>
- <div className="admin-toolbar"><button className="admin-btn" disabled={busy||!item.question.trim()||!item.answer.trim()} onClick={()=>saveItem('faqs',item)}>Salvar</button><button className="admin-btn danger" onClick={()=>removeItem('faqs',item)}>Excluir</button></div></div>)}</section>}
+ <div className="admin-toolbar"><button className="admin-btn" disabled={busy||!item.question?.trim()||!item.answer?.trim()} onClick={()=>saveItem('faqs',item)}>Salvar</button><button className="admin-btn danger" onClick={()=>removeItem('faqs',item)}>Excluir</button></div></div>)}</section>}
  {tab==='acessos'&&<section className="admin-panel">
  <h2>Usuários autorizados</h2>
  <p className="admin-note">Aqui aparecem somente as contas ativas. A proprietária pode revogar o suporte; os registros de auditoria permanecem disponíveis depois do encerramento do acesso.</p>
@@ -338,7 +512,7 @@ export default function Admin(){
   {audit.length===0&&<p className="admin-empty">Ainda não há atividades registradas.</p>}
  </div>
  </section>}
- {tab==='leads'&&<section className="admin-panel"><div className="admin-heading-row"><h2>Contatos recebidos <span className="admin-count">{leads.length}</span></h2><button className="admin-btn secondary" onClick={()=>run(refresh)}><RefreshCw size={14}/> Atualizar</button></div>
+ {tab==='leads'&&<section className="admin-panel"><div className="admin-heading-row"><h2>Contatos recebidos <span className="admin-count">{leads.length}</span></h2><button className="admin-btn secondary" onClick={()=>run(refresh,'Dados atualizados com sucesso.')}><RefreshCw size={14}/> Atualizar</button></div>
  <div className="admin-toolbar admin-lead-toolbar">
   <div className="admin-search-wrapper"><Users size={18}/><input className="admin-search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar nome, telefone ou serviço" aria-label="Buscar contatos"/></div>
   <select className="admin-search" value={leadStatusFilter} onChange={e=>setLeadStatusFilter(e.target.value)} aria-label="Filtrar por status">
@@ -346,10 +520,10 @@ export default function Admin(){
   </select>
   <button type="button" className="admin-btn secondary" onClick={exportLeads}><Download size={16}/> Exportar CSV</button>
  </div>
- <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Contato</th><th>Interesse</th><th>Data</th><th>Situação</th><th>WhatsApp</th><th>Anotações privadas</th></tr></thead><tbody>{leads.filter(l=>(l.full_name+' '+l.whatsapp+' '+kinds[l.interest]).toLowerCase().includes(query.toLowerCase())&&(leadStatusFilter==='todos'||l.status===leadStatusFilter)).map(l=><tr key={l.id}>
+ <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Contato</th><th>Interesse</th><th>Data</th><th>Situação</th><th>WhatsApp</th><th>Anotações privadas</th></tr></thead><tbody>{filteredLeads.map(l=><tr key={l.id}>
  <td data-label="Contato"><strong>{l.full_name}</strong><small>{l.whatsapp}</small></td><td data-label="Interesse">{kinds[l.interest]}</td><td data-label="Data">{when(l.created_at)}</td>
  <td data-label="Situação"><select value={l.status} aria-label={'Status de '+l.full_name} onChange={e=>updateLead(l.id,e.target.value)}>{Object.entries(labels).map(([key,label])=><option key={key} value={key}>{label}</option>)}</select></td>
  <td data-label="WhatsApp"><a href={'https://wa.me/'+l.whatsapp.replace(/\D/g,'')} target="_blank" rel="noopener noreferrer">Abrir ↗</a></td>
- <td data-label="Anotações"><div className="lead-note-editor"><textarea aria-label={'Observação de '+l.full_name} value={l.admin_notes||''} maxLength={2500} onChange={e=>setLeads(rows=>rows.map(x=>x.id===l.id?{...x,admin_notes:e.target.value}:x))} placeholder="Histórico do contato, retorno combinado..."/><button className="admin-btn secondary" onClick={()=>saveLeadNote(l.id,l.admin_notes||'')}>Salvar</button></div></td></tr>)}</tbody></table>{leads.length===0&&<p className="admin-empty">Nenhum interessado ainda.</p>}</div></section>}
+ <td data-label="Anotações"><div className="lead-note-editor"><textarea aria-label={'Observação de '+l.full_name} value={l.admin_notes||''} maxLength={2500} onChange={e=>setLeads(rows=>rows.map(x=>x.id===l.id?{...x,admin_notes:e.target.value}:x))} placeholder="Histórico do contato, retorno combinado..."/><button className="admin-btn secondary" onClick={()=>saveLeadNote(l.id,l.admin_notes||'')}>Salvar</button></div></td></tr>)}</tbody></table>{filteredLeads.length===0&&<p className="admin-empty">{leads.length===0?'Nenhum interessado ainda.':'Nenhum contato encontrado com os filtros selecionados.'}</p>}</div></section>}
  </main></div></div>;
 }

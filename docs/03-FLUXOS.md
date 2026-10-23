@@ -15,7 +15,7 @@
 2. A requisição chega em `app/api/leads/route.js`.
 3. O servidor valida, aplica limites e salva em `cf_leads`.
 4. O admin recebe os dados por `GET /api/admin/data`.
-5. O filtro é processado em `lib/admin/leads.mjs`.
+5. O filtro é processado em `lib/admin/leads.mjs`; a tela visual está em `components/admin/panels/LeadsPanel.jsx`.
 6. O CSV é montado por `createLeadsCsv` usando os mesmos contatos filtrados.
 
 **Experimento:** execute `npm run test` e acrescente um teste de contato sem WhatsApp.
@@ -39,3 +39,11 @@
 **Experimento:** leia `lib/auth.js` e explique por que o banco é consultado para conferir sessões.
 
 Próximo: [exercícios](./04-EXERCICIOS.md).
+
+## Fluxo 5: acessos administrativos
+1. `app/admin/page.jsx` controla a aba e carrega dados administrativos.
+2. `components/admin/panels/AccessPanel.jsx` apresenta usuários e convites.
+3. `app/api/admin/users/route.js` aplica as permissões reais no servidor.
+4. `lib/auth.js` valida sessões e `cf_admin_audit` preserva o histórico.
+
+**Importante:** esconder um botão no React não substitui verificar autorização na API.

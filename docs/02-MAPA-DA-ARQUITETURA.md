@@ -23,7 +23,10 @@ carolinaferrareze/
 │   ├── LeadForm.jsx                Formulário de interessados
 │   └── admin/
 │       ├── Field.jsx               Campos reutilizáveis de formulário
-│       └── MediaUploader.jsx       Envio de mídia autenticado
+│       ├── MediaUploader.jsx       Envio de mídia autenticado
+│       └── panels/
+│           ├── LeadsPanel.jsx      Consulta, filtros e anotações de leads
+│           └── AccessPanel.jsx     Contas autorizadas e auditoria
 ├── lib/
 │   ├── config.js                   Textos padrão (quando o banco não está disponível)
 │   ├── mantra.js                   Palavras editáveis da faixa do hero

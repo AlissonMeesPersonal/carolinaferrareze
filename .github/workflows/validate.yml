@@ -25,6 +25,9 @@ jobs:
           node-version: '22'
       - name: Instalar dependências
         run: npm install --no-audit --no-fund
+      - name: Analisar padrões com ESLint (diagnóstico inicial)
+        continue-on-error: true
+        run: npm run lint
       - name: Testar regras puras
         run: npm run test
       - name: Verificar compilação Next.js

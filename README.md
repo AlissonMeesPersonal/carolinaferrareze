@@ -22,16 +22,35 @@ Landing responsiva com caminhos para atendimento individual e mentorias, formul�
 - Vercel (deploy automático a cada commit em `main`)
 - Painel protegido por e-mail, hash de senha scrypt e cookie HttpOnly/secure; sessões revogáveis e gravadas no próprio Neon
 
-## Ativar Neon
-1. Acesse [console.neon.tech](https://console.neon.tech) e crie ou escolha um projeto, banco e branch. Prefira região próxima da Vercel. Banco dedicado recomendado.
-2. Em **Connect**, copie a string PostgreSQL **pooled**. Adicione em Vercel > Project > Settings > Environment Variables como `DATABASE_URL`, com tipo **Sensitive/Encrypted** e destino Production (e Preview caso haja banco de teste).
-3. No Neon SQL Editor execute `neon/schema.sql`; confirme a existência das tabelas `cf_site`, `cf_services`, `cf_faqs`, `cf_testimonials`, `cf_leads`, `cf_admin_sessions` e `cf_request_limits`.
-4. Configurar `ADMIN_EMAIL` com o e-mail autorizado da Carolina; gerar hash da senha localmente rodando `npm run hash-password` e inserir seu resultado em `ADMIN_PASSWORD_HASH` na Vercel (nunca enviar a senha ou connection string para o chat ou GitHub).
-5. Execute Redeploy na Vercel **após** configurar as variáveis para que o novo deploy use a conexão.
-6. Abra `/admin` e teste login, conteúdo e envio do formulário.
+## Iniciar no VS Code (desenvolvimento)
+
+Comece em **[01 — Abrir no VS Code](./docs/01-COMECE-AQUI.md)**. A documentação percorre a arquitetura do site, formulários, autenticação, integração com Neon e exercícios.
+
+```bash
+git clone https://github.com/AlissonMeesPersonal/carolinaferrareze.git
+cd carolinaferrareze
+npm install
+npm run dev
+```
+
+Para trabalhar com autenticação, banco e upload localmente, use uma **branch de desenvolvimento do Neon** e configure `.env.local` com variáveis privadas. Não use dados reais para exercícios.
+
+## Documentação de estudo
+
+- [01 — Configurar VS Code](./docs/01-COMECE-AQUI.md)
+- [02 — Mapa da arquitetura](./docs/02-MAPA-DA-ARQUITETURA.md)
+- [03 — Fluxos da aplicação](./docs/03-FLUXOS.md)
+- [04 — Exercícios](./docs/04-EXERCICIOS.md)
+- [05 — Segurança e deploy](./docs/05-SEGURANCA-E-DEPLOY.md)
+
+## Neon e acesso administrativo
+
+Este projeto usa **contas individuais em `cf_admin_users`** e convites de uso único: não depende de uma conta única por `ADMIN_EMAIL` nem de `ADMIN_PASSWORD_HASH` para entrar no painel. A string `DATABASE_URL` deve estar configurada apenas no servidor.
+
+As tabelas iniciais estão em `neon/schema.sql`. Alterações incrementais ficam em `neon/migrations`, incluindo usuários, mídia e faixa de palavras. Em um ambiente novo, aplicar schema e migrations na ordem apropriada antes de testar; em produção, revisar cada migration antes de executar.
 
 ## Personalização e fotos pelo painel
-A Carolina acessa `/admin` depois da configuração das credenciais `ADMIN_EMAIL` e `ADMIN_PASSWORD_HASH`.
+A Carolina acessa `/admin` com sua conta individual ativada por convite. Os acessos são auditados e podem ser revogados.
 
 - **Editor do site**: edita textos, informações de contato, capa, apresentação, fotos de mentorias e seção editorial. Fotos JPEG, PNG, WebP ou AVIF são enviadas diretamente pelo painel (até 8 MB cada, sem recompressão automática). Após o upload, clique em **Salvar site** para publicar.
 - **Atendimentos e mentorias**: editar descrições, ordem, publicação e imagem de cada serviço.
@@ -46,15 +65,13 @@ Variáveis apenas de servidor na Vercel Production:
 - `DATABASE_URL`
 - `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` — segredos do Neon Storage
 - `AWS_ENDPOINT_URL_S3`, `AWS_REGION`, `NEON_MEDIA_BUCKET`
-- `ADMIN_EMAIL` — e-mail real da Carolina
-- `ADMIN_PASSWORD_HASH` — hash scrypt derivado por `npm run hash-password`
 
-**O armazenamento já foi provisionado.** O login continuará desabilitado até `ADMIN_EMAIL` e `ADMIN_PASSWORD_HASH` serem definidos na Vercel. Não criar credenciais padrão nem colocá-las no GitHub.
+**O armazenamento já foi provisionado.** Para entrar no painel, cada usuário deve possuir uma conta individual ativa na tabela `cf_admin_users` e senha definida pelo convite. Não criar credenciais padrão nem colocá-las no GitHub.
 
 Observação: o bucket é público apenas para leitura de imagens publicadas. **Não envie imagens com dados pessoais sensíveis**; para prints de depoimentos, oculte nomes, números de telefone e outras informações identificáveis antes de enviar. Confirme autorização antes de ativar a publicação. O conteúdo estático original em `public/images/originais` continua no GitHub sem alteração.
 
 ## Segurança
-- `DATABASE_URL`, `ADMIN_EMAIL` e `ADMIN_PASSWORD_HASH` são somente do servidor, sem prefixo `NEXT_PUBLIC_`.
+- `DATABASE_URL` e chaves do Storage são somente do servidor, sem prefixo `NEXT_PUBLIC_`.
 - O navegador nunca recebe SQL, conexão ao banco ou dados de leads de usuários não autorizados.
 - Operações administrativas exigem cookie de sessão validado no banco; mutações também verificam origem HTTP.
 - O login e o formulário possuem limite de requisições persistente no banco.
@@ -77,4 +94,4 @@ A proprietária pode desativar uma conta de suporte ativa. Não existe conta esc
 - **Domínio anterior**: `carolineferrareze.vercel.app`, mantido como redirecionamento permanente para o novo endereço.
 - **Metadata canônica**: apontando para o domínio correto, evitando endereços duplicados nos buscadores.
 
-A mudança de nome do repositório GitHub é independente da Vercel e deve ser feita nas configurações de repositório pelo proprietário. Após renomear o repositório, conferir vínculo da integração na Vercel.
+O repositório já usa o nome correto `carolinaferrareze`.

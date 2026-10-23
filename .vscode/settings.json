@@ -1,0 +1,11 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.tabSize": 2,
+  "files.eol": "\n",
+  "files.exclude": {
+    "**/.next": true,
+    "**/node_modules": true
+  },
+  "javascript.preferences.importModuleSpecifier": "non-relative"
+}

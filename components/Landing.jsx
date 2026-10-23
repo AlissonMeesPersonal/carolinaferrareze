@@ -1,8 +1,9 @@
 'use client';
 import { ArrowRight, ArrowUpRight, Heart, Leaf, Sparkles, Instagram, MessageCircle, Quote, Menu, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import LeadForm from './LeadForm';
 import { whatsappUrl } from '@/lib/config';
+import { DEFAULT_MANTRA_WORDS, parseMantraWords } from '@/lib/mantra';
 // Ícone oficial de forma vetorial, sem dependência de imagens externas.
 function WhatsAppIcon({size=24}) {
  return <svg aria-hidden="true" focusable="false" width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -48,6 +49,7 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
  const topicEntries=(site.accompaniment_topics||'').split('\n').map(line=>line.trim()).filter(Boolean).map(line=>{const [name,...desc]=line.split('|');return {name,description:desc.join('|')}});
  const formatEntries=(site.accompaniment_format||'').split('\n').map(line=>line.trim()).filter(Boolean);
  const packageEntries=(site.accompaniment_packages||'').split('\n').map(line=>line.trim()).filter(Boolean);
+ const mantraWords=parseMantraWords(site.mantra_words ?? DEFAULT_MANTRA_WORDS);
  const close=()=>setMobile(false);
  return <div className="site-shell">
   <header className={'topbar'+(scrolled||mobile?' is-scrolled':'')}>
@@ -64,7 +66,12 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
    <section id="inicio" className="hero"><div className="hero-content"><span className="eyebrow"><span className="eyebrow-dot"/> {site.hero_eyebrow}</span><h1>{site.hero_title}</h1><p className="hero-desc">{site.hero_description}</p><div className="hero-actions"><a className="btn btn-dark" href="#acompanhamento">Conhecer o acompanhamento <ArrowUpRight size={18}/></a><a className="btn btn-ghost" href="#mentorias">Explorar mentorias <ArrowRight size={18}/></a></div><div className="hero-signature"><span className="line"/> Um convite para olhar para dentro.</div></div>
     <div className="hero-art"><EditorialPhoto src={site.hero_image_url} variant="hero" alt="Carolina Ferrareze sentada em seu consultório, com a marca ao fundo"/><div className="floating-note"><Sparkles size={18}/><span>Seu caminho é único.</span></div></div>
    </section>
-   <section className="intro-band"><span>acolher</span><i/> <span>compreender</span><i/><span>ressignificar</span><i/><span>florescer</span></section>
+   {mantraWords.length>0&&<section className="intro-band" aria-label="Palavras que representam o acolhimento">
+    {mantraWords.map((word,index)=><Fragment key={index}>
+      <span>{word}</span>
+      {index<mantraWords.length-1&&<i aria-hidden="true"/>}
+    </Fragment>)}
+   </section>}
    <section id="sobre" className="section about"><div className="about-visual"><EditorialPhoto src={site.about_image_url} variant="about" alt="Retrato profissional de Carolina Ferrareze sentada no sofá do consultório"/><div className="about-badge"><Heart size={17}/> Um olhar individual</div></div><div className="section-copy"><span className="eyebrow">01 · SOBRE MIM</span><h2>{site.about_title}</h2><div className="accent-line"/><p>{site.about_text}</p><a className="underlined-link" href="#contato">Entre em contato <ArrowUpRight size={18}/></a></div></section>
    <section className="section paths" id="atendimentos"><div className="section-heading centered"><span className="eyebrow">02 · ATENDIMENTOS</span><h2>Um espaço para<br/><em>se reconectar.</em></h2><p>Conheça os atendimentos individuais e encontre uma possibilidade de cuidado que faça sentido para você.</p></div>
     <div className="cards">{atendimento.map((item,index)=><article className="service-card" key={item.id}>{item.image_url&&<div className="service-visual"><img src={item.image_url} loading="lazy" alt={item.title}/></div>}<div className="service-number">0{index+1} <Leaf size={19}/></div><span className="service-tag">{item.label||'ATENDIMENTO'}</span><h3>{item.title}</h3><p>{item.description}</p>{item.details&&<div className="service-details">{item.details}</div>}<a href="#contato" className="card-link">Tenho interesse <ArrowUpRight size={19}/></a></article>)}</div>

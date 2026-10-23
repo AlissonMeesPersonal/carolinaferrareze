@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS public.cf_site (
  brand TEXT NOT NULL DEFAULT 'Carolina Ferrareze',
  subtitle TEXT NOT NULL DEFAULT 'Autoconhecimento e desenvolvimento pessoal',
  hero_eyebrow TEXT NOT NULL DEFAULT 'UM ESPAÇO PARA SE ESCUTAR',
+ mantra_words TEXT NOT NULL DEFAULT 'acolher, compreender, ressignificar, florescer',
  hero_title TEXT NOT NULL DEFAULT 'Um novo olhar para a sua história começa aqui.',
  hero_description TEXT NOT NULL DEFAULT 'Um convite ao autoconhecimento, à escuta e ao desenvolvimento pessoal.',
  hero_image_url TEXT NOT NULL DEFAULT '',

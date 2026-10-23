@@ -2,6 +2,7 @@
 import './admin.css';
 import { useState,useEffect,useCallback } from 'react';
 import { fallbackSite } from '@/lib/config';
+import { DEFAULT_MANTRA_WORDS, parseMantraWords } from '@/lib/mantra';
 import MediaUploader from '@/components/admin/MediaUploader';
 import { ArrowUpRight,Save,Plus,LogOut,RefreshCw,Trash2,Menu,X,LayoutDashboard,FilePenLine,HeartHandshake,Sparkles,MessageSquareQuote,Images,CircleHelp,Users,ShieldCheck,ExternalLink,ChevronRight,Download } from 'lucide-react';
 
@@ -163,12 +164,14 @@ export default function Admin(){
  <p className="admin-note">O acesso é restrito à responsável. Não existe cadastro público.</p></div></main>;
  const editor=[
   ['Identidade visual',[['brand','Nome da marca'],['subtitle','Subtítulo da marca'],['hero_eyebrow','Texto acima do título'],['hero_title','Título principal (hero)'],['hero_description','Descrição do hero'],['hero_image_url','URL da foto principal']]],
+  ['Palavras da faixa',[['mantra_words','Palavras exibidas abaixo da foto principal']]],
   ['Sobre mim',[['about_title','Título de apresentação'],['about_text','Sua trajetória e formações'],['about_image_url','URL da sua foto']]],
   ['Fotos das seções',[['mentoring_image_url','Imagem da seção mentorias'],['editorial_image_url','Foto da seção editorial']]],
   ['Acompanhamento terapêutico',[['accompaniment_title','Título da seção'],['accompaniment_intro','Apresentação do acompanhamento'],['accompaniment_goal','Objetivo e benefícios propostos'],['accompaniment_topics','Temas: um por linha, no formato Nome|Descrição'],['accompaniment_format','Formato: uma informação por linha'],['accompaniment_packages','Pacotes: um por linha, sem preços']]],
   ['Mentorias e contato',[['journey_title','Título da jornada'],['journey_text','Texto introdutório'],['whatsapp','Número WhatsApp com 55 e DDD'],['instagram','Link do Instagram'],['contact_email','E-mail'],['footer_note','Texto do rodapé']]],
   ['SEO',[['seo_title','Título das buscas'],['seo_description','Descrição das buscas']]]
  ];
+ const mantraPreview=parseMantraWords(site.mantra_words ?? DEFAULT_MANTRA_WORDS);
  const type=(tab==='atendimento'||tab==='mentoria')?'services':tab;
  const local={services,setServices,testimonials,setTestimonials,faqs,setFaqs,gallery,setGallery};
  const changeLocal=(id,key,value)=>edit(local['set'+type[0].toUpperCase()+type.slice(1)],id,key,value);
@@ -223,7 +226,7 @@ export default function Admin(){
  <div className="admin-panel"><h2>Últimos contatos</h2>{leads.length?leads.slice(0,5).map(l=><p className="admin-mini" key={l.id}><strong>{l.full_name}</strong> · {kinds[l.interest]} · {when(l.created_at)}</p>):<p className="admin-empty">Nenhum contato recebido até agora.</p>}
  <button className="admin-btn secondary" onClick={()=>chooseTab('leads')}>Ver interessados</button></div></>}
  {tab==='site'&&<>{editor.map(([heading,fields])=><section className="admin-panel" key={heading}><h2>{heading}</h2><div className="admin-grid">{fields.map(([key,label])=>{
-  const wide=['hero_title','hero_description','about_text','journey_text','seo_description','hero_image_url','about_image_url','mentoring_image_url','editorial_image_url','accompaniment_intro','accompaniment_goal','accompaniment_topics','accompaniment_format','accompaniment_packages'].includes(key);
+  const wide=['mantra_words','hero_title','hero_description','about_text','journey_text','seo_description','hero_image_url','about_image_url','mentoring_image_url','editorial_image_url','accompaniment_intro','accompaniment_goal','accompaniment_topics','accompaniment_format','accompaniment_packages'].includes(key);
   const textarea=['hero_description','about_text','journey_text','seo_description','accompaniment_intro','accompaniment_goal','accompaniment_topics','accompaniment_format','accompaniment_packages'].includes(key);
   return <div className={wide?'wide':''} key={key}>
    {key.endsWith('_image_url')?
@@ -231,7 +234,18 @@ export default function Admin(){
       <MediaUploader label={label} url={site[key]} onUploaded={url=>changeSite(key,url)}/>
       <details className="admin-advanced-url"><summary>Endereço da imagem <span>(avançado)</span></summary><Field label="URL da fotografia" value={site[key]} onChange={value=>changeSite(key,value)}/></details>
     </>
-    :<Field label={label} value={site[key]} onChange={value=>changeSite(key,value)} textarea={textarea}/>}
+    :<>
+      <Field label={label} value={site[key]} onChange={value=>changeSite(key,value)} textarea={textarea}/>
+      {key==='mantra_words'&&<div className="admin-mantra-editor">
+        <p>Separe as palavras por vírgulas (ou ponto e vírgula). Você pode usar até 8 expressões; deixe o campo vazio para ocultar a faixa. Clique em <strong>Salvar alterações</strong> para publicar.</p>
+        <div className="admin-mantra-preview" aria-label="Prévia da faixa de palavras">
+          {mantraPreview.length?mantraPreview.map((word,index)=><span className="admin-mantra-term" key={index}>
+            <span>{word}</span>
+            {index<mantraPreview.length-1&&<i aria-hidden="true"/>}
+          </span>):<span className="admin-mantra-empty">A faixa ficará oculta quando você salvar.</span>}
+        </div>
+      </div>}
+    </>}
   </div>;
  })}</div></section>)}
  <div className="admin-sticky-save">

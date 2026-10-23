@@ -511,3 +511,46 @@
 
 .admin-field-label{display:block;color:#4d3427;font-size:13px;font-weight:700;margin:0 0 10px}
 .admin-advanced-url input{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px}
+
+/* Editor com prévia instantânea da faixa de palavras no rodapé do hero. */
+.admin-mantra-editor{margin-top:14px}
+.admin-mantra-editor p{
+ margin:0 0 14px;
+ font-size:12px;
+ line-height:1.65;
+ font-weight:400;
+ color:#756452;
+}
+.admin-mantra-preview{
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ flex-wrap:wrap;
+ gap:15px 23px;
+ min-height:76px;
+ background:#321d14;
+ color:#f4f1e8;
+ border-radius:10px;
+ padding:21px 18px;
+}
+.admin-mantra-term{
+ display:inline-flex;
+ gap:23px;
+ align-items:center;
+ font:italic 24px/1.2 'Radley',Georgia,serif;
+ white-space:nowrap;
+}
+.admin-mantra-term i{
+ display:inline-block;
+ width:5px;
+ height:5px;
+ border-radius:50%;
+ background:#cba977;
+ flex-shrink:0;
+}
+.admin-mantra-empty{font:13px/1.5 'DM Sans',sans-serif;color:#ead7be}
+@media(max-width:590px){
+ .admin-mantra-preview{gap:10px 16px;padding:18px 13px}
+ .admin-mantra-term{gap:16px;font-size:19px}
+ .admin-mantra-term i{width:4px;height:4px}
+}

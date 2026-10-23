@@ -2,17 +2,19 @@
 import {useEffect,useState,Suspense} from 'react';
 import '../admin.css';
 import {useRouter,useSearchParams} from 'next/navigation';
+import Link from 'next/link';
 function ActivationForm(){
  const router=useRouter(),params=useSearchParams(),token=params.get('token')||'';
+ const validToken=/^[a-f0-9]{64}$/i.test(token);
  const [state,setState]=useState('loading'),[user,setUser]=useState(null),[password,setPassword]=useState(''),[confirm,setConfirm]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState('');
  useEffect(()=>{
-  if(!/^[a-f0-9]{64}$/i.test(token)){setState('invalid');return}
+  if(!validToken)return;
   let active=true;
   fetch('/api/admin/activate?token='+token,{cache:'no-store'})
    .then(async r=>{const d=await r.json();if(active){setState(d.valid?'ready':'invalid');setUser(d.user||null)}})
    .catch(()=>{if(active)setState('invalid')});
   return()=>{active=false};
- },[token]);
+ },[token,validToken]);
  async function submit(e){
   e.preventDefault();setError('');
   if(password!==confirm){setError('As senhas não coincidem.');return}
@@ -27,10 +29,10 @@ function ActivationForm(){
   finally{setBusy(false)}
  }
  return <main className="admin-body"><div className="admin-login">
-  <a className="admin-back" href="/">← Voltar ao site</a>
+  <Link className="admin-back" href="/">← Voltar ao site</Link>
   <h1>Ativar acesso</h1>
-  {state==='loading'&&<p>Verificando convite...</p>}
-  {state==='invalid'&&<p className="admin-alert admin-error">O convite expirou, já foi utilizado ou é inválido. Solicite um novo convite ao administrador.</p>}
+  {validToken&&state==='loading'&&<p>Verificando convite...</p>}
+  {(!validToken||state==='invalid')&&<p className="admin-alert admin-error">O convite expirou, já foi utilizado ou é inválido. Solicite um novo convite ao administrador.</p>}
   {state==='ready'&&<><p>Configure uma senha pessoal para <strong>{user?.email}</strong> — perfil {user?.role==='owner'?'Proprietária':'Suporte técnico'}.</p>
    <form onSubmit={submit}>
     <label className="admin-field">Criar senha (mínimo 14 caracteres)<input type="password" autoComplete="new-password" required minLength={14} maxLength={128} value={password} onChange={e=>setPassword(e.target.value)}/></label>

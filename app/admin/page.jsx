@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
 import {
   ArrowUpRight,
   ChevronRight,
@@ -130,11 +131,24 @@ export default function Admin(){
   }).catch(()=>{if(active){setRole('guest');setAuthError('Não foi possível verificar a sessão. Tente novamente.')}});
   return ()=>{active=false};
  },[refresh]);
- useEffect(()=>{
-  if(tab==='acessos'&&role==='admin'){
-   refreshAccess().catch(e=>setMessage('Erro: '+e.message));
+ useEffect(() => {
+  if (tab !== 'acessos' || role !== 'admin') return;
+
+  let active = true;
+  async function loadAccounts() {
+   try {
+    const data = await api('/api/admin/users');
+    if (!active) return;
+    setAccounts(data.users ?? []);
+    setAudit(data.audit ?? []);
+   } catch (error) {
+    if (active) setMessage('Erro: ' + error.message);
+   }
   }
- },[tab,role,refreshAccess]);
+
+  void loadAccounts();
+  return () => { active = false; };
+ }, [tab, role]);
  useEffect(()=>{
   if(!navOpen)return;
   const onKey=e=>{if(e.key==='Escape')setNavOpen(false)};
@@ -330,7 +344,7 @@ export default function Admin(){
  const scheduledLeadsCount = leads.filter((lead) => lead.status === 'agendado').length;
 
  if(role==='loading')return <main className="admin-body admin-auth-screen"><div className="admin-login"><div className="admin-auth-monogram">CF</div><p>Carregando seu espaço...</p></div></main>;
- if(role!=='admin')return <main className="admin-body admin-auth-screen"><div className="admin-login"><div className="admin-auth-monogram">CF</div><a className="admin-back" href="/">← Voltar ao site</a><h1>Espaço Carolina</h1><p>Painel exclusivo para editar a página e acompanhar interessados.</p>
+ if(role!=='admin')return <main className="admin-body admin-auth-screen"><div className="admin-login"><div className="admin-auth-monogram">CF</div><Link className="admin-back" href="/">← Voltar ao site</Link><h1>Espaço Carolina</h1><p>Painel exclusivo para editar a página e acompanhar interessados.</p>
  {role==='unconfigured'?<p className="admin-alert admin-error">Configure o banco Neon e as variáveis de acesso no servidor da Vercel para ativar este painel.</p>:<form onSubmit={signIn}>
  <Field label="E-mail administrativo" type="email" value={login} onChange={setLogin}/>
  <Field label="Senha" type="password" value={password} onChange={setPassword}/>
@@ -360,7 +374,7 @@ export default function Admin(){
   </div>
   <div className="admin-header-right">
    <div className="admin-header-account"><span className="admin-account-dot"/><span>{viewer?.email}</span></div>
-   <a className="admin-btn secondary admin-view-site" href="/" target="_blank" rel="noopener noreferrer"><ExternalLink size={17}/><span>Ver site</span></a>
+   <Link className="admin-btn secondary admin-view-site" href="/" target="_blank" rel="noopener noreferrer"><ExternalLink size={17}/><span>Ver site</span></Link>
    <button type="button" className="admin-btn admin-signout" onClick={signOut} disabled={busy} aria-label="Sair da administração" title="Sair"><LogOut size={17}/><span>Sair</span></button>
   </div>
  </header>
@@ -388,7 +402,7 @@ export default function Admin(){
      <h1>{sections.find(x=>x[0]===tab)?.[1]}</h1>
      <p>{navDescriptions[tab]}</p>
     </div>
-    <a className="admin-title-link" href="/" target="_blank" rel="noopener noreferrer">Visualizar página <ArrowUpRight size={17}/></a>
+    <Link className="admin-title-link" href="/" target="_blank" rel="noopener noreferrer">Visualizar página <ArrowUpRight size={17}/></Link>
    </div>
  {message&&<p role="status" className={'admin-alert '+(message.startsWith('Erro')?'admin-error':'')}>{message}</p>}
  {tab==='dashboard'&&<>

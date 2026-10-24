@@ -63,7 +63,7 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
    <button type="button" className="nav-toggle" aria-label={mobile?'Fechar menu':'Abrir menu'} aria-expanded={mobile} onClick={()=>setMobile(!mobile)}>{mobile?<X/>:<Menu/>}</button>
   </header>
   <main>
-   <section id="inicio" className="hero"><div className="hero-content"><span className="eyebrow"><span className="eyebrow-dot"/> {site.hero_eyebrow}</span><h1>{site.hero_title}</h1><p className="hero-desc">{site.hero_description}</p><div className="hero-actions"><a className="btn btn-dark" href="#acompanhamento">Conhecer o acompanhamento <ArrowUpRight size={18}/></a><a className="btn btn-ghost" href="#mentorias">Explorar mentorias <ArrowRight size={18}/></a></div><div className="hero-signature"><span className="line"/> Um convite para olhar para dentro.</div></div>
+   <section id="inicio" className="hero"><div className="hero-content"><span className="eyebrow"><span className="eyebrow-dot"/> {site.hero_eyebrow}</span><h1>{site.hero_title}</h1><p className="hero-desc">{site.hero_description}</p><div className="hero-actions"><a className="btn btn-dark" href="#acompanhamento">Conhecer o acompanhamento <ArrowUpRight size={18}/></a><a className="btn btn-ghost" href="#mentorias">Explorar mentorias <ArrowRight size={18}/></a></div></div>
     <div className="hero-art"><EditorialPhoto src={site.hero_image_url} variant="hero" alt="Carolina Ferrareze sentada em seu consultório, com a marca ao fundo"/><div className="floating-note"><Sparkles size={18}/><span>Seu caminho é único.</span></div></div>
    </section>
    {mantraWords.length>0&&<section className="intro-band" aria-label="Palavras que representam o acolhimento">

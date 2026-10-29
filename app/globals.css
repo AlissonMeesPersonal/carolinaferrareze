@@ -270,3 +270,53 @@
  }
  .intro-band i{flex:0 0 4px;width:4px;height:4px}
 }
+
+/* CTA principal: três caminhos claros, com botões em coluna no hero.
+   A última opção só recebe href após a URL Hotmart ser cadastrada no CMS. */
+.hero-actions-three{
+ display:grid;
+ grid-template-columns:minmax(0,1fr);
+ gap:11px;
+ width:min(100%,455px);
+ margin-top:27px;
+}
+.hero-actions-three .hero-choice{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:22px;
+ width:100%;
+ min-height:60px;
+ padding:16px 20px;
+ border-radius:6px;
+ text-align:left;
+ font-size:13px;
+ font-weight:700;
+ line-height:1.45;
+ letter-spacing:.01em;
+ transition:background-color .18s ease,border-color .18s ease,transform .18s ease,box-shadow .18s ease;
+}
+.hero-actions-three .hero-choice > svg{flex:0 0 20px}
+.hero-actions-three .hero-choice:focus-visible{outline:3px solid #9c752f;outline-offset:3px}
+.hero-choice-bmc{background:#987343;border:1px solid #987343;color:#fff}
+.hero-choice-bmc:hover{background:#866338;color:#fff;box-shadow:0 6px 18px #321d141c}
+.hero-actions-three .hero-choice-pending,
+.hero-actions-three .hero-choice-pending:disabled{
+ opacity:.76;
+ cursor:not-allowed;
+ background:#eee7dc;
+ border:1px dashed #c7b49f;
+ color:#786452;
+ transform:none;
+ box-shadow:none;
+}
+.hero-choice-pending small{font-size:11px;font-weight:500;white-space:nowrap}
+.service-card#constelacao{scroll-margin-top:110px}
+@media(max-width:760px){
+ .hero-actions-three{width:100%;gap:12px;margin-top:26px}
+ .hero-actions-three .hero-choice{min-height:58px;padding:15px 17px;font-size:13px}
+ .service-card#constelacao{scroll-margin-top:92px}
+}
+@media(prefers-reduced-motion:reduce){
+ .hero-actions-three .hero-choice{transition:none}
+}

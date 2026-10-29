@@ -31,6 +31,7 @@ import { adminApi as api } from '@/lib/admin/api-client';
 import { createLeadsCsv, filterLeads, formatLeadDate as when } from '@/lib/admin/leads.mjs';
 import { fallbackSite } from '@/lib/config';
 import { DEFAULT_MANTRA_WORDS, parseMantraWords } from '@/lib/mantra';
+import { DEFAULT_HERO_CTA_LABELS, heroCtaLabel, safeHotmartUrl } from '@/lib/hero-ctas.mjs';
 import './admin.css';
 
 // Cada seção do menu abre uma área de gestão sem recarregar a página.
@@ -353,6 +354,7 @@ export default function Admin(){
  <p className="admin-note">O acesso é restrito à responsável. Não existe cadastro público.</p></div></main>;
  const editor=[
   ['Identidade visual',[['brand','Nome da marca'],['subtitle','Subtítulo da marca'],['hero_eyebrow','Texto acima do título'],['hero_title','Título principal (hero)'],['hero_description','Descrição do hero'],['hero_image_url','URL da foto principal']]],
+  ['Botões principais',[['hero_cta_individual_label','Botão 1 — Acompanhamento Individual'],['hero_cta_constelacao_label','Botão 2 — Quero Constelar'],['hero_cta_bmc_label','Botão 3 — Comunidade BMC'],['bmc_hotmart_url','Link de venda da Comunidade BMC na Hotmart']]],
   ['Palavras da faixa',[['mantra_words','Palavras exibidas abaixo da foto principal']]],
   ['Sobre mim',[['about_title','Título de apresentação'],['about_text','Sua trajetória e formações'],['about_image_url','URL da sua foto']]],
   ['Fotos das seções',[['mentoring_image_url','Imagem da seção mentorias'],['editorial_image_url','Foto da seção editorial']]],
@@ -414,7 +416,7 @@ export default function Admin(){
  <div className="admin-panel"><h2>Últimos contatos</h2>{leads.length?leads.slice(0,5).map(l=><p className="admin-mini" key={l.id}><strong>{l.full_name}</strong> · {kinds[l.interest]} · {when(l.created_at)}</p>):<p className="admin-empty">Nenhum contato recebido até agora.</p>}
  <button className="admin-btn secondary" onClick={()=>chooseTab('leads')}>Ver interessados</button></div></>}
  {tab==='site'&&<>{editor.map(([heading,fields])=><section className="admin-panel" key={heading}><h2>{heading}</h2><div className="admin-grid">{fields.map(([key,label])=>{
-  const wide=['mantra_words','hero_title','hero_description','about_text','journey_text','seo_description','hero_image_url','about_image_url','mentoring_image_url','editorial_image_url','accompaniment_intro','accompaniment_goal','accompaniment_topics','accompaniment_format','accompaniment_packages'].includes(key);
+  const wide=['mantra_words','bmc_hotmart_url','hero_title','hero_description','about_text','journey_text','seo_description','hero_image_url','about_image_url','mentoring_image_url','editorial_image_url','accompaniment_intro','accompaniment_goal','accompaniment_topics','accompaniment_format','accompaniment_packages'].includes(key);
   const textarea=['hero_description','about_text','journey_text','seo_description','accompaniment_intro','accompaniment_goal','accompaniment_topics','accompaniment_format','accompaniment_packages'].includes(key);
   return <div className={wide?'wide':''} key={key}>
    {key.endsWith('_image_url')?
@@ -424,6 +426,17 @@ export default function Admin(){
     </>
     :<>
       <Field label={label} value={site[key]} onChange={value=>changeSite(key,value)} textarea={textarea}/>
+      {key==='bmc_hotmart_url'&&<div className="admin-hotmart-info">
+        <p>Cole a URL HTTPS oficial da Hotmart (ex.: https://pay.hotmart.com/...). Não utilize o link do painel de gestão da Hotmart.</p>
+        {safeHotmartUrl(site.bmc_hotmart_url)?
+          <a href={safeHotmartUrl(site.bmc_hotmart_url)} target="_blank" rel="noopener noreferrer">Testar página de venda <ArrowUpRight size={15}/></a>:
+          <span>{String(site.bmc_hotmart_url||'').trim()?'Endereço inválido. Use um link oficial Hotmart.':'Aguardando o link da Hotmart. O botão ficará visível, mas indisponível.'}</span>}
+      </div>}
+      {key==='hero_cta_bmc_label'&&<div className="admin-hero-cta-preview" aria-label="Prévia dos três botões">
+        <span>{heroCtaLabel(site.hero_cta_individual_label,DEFAULT_HERO_CTA_LABELS.individual)}</span>
+        <span>{heroCtaLabel(site.hero_cta_constelacao_label,DEFAULT_HERO_CTA_LABELS.constelacao)}</span>
+        <span>{heroCtaLabel(site.hero_cta_bmc_label,DEFAULT_HERO_CTA_LABELS.bmc)} {!safeHotmartUrl(site.bmc_hotmart_url)&&<small>Em breve</small>}</span>
+      </div>}
       {key==='mantra_words'&&<div className="admin-mantra-editor">
         <p>Separe as palavras por vírgulas (ou ponto e vírgula). Você pode usar até 8 expressões; deixe o campo vazio para ocultar a faixa. Clique em <strong>Salvar alterações</strong> para publicar.</p>
         <div className="admin-mantra-preview" aria-label="Prévia da faixa de palavras">

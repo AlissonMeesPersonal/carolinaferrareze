@@ -554,3 +554,40 @@
  .admin-mantra-term{gap:16px;font-size:19px}
  .admin-mantra-term i{width:4px;height:4px}
 }
+
+/* Edição dos CTA da capa e link externo da comunidade BMC. */
+.admin-hotmart-info{
+ margin-top:12px;
+ background:#fbf5ea;
+ border:1px solid #ead9bd;
+ border-radius:9px;
+ padding:15px 18px;
+ font-size:12px;
+ line-height:1.7;
+ color:#6a5542;
+}
+.admin-hotmart-info p{margin:0 0 8px}
+.admin-hotmart-info a{display:inline-flex;align-items:center;gap:6px;color:#65411e;font-weight:700;text-decoration:underline}
+.admin-hotmart-info span{color:#8e6b46}
+.admin-hero-cta-preview{
+ margin-top:14px;
+ display:grid;
+ gap:8px;
+ max-width:430px;
+}
+.admin-hero-cta-preview>span{
+ display:flex;
+ justify-content:space-between;
+ gap:14px;
+ min-height:39px;
+ align-items:center;
+ padding:9px 14px;
+ border-radius:6px;
+ font-size:12px;
+ font-weight:700;
+ border:1px solid #d4bea5;
+ color:#321d14;
+}
+.admin-hero-cta-preview>span:first-child{background:#321d14;color:#fff;border-color:#321d14}
+.admin-hero-cta-preview>span:last-child{background:#9c752f;color:#fff;border-color:#9c752f}
+.admin-hero-cta-preview small{font-size:11px;font-weight:400}

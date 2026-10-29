@@ -1,9 +1,10 @@
 'use client';
-import { ArrowRight, ArrowUpRight, Heart, Leaf, Sparkles, Instagram, MessageCircle, Quote, Menu, X } from 'lucide-react';
+import { ArrowUpRight, ExternalLink, Heart, Leaf, Sparkles, Instagram, MessageCircle, Quote, Menu, X } from 'lucide-react';
 import { Fragment, useEffect, useState } from 'react';
 import LeadForm from './LeadForm';
 import { whatsappUrl } from '@/lib/config';
 import { DEFAULT_MANTRA_WORDS, parseMantraWords } from '@/lib/mantra';
+import { DEFAULT_HERO_CTA_LABELS, heroCtaLabel, safeHotmartUrl } from '@/lib/hero-ctas.mjs';
 // Ícone oficial de forma vetorial, sem dependência de imagens externas.
 function WhatsAppIcon({size=24}) {
  return <svg aria-hidden="true" focusable="false" width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -50,6 +51,13 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
  const formatEntries=(site.accompaniment_format||'').split('\n').map(line=>line.trim()).filter(Boolean);
  const packageEntries=(site.accompaniment_packages||'').split('\n').map(line=>line.trim()).filter(Boolean);
  const mantraWords=parseMantraWords(site.mantra_words ?? DEFAULT_MANTRA_WORDS);
+ const constelacaoService=atendimento.find(s=>/constel/i.test(s.title||''));
+ const hotmartCheckout=safeHotmartUrl(site.bmc_hotmart_url);
+ const heroLabels={
+  individual:heroCtaLabel(site.hero_cta_individual_label,DEFAULT_HERO_CTA_LABELS.individual),
+  constelacao:heroCtaLabel(site.hero_cta_constelacao_label,DEFAULT_HERO_CTA_LABELS.constelacao),
+  bmc:heroCtaLabel(site.hero_cta_bmc_label,DEFAULT_HERO_CTA_LABELS.bmc)
+ };
  const close=()=>setMobile(false);
  return <div className="site-shell">
   <header className={'topbar'+(scrolled||mobile?' is-scrolled':'')}>
@@ -63,7 +71,23 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
    <button type="button" className="nav-toggle" aria-label={mobile?'Fechar menu':'Abrir menu'} aria-expanded={mobile} onClick={()=>setMobile(!mobile)}>{mobile?<X/>:<Menu/>}</button>
   </header>
   <main>
-   <section id="inicio" className="hero"><div className="hero-content"><span className="eyebrow"><span className="eyebrow-dot"/> {site.hero_eyebrow}</span><h1>{site.hero_title}</h1><p className="hero-desc">{site.hero_description}</p><div className="hero-actions"><a className="btn btn-dark" href="#acompanhamento">Conhecer o acompanhamento <ArrowUpRight size={18}/></a><a className="btn btn-ghost" href="#mentorias">Explorar mentorias <ArrowRight size={18}/></a></div></div>
+   <section id="inicio" className="hero"><div className="hero-content"><span className="eyebrow"><span className="eyebrow-dot"/> {site.hero_eyebrow}</span><h1>{site.hero_title}</h1><p className="hero-desc">{site.hero_description}</p><div className="hero-actions hero-actions-three" aria-label="Escolha seu próximo passo">
+    <a className="btn btn-dark hero-choice" href="#acompanhamento">
+      <span>{heroLabels.individual}</span><ArrowUpRight size={20} aria-hidden="true"/>
+    </a>
+    <a className="btn btn-ghost hero-choice" href={constelacaoService?'#constelacao':'#atendimentos'}>
+      <span>{heroLabels.constelacao}</span><ArrowUpRight size={20} aria-hidden="true"/>
+    </a>
+    {hotmartCheckout?
+      <a className="btn hero-choice hero-choice-bmc" href={hotmartCheckout} target="_blank" rel="noopener noreferrer"
+       aria-label={heroLabels.bmc+' — acessar a página de venda na Hotmart'}>
+        <span>{heroLabels.bmc}</span><ExternalLink size={19} aria-hidden="true"/>
+      </a>:
+      <button type="button" className="btn hero-choice hero-choice-bmc hero-choice-pending" disabled
+       title="O endereço de venda da Hotmart ainda não foi configurado">
+        <span>{heroLabels.bmc}</span><small>Em breve</small>
+      </button>}
+   </div></div>
     <div className="hero-art"><EditorialPhoto src={site.hero_image_url} variant="hero" alt="Carolina Ferrareze sentada em seu consultório, com a marca ao fundo"/><div className="floating-note"><Sparkles size={18}/><span>Seu caminho é único.</span></div></div>
    </section>
    {mantraWords.length>0&&<section className="intro-band" aria-label="Palavras que representam o acolhimento">
@@ -74,7 +98,7 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
    </section>}
    <section id="sobre" className="section about"><div className="about-visual"><EditorialPhoto src={site.about_image_url} variant="about" alt="Retrato profissional de Carolina Ferrareze sentada no sofá do consultório"/><div className="about-badge"><Heart size={17}/> Um olhar individual</div></div><div className="section-copy"><span className="eyebrow">01 · SOBRE MIM</span><h2>{site.about_title}</h2><div className="accent-line"/><p>{site.about_text}</p><a className="underlined-link" href="#contato">Entre em contato <ArrowUpRight size={18}/></a></div></section>
    <section className="section paths" id="atendimentos"><div className="section-heading centered"><span className="eyebrow">02 · ATENDIMENTOS</span><h2>Um espaço para<br/><em>se reconectar.</em></h2><p>Conheça os atendimentos individuais e encontre uma possibilidade de cuidado que faça sentido para você.</p></div>
-    <div className="cards">{atendimento.map((item,index)=><article className="service-card" key={item.id}>{item.image_url&&<div className="service-visual"><img src={item.image_url} loading="lazy" alt={item.title}/></div>}<div className="service-number">0{index+1} <Leaf size={19}/></div><span className="service-tag">{item.label||'ATENDIMENTO'}</span><h3>{item.title}</h3><p>{item.description}</p>{item.details&&<div className="service-details">{item.details}</div>}<a href="#contato" className="card-link">Tenho interesse <ArrowUpRight size={19}/></a></article>)}</div>
+    <div className="cards">{atendimento.map((item,index)=><article className="service-card" key={item.id} id={item.id===constelacaoService?.id?'constelacao':undefined}>{item.image_url&&<div className="service-visual"><img src={item.image_url} loading="lazy" alt={item.title}/></div>}<div className="service-number">0{index+1} <Leaf size={19}/></div><span className="service-tag">{item.label||'ATENDIMENTO'}</span><h3>{item.title}</h3><p>{item.description}</p>{item.details&&<div className="service-details">{item.details}</div>}<a href="#contato" className="card-link">Tenho interesse <ArrowUpRight size={19}/></a></article>)}</div>
    </section>
    <section className="accompaniment-section" id="acompanhamento">
     <div className="accompaniment-intro">

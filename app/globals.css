@@ -394,8 +394,13 @@
 }
 .community-visual picture,.community-visual img{display:block;width:100%}
 .community-visual img{
- height:auto;aspect-ratio:1600 / 534;object-fit:contain;
+ width:100%;
+ height:auto;
+ aspect-ratio:1600 / 534;
+ object-fit:contain;
+ object-position:center;
 }
+
 .community-content{
  position:relative;z-index:1;width:min(100%,1090px);margin:0 auto;
  padding-top:clamp(34px,4vw,66px);
@@ -441,7 +446,7 @@
  .community-section{padding:38px 17px 68px;scroll-margin-top:75px}
  .community-legacy-anchor{scroll-margin-top:75px}
  .community-visual{border-radius:10px}
- .community-visual img{aspect-ratio:1 / 1}
+ .community-visual img{aspect-ratio:1 / 1;object-fit:contain}
  .community-content{padding-top:32px}
  .community-content h2{font-size:clamp(35px,9.5vw,52px);margin:16px 0 23px}
  .community-description p{font-size:15px}

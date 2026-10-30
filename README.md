@@ -95,3 +95,20 @@ A proprietária pode desativar uma conta de suporte ativa. Não existe conta esc
 - **Metadata canônica**: apontando para o domínio correto, evitando endereços duplicados nos buscadores.
 
 O repositório já usa o nome correto `carolinaferrareze`.
+
+## Comunidade BMC — imagens originais em desktop e mobile
+
+Os dois banners podem ser enviados diretamente pelo GitHub, **sem compressão ou conversão**.
+
+| Dispositivo | Arquivo no repositório | Tamanho original |
+|---|---|---|
+| Desktop (telas acima de 760 px) | `public/images/comunidade-bmc/banner-desktop.jpeg` | 1600 × 534 px |
+| Celular (telas até 760 px) | `public/images/comunidade-bmc/banner-mobile.jpeg` | 1254 × 1254 px |
+
+**Passo a passo:** abra `public/images/comunidade-bmc/` no GitHub, clique em **Add file → Upload files**, envie cada JPEG com o nome acima e confirme o commit em `main`. A integração GitHub/Vercel publica a mudança automaticamente.
+
+A landing usa `<picture>` para selecionar a foto conforme a largura do dispositivo e `<img>` nativo, sem a otimização/recompressão automática do Next/Image. O CSS utiliza `object-fit: contain`, sem recortar a fotografia nem o texto incorporado à arte. O carregamento é lazy porque a comunidade fica abaixo da primeira dobra.
+
+Até os arquivos existirem no repositório, o site usa `/images/originais/mentorias.jpeg` como imagem de segurança. Os URLs preenchidos no **Painel → Comunidade BMC** (Neon Storage) têm prioridade sobre esses arquivos locais; deixe os campos vazios para utilizar sempre as fotografias do GitHub.
+
+> O navegador pode diminuir a imagem **visualmente**, para caber na largura da tela. Isso não modifica os bytes originais do JPEG nem altera a qualidade do arquivo publicado.

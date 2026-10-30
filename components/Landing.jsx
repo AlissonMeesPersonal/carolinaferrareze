@@ -5,6 +5,7 @@ import LeadForm from './LeadForm';
 import { whatsappUrl } from '@/lib/config';
 import { DEFAULT_MANTRA_WORDS, parseMantraWords } from '@/lib/mantra';
 import { DEFAULT_HERO_CTA_LABELS, heroCtaLabel, safeHotmartUrl } from '@/lib/hero-ctas.mjs';
+import CommunityBanner from '@/components/CommunityBanner';
 // Ícone oficial de forma vetorial, sem dependência de imagens externas.
 function WhatsAppIcon({size=24}) {
  return <svg aria-hidden="true" focusable="false" width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -125,20 +126,10 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
    </section>
    <section id="comunidade" className="community-section" aria-labelledby="community-heading">
     <span id="mentorias" className="community-legacy-anchor" aria-hidden="true"/>
-    <div className="community-visual" aria-label="Apresentação da Comunidade Bota a Mão na Consciência">
-      <picture>
-        <source
-          media="(max-width: 760px)"
-          srcSet={site.community_mobile_image_url || site.community_desktop_image_url || site.mentoring_image_url || '/images/originais/mentorias.jpeg'}
-        />
-        <img
-          src={site.community_desktop_image_url || site.mentoring_image_url || '/images/originais/mentorias.jpeg'}
-          alt="Carolina Ferrareze e a identidade visual da Comunidade Bota a Mão na Consciência"
-          width="1600" height="534"
-          loading="lazy" decoding="async"
-        />
-      </picture>
-    </div>
+    <CommunityBanner
+      desktopUrl={site.community_desktop_image_url}
+      mobileUrl={site.community_mobile_image_url}
+    />
     <div className="community-content">
       <span className="eyebrow">03 · COMUNIDADE BMC</span>
       <h2 id="community-heading">{site.journey_title || 'Comunidade Bota a Mão na Consciência'}</h2>

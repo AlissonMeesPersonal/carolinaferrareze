@@ -464,13 +464,13 @@ export default function Admin(){
     <Field label="Texto do botão" value={site.community_cta_label} onChange={v=>changeSite('community_cta_label',v)}/>
     <div className="wide">
       <div className="admin-field-label">Banner desktop — imagem horizontal (1600 × 534 px)</div>
-      <p className="admin-note">Use a arte horizontal com Carolina e a marca Bota a Mão na Consciência. Ela ocupa a largura da seção no computador, sem recortes.</p>
+      <p className="admin-note">Para usar a foto original pelo GitHub, envie o arquivo <code>banner-desktop.jpeg</code> à pasta <code>public/images/comunidade-bmc/</code>. O site reconhecerá automaticamente após o deploy, mantendo os 1600 × 534 px. Se você enviar uma foto neste painel, ela substituirá a versão do GitHub.</p>
       <MediaUploader url={site.community_desktop_image_url} label="Banner horizontal da comunidade — desktop" onUploaded={url=>changeSite('community_desktop_image_url',url)}/>
       <details className="admin-advanced-url"><summary>Endereço da arte desktop (avançado)</summary><Field label="URL da arte desktop" value={site.community_desktop_image_url} onChange={v=>changeSite('community_desktop_image_url',v)}/></details>
     </div>
     <div className="wide">
       <div className="admin-field-label">Banner mobile — imagem quadrada (1254 × 1254 px)</div>
-      <p className="admin-note">Use a arte com Carolina sentada. Essa versão aparece no celular até 760 px de largura, sem cortar a marca ou a fotografia.</p>
+      <p className="admin-note">Para usar a foto original pelo GitHub, envie <code>banner-mobile.jpeg</code> na mesma pasta, mantendo os 1254 × 1254 px. Essa imagem é utilizada automaticamente em telas de até 760 px. Uma foto enviada neste painel terá prioridade sobre a versão do GitHub.</p>
       <MediaUploader url={site.community_mobile_image_url} label="Banner da comunidade — celular" onUploaded={url=>changeSite('community_mobile_image_url',url)}/>
       <details className="admin-advanced-url"><summary>Endereço da arte mobile (avançado)</summary><Field label="URL da arte mobile" value={site.community_mobile_image_url} onChange={v=>changeSite('community_mobile_image_url',v)}/></details>
     </div>

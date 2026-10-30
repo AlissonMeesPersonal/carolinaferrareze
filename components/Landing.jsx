@@ -1,5 +1,5 @@
 'use client';
-import { ArrowUpRight, ExternalLink, Heart, Leaf, Sparkles, Instagram, MessageCircle, Quote, Menu, X } from 'lucide-react';
+import { ArrowUpRight, ExternalLink, Leaf, Sparkles, Instagram, MessageCircle, Quote, Menu, X } from 'lucide-react';
 import { Fragment, useEffect, useState } from 'react';
 import LeadForm from './LeadForm';
 import { whatsappUrl } from '@/lib/config';
@@ -88,7 +88,7 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
         <span>{heroLabels.bmc}</span><small>Em breve</small>
       </button>}
    </div></div>
-    <div className="hero-art"><EditorialPhoto src={site.hero_image_url} variant="hero" alt="Carolina Ferrareze sentada em seu consultório, com a marca ao fundo"/><div className="floating-note"><Sparkles size={18}/><span>Seu caminho é único.</span></div></div>
+    <div className="hero-art"><EditorialPhoto src={site.hero_image_url} variant="hero" alt="Carolina Ferrareze sentada em seu consultório, com a marca ao fundo"/></div>
    </section>
    {mantraWords.length>0&&<section className="intro-band" aria-label="Palavras que representam o acolhimento">
     {mantraWords.map((word,index)=><Fragment key={index}>
@@ -96,17 +96,18 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
       {index<mantraWords.length-1&&<i aria-hidden="true"/>}
     </Fragment>)}
    </section>}
-   <section id="sobre" className="section about"><div className="about-visual"><EditorialPhoto src={site.about_image_url} variant="about" alt="Retrato profissional de Carolina Ferrareze sentada no sofá do consultório"/><div className="about-badge"><Heart size={17}/> Um olhar individual</div></div><div className="section-copy"><span className="eyebrow">01 · SOBRE MIM</span><h2>{site.about_title}</h2><div className="accent-line"/><p>{site.about_text}</p><a className="underlined-link about-contact-attention" href="#contato">Entre em contato <ArrowUpRight size={18}/></a></div></section>
-   <section className="section paths" id="atendimentos"><div className="section-heading centered"><span className="eyebrow">02 · ATENDIMENTOS</span><h2>Um espaço para<br/><em>se reconectar.</em></h2><p>Conheça os atendimentos individuais e encontre uma possibilidade de cuidado que faça sentido para você.</p></div>
+   <section id="sobre" className="section about"><div className="about-visual"><EditorialPhoto src={site.about_image_url} variant="about" alt="Retrato profissional de Carolina Ferrareze sentada no sofá do consultório"/></div><div className="section-copy"><span className="eyebrow">01 · SOBRE MIM</span><h2>{site.about_title}</h2><div className="accent-line"/><p>{site.about_text}</p><a className="underlined-link about-contact-attention" href="#contato">Entre em contato <ArrowUpRight size={18}/></a></div></section>
+   {atendimento.length>0&&<section className="section paths" id="atendimentos"><div className="section-heading"><span className="eyebrow">02 · ATENDIMENTOS</span></div>
     <div className="cards">{atendimento.map((item,index)=><article className="service-card" key={item.id} id={item.id===constelacaoService?.id?'constelacao':undefined}>{item.image_url&&<div className="service-visual"><img src={item.image_url} loading="lazy" alt={item.title}/></div>}<div className="service-number">0{index+1} <Leaf size={19}/></div><span className="service-tag">{item.label||'ATENDIMENTO'}</span><h3>{item.title}</h3><p>{item.description}</p>{item.details&&<div className="service-details">{item.details}</div>}<a href="#contato" className="card-link">Tenho interesse <ArrowUpRight size={19}/></a></article>)}</div>
-   </section>
+   </section>}
    <section className="accompaniment-section" id="acompanhamento">
+    {atendimento.length===0&&<span id="atendimentos" className="section-anchor" aria-hidden="true"/>}
     <div className="accompaniment-intro">
-     <span className="eyebrow">ACOMPANHAMENTO TERAPÊUTICO</span>
+     <span className="eyebrow">{atendimento.length===0?'02 · ATENDIMENTOS':'ACOMPANHAMENTO TERAPÊUTICO'}</span>
      <h2>{site.accompaniment_title||'Acompanhamento Terapêutico'}</h2>
      <p>{site.accompaniment_intro}</p>
      <p>{site.accompaniment_goal}</p>
-     <a className="btn btn-dark" href={whatsappUrl(site.whatsapp,'Quero agendar minha sessão.')} {...waProps} aria-label="Agendar sessão com Carolina pelo WhatsApp">Agende sua sessão agora <ArrowUpRight size={17}/></a>
+     <a className="btn btn-dark booking-cta-pulse" href={whatsappUrl(site.whatsapp,'Quero agendar minha sessão.')} {...waProps} aria-label="Agendar sessão com Carolina pelo WhatsApp">Agende sua sessão agora <ArrowUpRight size={17}/></a>
     </div>
     <div className="accompaniment-detail">
      <h3>O que abordaremos?</h3>
@@ -123,14 +124,14 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
     <div><span className="eyebrow">ESCOLHA SEU PROCESSO</span><h2>Um acompanhamento no seu ritmo.</h2><p>Você pode conhecer as opções de acompanhamento e conversar diretamente com a Carolina para saber sobre o investimento.</p></div>
     <div className="accompaniment-plans">{packageEntries.map((plan,i)=><div className="accompaniment-plan" key={i}><span>0{i+1}</span><h3>{plan}</h3><a href="#contato">Consultar investimento <ArrowUpRight size={18}/></a></div>)}</div>
    </section>
-   <section id="mentorias" className="mentoring"><div className="mentoring-decor"><EditorialPhoto src={site.mentoring_image_url} variant="consultorio" alt="Carolina Ferrareze em pé no consultório, diante da identidade visual"/><span className="mentoring-photo-label">Cuidado com presença e propósito.</span></div><div className="mentoring-content"><span className="eyebrow">03 · MENTORIAS TERAPÊUTICAS</span><h2>{site.journey_title}</h2><p>{site.journey_text}</p>{mentorias.map(item=><div className="mentoring-item" key={item.id}><span><Sparkles size={19}/></span><div><h3>{item.title}</h3><p>{item.description}</p>{item.details&&<small>{item.details}</small>}</div></div>)}<a className="btn btn-light" href="#contato">Quero saber mais <ArrowUpRight size={17}/></a></div></section>
+   <section id="mentorias" className="mentoring"><div className="mentoring-decor"><EditorialPhoto src={site.mentoring_image_url} variant="consultorio" alt="Carolina Ferrareze em pé no consultório, diante da identidade visual"/></div><div className="mentoring-content"><span className="eyebrow">03 · MENTORIAS TERAPÊUTICAS</span><h2>{site.journey_title}</h2><p>{site.journey_text}</p>{mentorias.map(item=><div className="mentoring-item" key={item.id}><span><Sparkles size={19}/></span><div><h3>{item.title}</h3><p>{item.description}</p>{item.details&&<small>{item.details}</small>}</div></div>)}<a className="btn btn-light" href="#contato">Quero saber mais <ArrowUpRight size={17}/></a></div></section>
    <section className="editorial-story" aria-label="Uma mensagem da Carolina">
     <div className="story-text"><span className="eyebrow">UM CONVITE PARA VOCÊ</span><h2>O seu processo merece <em>ser vivido com presença.</em></h2><p>Não é sobre fazer tudo de uma vez. É sobre dar espaço para compreender sua história e descobrir novos caminhos.</p><a className="underlined-link" href="#contato">Conversar com a Carolina <ArrowUpRight size={17}/></a></div>
     <div className="story-portrait"><EditorialPhoto src={site.editorial_image_url} variant="perfil" alt="Retrato em perfil de Carolina Ferrareze com luz natural"/></div>
    </section>
-   <section className="section process"><div className="section-heading centered"><span className="eyebrow">04 · COMO FUNCIONA</span><h2>O primeiro passo pode<br/><em>ser simples.</em></h2></div><div className="steps"><div><span>01</span><h3>Escolha seu caminho</h3><p>Explore as opções de atendimentos e mentorias.</p></div><div><span>02</span><h3>Entre em contato</h3><p>Preencha o formulário para receber informações.</p></div><div><span>03</span><h3>Converse com a Carolina</h3><p>Entenda disponibilidade, condições e próximos passos.</p></div></div></section>
+   <section className="section process"><div className="section-heading"><span className="eyebrow">04 · COMO FUNCIONA</span><h2>O primeiro passo pode<br/><em>ser simples.</em></h2></div><div className="steps"><div><span>01</span><h3>Escolha seu caminho</h3><p>Explore as opções de atendimentos e mentorias.</p></div><div><span>02</span><h3>Entre em contato</h3><p>Preencha o formulário para receber informações.</p></div><div><span>03</span><h3>Converse com a Carolina</h3><p>Entenda disponibilidade, condições e próximos passos.</p></div></div></section>
    <section id="depoimentos" className="testimonials-showcase">
-     <div className="section-heading centered"><span className="eyebrow">EXPERIÊNCIAS COMPARTILHADAS</span><h2>Palavras de quem <em>viveu esse processo.</em></h2><p>Trechos de mensagens compartilhadas por pessoas atendidas, com a identidade preservada. Cada experiência é única.</p></div>
+     <div className="section-heading"><span className="eyebrow">EXPERIÊNCIAS COMPARTILHADAS</span><h2>Palavras de quem <em>viveu esse processo.</em></h2><p>Trechos de mensagens compartilhadas por pessoas atendidas, com a identidade preservada. Cada experiência é única.</p></div>
      <div className="testimonials-gallery" aria-label="Depoimentos recebidos">
       {(gallery.length>0?gallery.map(g=>({id:g.id,url:g.url,alt:g.alt_text||g.caption||'Depoimento',caption:g.caption})):
       [
@@ -146,7 +147,7 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
      </div>
      <p className="testimonial-disclaimer">Mensagens compartilhadas para ilustrar experiências pessoais. Os resultados não são garantidos e variam de pessoa para pessoa.</p>
    </section>
-   {testimonials.length>0&&<section className="section testimonials"><div className="section-heading centered"><span className="eyebrow">PALAVRAS QUE ACOLHEM</span><h2>Histórias compartilhadas.</h2></div><div className="testimonial-cards">{testimonials.map(t=><blockquote key={t.id}><Quote size={23}/><p>“{t.quote}”</p><cite>— {t.display_name}</cite></blockquote>)}</div></section>}
+   {testimonials.length>0&&<section className="section testimonials"><div className="section-heading"><span className="eyebrow">PALAVRAS QUE ACOLHEM</span><h2>Histórias compartilhadas.</h2></div><div className="testimonial-cards">{testimonials.map(t=><blockquote key={t.id}><Quote size={23}/><p>“{t.quote}”</p><cite>— {t.display_name}</cite></blockquote>)}</div></section>}
    {faqs.length>0&&<section id="duvidas" className="section faq"><div className="section-copy"><span className="eyebrow">05 · DÚVIDAS FREQUENTES</span><h2>Talvez você esteja se perguntando...</h2><p>Algumas respostas para ajudar no seu próximo passo.</p></div><div className="faq-list">{faqs.map(f=><details key={f.id}><summary>{f.question}<span>+</span></summary><p>{f.answer}</p></details>)}</div></section>}
    <section id="contato" className="contact-section"><div className="contact-copy"><span className="eyebrow">SEU PRÓXIMO PASSO</span><h2>Vamos começar<br/><em>uma conversa?</em></h2><p>Preencha o formulário e a Carolina poderá entrar em contato com você para conversar sobre o que procura.</p><div className="contact-side">
  <a className="contact-whatsapp-mark" href={wa} {...waProps} aria-label={hasWhatsApp?'Chamar Carolina diretamente no WhatsApp':'Ir para o formulário de contato'} title={hasWhatsApp?'Chamar Carolina pelo WhatsApp':'Ir para o formulário'}><WhatsAppIcon size={25}/></a>

@@ -25,6 +25,8 @@ CREATE TABLE IF NOT EXISTS public.cf_site (
  community_tagline TEXT NOT NULL DEFAULT 'Um espaço sem meias palavras, para quem quer ir além do superficial e construir uma vida com mais consciência, paz e alegria.',
  community_cta_label TEXT NOT NULL DEFAULT 'Conhecer a comunidade',
  community_logo_url TEXT NOT NULL DEFAULT '',
+ community_desktop_image_url TEXT NOT NULL DEFAULT '',
+ community_mobile_image_url TEXT NOT NULL DEFAULT '',
  whatsapp TEXT NOT NULL DEFAULT '',
  instagram TEXT NOT NULL DEFAULT '',
  contact_email TEXT NOT NULL DEFAULT '',

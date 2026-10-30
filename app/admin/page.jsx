@@ -455,7 +455,7 @@ export default function Admin(){
  </div></>}
  {tab==='mentoria'&&<section className="admin-panel">
   <h2>Comunidade Bota a Mão na Consciência</h2>
-  <p className="admin-note">Personalize a seção da comunidade. Os textos e imagens serão atualizados no site após salvar. O botão abre a página da Hotmart quando houver um link válido; caso contrário, abre o WhatsApp da Carolina.</p>
+  <p className="admin-note">Personalize a comunidade, com uma imagem horizontal para desktop e outra quadrada para celular. Após enviar as duas artes, clique em Salvar comunidade. O botão abre a Hotmart quando houver um link válido; caso contrário, abre o WhatsApp da Carolina.</p>
   <div className="admin-grid">
     <Field label="Título da comunidade" wide value={site.journey_title} onChange={v=>changeSite('journey_title',v)}/>
     <Field label="Descrição da comunidade (separe parágrafos com uma linha em branco)" wide textarea value={site.journey_text} onChange={v=>changeSite('journey_text',v)}/>
@@ -463,14 +463,16 @@ export default function Admin(){
     <Field label="Frase de destaque" wide textarea value={site.community_tagline} onChange={v=>changeSite('community_tagline',v)}/>
     <Field label="Texto do botão" value={site.community_cta_label} onChange={v=>changeSite('community_cta_label',v)}/>
     <div className="wide">
-      <div className="admin-field-label">Fotografia da comunidade</div>
-      <MediaUploader url={site.mentoring_image_url} label="Fotografia da Comunidade BMC" onUploaded={url=>changeSite('mentoring_image_url',url)}/>
-      <details className="admin-advanced-url"><summary>Endereço da fotografia (avançado)</summary><Field label="URL da fotografia" value={site.mentoring_image_url} onChange={v=>changeSite('mentoring_image_url',v)}/></details>
+      <div className="admin-field-label">Banner desktop — imagem horizontal (1600 × 534 px)</div>
+      <p className="admin-note">Use a arte horizontal com Carolina e a marca Bota a Mão na Consciência. Ela ocupa a largura da seção no computador, sem recortes.</p>
+      <MediaUploader url={site.community_desktop_image_url} label="Banner horizontal da comunidade — desktop" onUploaded={url=>changeSite('community_desktop_image_url',url)}/>
+      <details className="admin-advanced-url"><summary>Endereço da arte desktop (avançado)</summary><Field label="URL da arte desktop" value={site.community_desktop_image_url} onChange={v=>changeSite('community_desktop_image_url',v)}/></details>
     </div>
     <div className="wide">
-      <div className="admin-field-label">Logo ou arte da comunidade</div>
-      <MediaUploader url={site.community_logo_url||'/images/comunidade-bmc/assinatura.svg'} label="Logo da Comunidade BMC" onUploaded={url=>changeSite('community_logo_url',url)}/>
-      <details className="admin-advanced-url"><summary>Endereço da arte (avançado)</summary><Field label="URL da arte" value={site.community_logo_url} onChange={v=>changeSite('community_logo_url',v)}/></details>
+      <div className="admin-field-label">Banner mobile — imagem quadrada (1254 × 1254 px)</div>
+      <p className="admin-note">Use a arte com Carolina sentada. Essa versão aparece no celular até 760 px de largura, sem cortar a marca ou a fotografia.</p>
+      <MediaUploader url={site.community_mobile_image_url} label="Banner da comunidade — celular" onUploaded={url=>changeSite('community_mobile_image_url',url)}/>
+      <details className="admin-advanced-url"><summary>Endereço da arte mobile (avançado)</summary><Field label="URL da arte mobile" value={site.community_mobile_image_url} onChange={v=>changeSite('community_mobile_image_url',v)}/></details>
     </div>
     <Field label="Link oficial da venda na Hotmart (opcional)" wide value={site.bmc_hotmart_url} onChange={v=>changeSite('bmc_hotmart_url',v)}/>
     <div className="wide admin-hotmart-info">{safeHotmartUrl(site.bmc_hotmart_url)?<a href={safeHotmartUrl(site.bmc_hotmart_url)} target="_blank" rel="noopener noreferrer">Testar página da Hotmart <ArrowUpRight size={15}/></a>:<span>Sem um link válido, o botão abrirá o WhatsApp para esclarecer dúvidas sobre a comunidade.</span>}</div>

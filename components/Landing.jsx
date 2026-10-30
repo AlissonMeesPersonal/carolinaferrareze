@@ -125,13 +125,19 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
    </section>
    <section id="comunidade" className="community-section" aria-labelledby="community-heading">
     <span id="mentorias" className="community-legacy-anchor" aria-hidden="true"/>
-    <div className="community-visual">
-      <div className="community-photo">
-        <EditorialPhoto src={site.mentoring_image_url || '/images/originais/hero.jpeg'} variant="community" alt="Carolina Ferrareze, criadora da Comunidade Bota a Mão na Consciência"/>
-      </div>
-      <div className="community-visual-brand">
-        <img src={site.community_logo_url || '/images/comunidade-bmc/assinatura.svg'} alt="Identidade visual da comunidade Bota a Mão na Consciência" loading="lazy" width="640" height="360"/>
-      </div>
+    <div className="community-visual" aria-label="Apresentação da Comunidade Bota a Mão na Consciência">
+      <picture>
+        <source
+          media="(max-width: 760px)"
+          srcSet={site.community_mobile_image_url || site.community_desktop_image_url || site.mentoring_image_url || '/images/originais/mentorias.jpeg'}
+        />
+        <img
+          src={site.community_desktop_image_url || site.mentoring_image_url || '/images/originais/mentorias.jpeg'}
+          alt="Carolina Ferrareze e a identidade visual da Comunidade Bota a Mão na Consciência"
+          width="1600" height="534"
+          loading="lazy" decoding="async"
+        />
+      </picture>
     </div>
     <div className="community-content">
       <span className="eyebrow">03 · COMUNIDADE BMC</span>

@@ -320,3 +320,38 @@
 @media(prefers-reduced-motion:reduce){
  .hero-actions-three .hero-choice{transition:none}
 }
+
+
+/* CTA da seção Sobre mim: dois realces discretos a cada cinco segundos.
+   O texto permanece legível e o efeito não desloca o layout. */
+.about .about-contact-attention{
+  transform-origin:left center;
+  animation:about-contact-blink 5s ease-in-out infinite;
+}
+@keyframes about-contact-blink{
+  0%,7%,14%,21%,100%{
+    color:#321d14;
+    border-bottom-color:#b99b71;
+    text-shadow:none;
+    box-shadow:none;
+  }
+  3.5%,10.5%,17.5%{
+    color:#a36c27;
+    border-bottom-color:#a36c27;
+    text-shadow:0 0 1px rgba(163,108,39,.35);
+    box-shadow:0 2px 0 rgba(163,108,39,.33);
+  }
+}
+.about .about-contact-attention:hover,
+.about .about-contact-attention:focus-visible{
+  animation-play-state:paused;
+  color:#a36c27;
+  border-bottom-color:#a36c27;
+}
+@media(prefers-reduced-motion:reduce){
+  .about .about-contact-attention{
+    animation:none;
+    color:#321d14;
+    border-bottom:2px solid #a36c27;
+  }
+}

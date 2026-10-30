@@ -106,7 +106,7 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
      <h2>{site.accompaniment_title||'Acompanhamento Terapêutico'}</h2>
      <p>{site.accompaniment_intro}</p>
      <p>{site.accompaniment_goal}</p>
-     <a className="btn btn-dark" href="#contato">Quero entender como funciona <ArrowUpRight size={17}/></a>
+     <a className="btn btn-dark" href={whatsappUrl(site.whatsapp,'Quero agendar minha sessão.')} {...waProps} aria-label="Agendar sessão com Carolina pelo WhatsApp">Agende sua sessão agora <ArrowUpRight size={17}/></a>
     </div>
     <div className="accompaniment-detail">
      <h3>O que abordaremos?</h3>

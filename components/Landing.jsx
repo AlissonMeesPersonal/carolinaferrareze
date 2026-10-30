@@ -47,6 +47,7 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
  const mentorias=services.filter(s=>s.category==='mentoria');
  const wa=whatsappUrl(site.whatsapp);
  const hasWhatsApp=Boolean((site.whatsapp||'').replace(/\D/g,''));
+ const formEnabled=site.form_enabled===true;
  const waProps=hasWhatsApp?{target:'_blank',rel:'noopener noreferrer'}:{};
  const topicEntries=(site.accompaniment_topics||'').split('\n').map(line=>line.trim()).filter(Boolean).map(line=>{const [name,...desc]=line.split('|');return {name,description:desc.join('|')}});
  const formatEntries=(site.accompaniment_format||'').split('\n').map(line=>line.trim()).filter(Boolean);
@@ -167,10 +168,34 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
    </section>
    {testimonials.length>0&&<section className="section testimonials"><div className="section-heading"><span className="eyebrow">PALAVRAS QUE ACOLHEM</span><h2>Histórias compartilhadas.</h2></div><div className="testimonial-cards">{testimonials.map(t=><blockquote key={t.id}><Quote size={23}/><p>“{t.quote}”</p><cite>— {t.display_name}</cite></blockquote>)}</div></section>}
    {faqs.length>0&&<section id="duvidas" className="section faq"><div className="section-copy"><span className="eyebrow">05 · DÚVIDAS FREQUENTES</span><h2>Talvez você esteja se perguntando...</h2><p>Algumas respostas para ajudar no seu próximo passo.</p></div><div className="faq-list">{faqs.map(f=><details key={f.id}><summary>{f.question}<span>+</span></summary><p>{f.answer}</p></details>)}</div></section>}
-   <section id="contato" className="contact-section"><div className="contact-copy"><span className="eyebrow">SEU PRÓXIMO PASSO</span><h2>Vamos começar<br/><em>uma conversa?</em></h2><p>Preencha o formulário e a Carolina poderá entrar em contato com você para conversar sobre o que procura.</p><div className="contact-side">
- <a className="contact-whatsapp-mark" href={wa} {...waProps} aria-label={hasWhatsApp?'Chamar Carolina diretamente no WhatsApp':'Ir para o formulário de contato'} title={hasWhatsApp?'Chamar Carolina pelo WhatsApp':'Ir para o formulário'}><WhatsAppIcon size={25}/></a>
- <div><strong>Prefere o WhatsApp?</strong><a href={wa} {...waProps}>{hasWhatsApp?'Iniciar uma conversa':'Deixe seu contato pelo formulário'} <ArrowUpRight size={16}/></a></div>
-</div></div><div className="form-panel"><span className="eyebrow">FALE COMIGO</span><h3>Conte um pouco sobre seu interesse.</h3><LeadForm/></div></section>
+   <section id="contato" className={'contact-section'+(formEnabled?'':' contact-direct-only')}>
+    <div className="contact-copy">
+      <span className="eyebrow">SEU PRÓXIMO PASSO</span>
+      <h2>Vamos começar<br/><em>uma conversa?</em></h2>
+      <p>{formEnabled
+        ? 'Preencha o formulário e a Carolina poderá entrar em contato com você para conversar sobre o que procura.'
+        : 'Entre em contato diretamente pelo WhatsApp para conversar com a Carolina sobre atendimentos e disponibilidade.'}</p>
+      {formEnabled&&<div className="contact-side">
+        <a className="contact-whatsapp-mark" href={wa} {...waProps}
+          aria-label={hasWhatsApp?'Chamar Carolina diretamente no WhatsApp':'Ir para o formulário de contato'}
+          title={hasWhatsApp?'Chamar Carolina pelo WhatsApp':'Ir para o formulário'}><WhatsAppIcon size={25}/></a>
+        <div><strong>Prefere o WhatsApp?</strong><a href={wa} {...waProps}>{hasWhatsApp?'Iniciar uma conversa':'Deixe seu contato pelo formulário'} <ArrowUpRight size={16}/></a></div>
+      </div>}
+    </div>
+    {formEnabled
+      ? <div className="form-panel"><span className="eyebrow">FALE COMIGO</span><h3>Conte um pouco sobre seu interesse.</h3><LeadForm/></div>
+      : <div className="contact-direct-card">
+          <span className="eyebrow">CONTATO DIRETO</span>
+          <h3>Fale diretamente com a Carolina.</h3>
+          <p>Inicie uma conversa pelo WhatsApp para tirar suas dúvidas e saber mais sobre os atendimentos.</p>
+          <a className="btn btn-dark contact-direct-button"
+            href={whatsappUrl(site.whatsapp,'Olá, Carolina! Gostaria de conversar sobre seus atendimentos.')}
+            {...waProps}
+            aria-label="Conversar com Carolina no WhatsApp">
+            <WhatsAppIcon size={23}/> <span>Conversar no WhatsApp</span><ArrowUpRight size={19}/>
+          </a>
+        </div>}
+   </section>
   </main>
   <footer className="footer"><div><a className="brand footer-brand brand-with-logo" href="#inicio" aria-label="Carolina Ferrareze — voltar ao início">
     <span className="brand-logo-frame brand-logo-frame--footer" aria-hidden="true">

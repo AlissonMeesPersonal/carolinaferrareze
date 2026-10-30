@@ -11,7 +11,7 @@ const definitions={
  faqs:{table:'cf_faqs',fields:['question','answer','is_published','position']},
  gallery:{table:'cf_gallery_media',fields:['url','caption','alt_text','position','consent_confirmed','is_published']}
 };
-const siteFields=['brand','subtitle','hero_eyebrow','hero_cta_individual_label','hero_cta_constelacao_label','hero_cta_bmc_label','bmc_hotmart_url','hero_title','hero_description','mantra_words','hero_image_url','about_image_url','about_title','about_text','journey_title','journey_text','community_features','community_tagline','community_cta_label','community_logo_url','community_desktop_image_url','community_mobile_image_url','whatsapp','instagram','contact_email','seo_title','seo_description','footer_note','accompaniment_title','accompaniment_intro','accompaniment_goal','accompaniment_topics','accompaniment_format','accompaniment_packages','mentoring_image_url','editorial_image_url'];
+const siteFields=['brand','subtitle','hero_eyebrow','hero_cta_individual_label','hero_cta_constelacao_label','hero_cta_bmc_label','bmc_hotmart_url','hero_title','hero_description','mantra_words','hero_image_url','about_image_url','about_title','about_text','journey_title','journey_text','community_features','community_tagline','community_cta_label','community_logo_url','community_desktop_image_url','community_mobile_image_url','form_enabled','whatsapp','instagram','contact_email','seo_title','seo_description','footer_note','accompaniment_title','accompaniment_intro','accompaniment_goal','accompaniment_topics','accompaniment_format','accompaniment_packages','mentoring_image_url','editorial_image_url'];
 const statuses=['novo','em_contato','agendado','concluido','descartado'];
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const noAccess=()=>reply({error:'Não autorizado.'},401);
@@ -22,7 +22,7 @@ function convert(key,value){
  if(key==='hero_cta_constelacao_label')return heroCtaLabel(value,DEFAULT_HERO_CTA_LABELS.constelacao);
  if(key==='hero_cta_bmc_label')return heroCtaLabel(value,DEFAULT_HERO_CTA_LABELS.bmc);
  if(key==='bmc_hotmart_url')return safeHotmartUrl(value);
- if(['is_published','permission_confirmed'].includes(key))return value===true;
+ if(['is_published','permission_confirmed','form_enabled'].includes(key))return value===true;
  if(key==='position')return Math.min(100000,Math.max(0,Math.trunc(Number(value)||0)));
  return String(value??'').slice(0,key==='details'||key==='about_text'?8000:4000);
 }

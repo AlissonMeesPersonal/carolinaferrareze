@@ -594,3 +594,40 @@
 
 /* Edição da comunidade no painel */
 .admin-body .admin-panel:has(.admin-hotmart-info) .admin-grid{row-gap:22px}
+
+/* Alternância de formulário — editável pela proprietária e pelo suporte autorizado. */
+.admin-form-settings{scroll-margin-top:105px}
+.admin-form-switch{
+  display:flex;justify-content:space-between;align-items:center;gap:24px;
+  padding:19px 22px;margin-top:22px;
+  background:#fcf9f5;border:1px solid #e6d6c5;border-radius:10px;
+  cursor:pointer;position:relative;
+}
+.admin-form-switch-description{flex:1;display:flex;flex-direction:column;gap:8px}
+.admin-form-switch-description strong{font-size:14px;color:#321d14}
+.admin-form-switch-description small{color:#755d4d;line-height:1.5;font-size:12px}
+.admin-form-switch input{
+  position:absolute;opacity:0;width:44px;height:30px;right:20px;top:50%;
+  transform:translateY(-50%);margin:0;cursor:pointer;
+}
+.admin-form-switch-track{
+  flex:0 0 51px;position:relative;width:51px;height:29px;
+  border-radius:99px;border:1px solid #bbac9d;
+  background:#d3c6b9;transition:background-color .2s ease;
+}
+.admin-form-switch-track::before{
+  content:"";position:absolute;left:3px;top:3px;width:21px;height:21px;
+  background:#fff;border-radius:50%;box-shadow:0 2px 5px #321d1426;
+  transition:transform .2s ease;
+}
+.admin-form-switch input:checked + .admin-form-switch-track{background:#6f8b63;border-color:#6f8b63}
+.admin-form-switch input:checked + .admin-form-switch-track::before{transform:translateX(22px)}
+.admin-form-switch input:focus-visible + .admin-form-switch-track{outline:3px solid #9c752f;outline-offset:3px}
+.admin-form-save-hint{font-size:12px;margin:14px 0 0;color:#6c5746}
+@media(max-width:560px){
+ .admin-form-switch{gap:14px;padding:18px 15px}
+ .admin-form-switch-track{flex-basis:51px}
+}
+@media(prefers-reduced-motion:reduce){
+ .admin-form-switch-track,.admin-form-switch-track::before{transition:none}
+}

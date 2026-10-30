@@ -415,7 +415,23 @@ export default function Admin(){
  </div>
  <div className="admin-panel"><h2>Últimos contatos</h2>{leads.length?leads.slice(0,5).map(l=><p className="admin-mini" key={l.id}><strong>{l.full_name}</strong> · {kinds[l.interest]} · {when(l.created_at)}</p>):<p className="admin-empty">Nenhum contato recebido até agora.</p>}
  <button className="admin-btn secondary" onClick={()=>chooseTab('leads')}>Ver interessados</button></div></>}
- {tab==='site'&&<>{editor.map(([heading,fields])=><section className="admin-panel" key={heading}><h2>{heading}</h2><div className="admin-grid">{fields.map(([key,label])=>{
+ {tab==='site'&&<>
+ <section className="admin-panel admin-form-settings">
+   <h2>Formulário de contato</h2>
+   <p className="admin-note">Escolha se os visitantes poderão preencher o formulário. Com ele desativado, o site apresenta somente o contato direto pelo WhatsApp. Os contatos antigos permanecem na aba Contatos recebidos.</p>
+   <label className="admin-form-switch">
+     <span className="admin-form-switch-description">
+       <strong>Permitir envio pelo formulário</strong>
+       <small>{site.form_enabled===true?'Ativado — formulário visível e recebendo contatos.':'Desativado — visitantes são direcionados ao WhatsApp.'}</small>
+     </span>
+     <input type="checkbox" checked={site.form_enabled===true}
+       onChange={event=>changeSite('form_enabled',event.target.checked)}
+       aria-label="Ativar ou desativar formulário de contato"/>
+     <span className="admin-form-switch-track" aria-hidden="true"/>
+   </label>
+   <p className="admin-form-save-hint">Clique em <strong>Salvar alterações</strong> ao final do editor para publicar esta configuração.</p>
+ </section>
+ {editor.map(([heading,fields])=><section className="admin-panel" key={heading}><h2>{heading}</h2><div className="admin-grid">{fields.map(([key,label])=>{
   const wide=['mantra_words','bmc_hotmart_url','hero_title','hero_description','about_text','journey_text','seo_description','hero_image_url','about_image_url','mentoring_image_url','editorial_image_url','accompaniment_intro','accompaniment_goal','accompaniment_topics','accompaniment_format','accompaniment_packages'].includes(key);
   const textarea=['hero_description','about_text','journey_text','seo_description','accompaniment_intro','accompaniment_goal','accompaniment_topics','accompaniment_format','accompaniment_packages'].includes(key);
   return <div className={wide?'wide':''} key={key}>

@@ -19,6 +19,11 @@ export async function POST(request){
    return json({error:'Revise os dados e tente novamente.'},400);
   const sql=getDb();
   if(!sql)return json({error:'Formulário indisponível no momento.'},503);
+  // O bloqueio acontece também no servidor: ocultar o formulário no React não basta.
+  // Assim, requisições antigas/manuais não criam leads enquanto a opção estiver desativada.
+  const settings=await sql`SELECT form_enabled FROM cf_site WHERE id='main' LIMIT 1`;
+  if(settings[0]?.form_enabled!==true)
+   return json({error:'O formulário está desativado. Entre em contato pelo WhatsApp.'},410);
   const ip=(request.headers.get('x-forwarded-for')||'').split(',')[0].trim()||'unknown';
   const bucket='lead:'+createHash('sha256').update(ip+':'+(process.env.ADMIN_EMAIL||'cf')).digest('hex');
   if(!await rateLimit(sql,bucket,5,15))return json({error:'Limite de mensagens atingido. Tente novamente mais tarde.'},429);

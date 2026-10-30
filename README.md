@@ -112,3 +112,14 @@ A landing usa `<picture>` para selecionar a foto conforme a largura do dispositi
 Até os arquivos existirem no repositório, o site usa `/images/originais/mentorias.jpeg` como imagem de segurança. Os URLs preenchidos no **Painel → Comunidade BMC** (Neon Storage) têm prioridade sobre esses arquivos locais; deixe os campos vazios para utilizar sempre as fotografias do GitHub.
 
 > O navegador pode diminuir a imagem **visualmente**, para caber na largura da tela. Isso não modifica os bytes originais do JPEG nem altera a qualidade do arquivo publicado.
+
+## Formulário de contato — ativar/desativar sem novo deploy
+
+No painel **Editor do site → Formulário de contato**, a Carolina poderá habilitar ou desabilitar o envio de interessados.
+
+- **Desativado (padrão atual):** a seção de contato exibe um botão direto de WhatsApp. O formulário não é exibido e a API `POST /api/leads` responde `410` sem cadastrar dados.
+- **Ativado:** o formulário volta a aparecer e a API aceita cadastros válidos, seguindo as verificações de proteção e consentimento existentes.
+- A configuração é armazenada no campo booleano `cf_site.form_enabled` do Neon e publicada após clicar em **Salvar alterações**.
+- O histórico de contatos anteriores continua disponível no painel; **desativar não exclui registros**.
+
+Migration: `neon/migrations/20261030_form_enabled.sql`. O controle deve ser alterado pelo painel, não por modificações no código.

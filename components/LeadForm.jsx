@@ -20,7 +20,7 @@ export default function LeadForm({kind='informacoes',compact=false}){
  return <form className="lead-form" onSubmit={submit}>
    <label>Como podemos chamar você?<input autoComplete="name" required maxLength={120} minLength={2} value={full_name} onChange={e=>setName(e.target.value)} placeholder="Seu nome completo"/></label>
    <label>Seu WhatsApp<input type="tel" autoComplete="tel" required minLength={8} maxLength={22} value={whatsapp} onChange={e=>setWhatsapp(e.target.value)} placeholder="(00) 00000-0000"/></label>
-   <label>Qual seu interesse?<select value={interest} onChange={e=>setInterest(e.target.value)} required><option value="atendimento">Atendimento individual</option><option value="mentoria">Mentorias</option><option value="informacoes">Quero conhecer as opções</option></select></label>
+   <label>Qual seu interesse?<select value={interest} onChange={e=>setInterest(e.target.value)} required><option value="atendimento">Atendimento individual</option><option value="mentoria">Comunidade BMC</option><option value="informacoes">Quero conhecer as opções</option></select></label>
    <div className="honey" aria-hidden="true"><label>Site<input tabIndex={-1} autoComplete="off" value={website} onChange={e=>setWebsite(e.target.value)}/></label></div>
    <label className="check"><input type="checkbox" checked={consent} required onChange={e=>setConsent(e.target.checked)}/><span>Autorizo o uso dos meus dados para responder a este contato. Li a <a href="/privacy" target="_blank" rel="noreferrer">Política de Privacidade</a>.</span></label>
    <button className="btn btn-dark form-submit" disabled={loading||!consent} type="submit">{loading?<Loader2 className="spin" size={18}/>:<>Enviar minha mensagem <ArrowRight size={18}/></>}</button>

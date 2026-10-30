@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS public.cf_site (
  community_logo_url TEXT NOT NULL DEFAULT '',
  community_desktop_image_url TEXT NOT NULL DEFAULT '',
  community_mobile_image_url TEXT NOT NULL DEFAULT '',
+ form_enabled BOOLEAN NOT NULL DEFAULT FALSE,
  whatsapp TEXT NOT NULL DEFAULT '',
  instagram TEXT NOT NULL DEFAULT '',
  contact_email TEXT NOT NULL DEFAULT '',

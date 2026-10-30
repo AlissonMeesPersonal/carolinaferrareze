@@ -67,7 +67,7 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
      <img className="brand-image brand-image-dark" src="/images/originais/logo_preta.jpeg" alt="" width="1200" height="675" decoding="async"/>
     </span>
    </a>
-   <nav className={mobile?'nav open':'nav'} aria-label="Navegação principal"><a onClick={close} href="#sobre">Sobre mim</a><a onClick={close} href="#atendimentos">Atendimentos</a><a onClick={close} href="#acompanhamento">Acompanhamento</a><a onClick={close} href="#mentorias">Mentorias</a><a onClick={close} href="#depoimentos">Depoimentos</a>{faqs.length>0&&<a onClick={close} href="#duvidas">Dúvidas</a>}<a onClick={close} className="nav-contact" href="#contato">Vamos conversar <ArrowUpRight size={16}/></a></nav>
+   <nav className={mobile?'nav open':'nav'} aria-label="Navegação principal"><a onClick={close} href="#sobre">Sobre mim</a><a onClick={close} href="#atendimentos">Atendimentos</a><a onClick={close} href="#acompanhamento">Acompanhamento</a><a onClick={close} href="#comunidade">Comunidade BMC</a><a onClick={close} href="#depoimentos">Depoimentos</a>{faqs.length>0&&<a onClick={close} href="#duvidas">Dúvidas</a>}<a onClick={close} className="nav-contact" href="#contato">Vamos conversar <ArrowUpRight size={16}/></a></nav>
    <button type="button" className="nav-toggle" aria-label={mobile?'Fechar menu':'Abrir menu'} aria-expanded={mobile} onClick={()=>setMobile(!mobile)}>{mobile?<X/>:<Menu/>}</button>
   </header>
   <main>
@@ -83,10 +83,9 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
        aria-label={heroLabels.bmc+' — acessar a página de venda na Hotmart'}>
         <span>{heroLabels.bmc}</span><ExternalLink size={19} aria-hidden="true"/>
       </a>:
-      <button type="button" className="btn hero-choice hero-choice-bmc hero-choice-pending" disabled
-       title="O endereço de venda da Hotmart ainda não foi configurado">
-        <span>{heroLabels.bmc}</span><small>Em breve</small>
-      </button>}
+      <a className="btn hero-choice hero-choice-bmc" href="#comunidade" aria-label="Conhecer a Comunidade BMC">
+        <span>{heroLabels.bmc}</span><ArrowUpRight size={19} aria-hidden="true"/>
+      </a>}
    </div></div>
     <div className="hero-art"><EditorialPhoto src={site.hero_image_url} variant="hero" alt="Carolina Ferrareze sentada em seu consultório, com a marca ao fundo"/></div>
    </section>
@@ -124,7 +123,29 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
     <span className="eyebrow">ESCOLHA SEU PROCESSO</span>
     <div className="accompaniment-plans">{packageEntries.map((plan,i)=><div className="accompaniment-plan" key={i}><span>0{i+1}</span><h3>{plan}</h3><a href="#contato">Consultar investimento <ArrowUpRight size={18}/></a></div>)}</div>
    </section>
-   <section id="mentorias" className="mentoring"><div className="mentoring-decor"><EditorialPhoto src={site.mentoring_image_url} variant="consultorio" alt="Carolina Ferrareze em pé no consultório, diante da identidade visual"/></div><div className="mentoring-content"><span className="eyebrow">03 · MENTORIAS TERAPÊUTICAS</span><h2>{site.journey_title}</h2><p>{site.journey_text}</p>{mentorias.map(item=><div className="mentoring-item" key={item.id}><span><Sparkles size={19}/></span><div><h3>{item.title}</h3><p>{item.description}</p>{item.details&&<small>{item.details}</small>}</div></div>)}<a className="btn btn-light" href="#contato">Quero saber mais <ArrowUpRight size={17}/></a></div></section>
+   <section id="comunidade" className="community-section" aria-labelledby="community-heading">
+    <span id="mentorias" className="community-legacy-anchor" aria-hidden="true"/>
+    <div className="community-visual">
+      <div className="community-photo">
+        <EditorialPhoto src={site.mentoring_image_url || '/images/originais/hero.jpeg'} variant="community" alt="Carolina Ferrareze, criadora da Comunidade Bota a Mão na Consciência"/>
+      </div>
+      <div className="community-visual-brand">
+        <img src={site.community_logo_url || '/images/comunidade-bmc/assinatura.svg'} alt="Identidade visual da comunidade Bota a Mão na Consciência" loading="lazy" width="640" height="360"/>
+      </div>
+    </div>
+    <div className="community-content">
+      <span className="eyebrow">03 · COMUNIDADE BMC</span>
+      <h2 id="community-heading">{site.journey_title || 'Comunidade Bota a Mão na Consciência'}</h2>
+      <div className="community-description">{String(site.journey_text||'').split(/\n\s*\n/).filter(Boolean).map((paragraph,index)=><p key={index}>{paragraph.trim()}</p>)}</div>
+      <div className="community-benefits" aria-label="O que você encontra na comunidade">
+        {String(site.community_features||'').split('\n').map(x=>x.trim()).filter(Boolean).slice(0,8).map((feature,index)=><span key={index}><Sparkles size={17} aria-hidden="true"/>{feature}</span>)}
+      </div>
+      {site.community_tagline&&<p className="community-tagline">“{site.community_tagline}”</p>}
+      {hotmartCheckout?
+        <a className="btn community-action" href={hotmartCheckout} target="_blank" rel="noopener noreferrer">{site.community_cta_label||'Conhecer a comunidade'} <ExternalLink size={18}/></a>:
+        <a className="btn community-action" href={whatsappUrl(site.whatsapp,'Olá, Carolina! Quero saber mais sobre a Comunidade Bota a Mão na Consciência.')} {...waProps}>{site.community_cta_label||'Conhecer a comunidade'} <ArrowUpRight size={18}/></a>}
+    </div>
+   </section>
    <section className="editorial-story" aria-label="Uma mensagem da Carolina">
     <div className="story-text"><span className="eyebrow">UM CONVITE PARA VOCÊ</span><h2>O seu processo merece <em>ser vivido com presença.</em></h2><p>Não é sobre fazer tudo de uma vez. É sobre dar espaço para compreender sua história e descobrir novos caminhos.</p><a className="underlined-link" href="#contato">Conversar com a Carolina <ArrowUpRight size={17}/></a></div>
     <div className="story-portrait"><EditorialPhoto src={site.editorial_image_url} variant="perfil" alt="Retrato em perfil de Carolina Ferrareze com luz natural"/></div>

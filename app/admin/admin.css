@@ -591,3 +591,6 @@
 .admin-hero-cta-preview>span:first-child{background:#321d14;color:#fff;border-color:#321d14}
 .admin-hero-cta-preview>span:last-child{background:#9c752f;color:#fff;border-color:#9c752f}
 .admin-hero-cta-preview small{font-size:11px;font-weight:400}
+
+/* Edição da comunidade no painel */
+.admin-body .admin-panel:has(.admin-hotmart-info) .admin-grid{row-gap:22px}

@@ -39,7 +39,7 @@ const sections = [
   ['dashboard', 'Visão geral'],
   ['site', 'Editor do site'],
   ['atendimento', 'Atendimentos'],
-  ['mentoria', 'Mentorias'],
+  ['mentoria', 'Comunidade BMC'],
   ['testimonials', 'Depoimentos'],
   ['gallery', 'Fotos de depoimentos'],
   ['faqs', 'Perguntas frequentes'],
@@ -63,7 +63,7 @@ const navDescriptions = {
   dashboard: 'O que está acontecendo no seu site',
   site: 'Textos, fotos e identidade visual',
   atendimento: 'Serviços e modalidades disponíveis',
-  mentoria: 'Acompanhamentos e programas',
+  mentoria: 'Conteúdo e identidade visual da comunidade',
   testimonials: 'Relatos escritos de clientes',
   gallery: 'Imagens e prints autorizados',
   faqs: 'Respostas para as dúvidas comuns',
@@ -357,13 +357,13 @@ export default function Admin(){
   ['Botões principais',[['hero_cta_individual_label','Botão 1 — Acompanhamento Individual'],['hero_cta_constelacao_label','Botão 2 — Quero Constelar'],['hero_cta_bmc_label','Botão 3 — Comunidade BMC'],['bmc_hotmart_url','Link de venda da Comunidade BMC na Hotmart']]],
   ['Palavras da faixa',[['mantra_words','Palavras exibidas abaixo da foto principal']]],
   ['Sobre mim',[['about_title','Título de apresentação'],['about_text','Sua trajetória e formações'],['about_image_url','URL da sua foto']]],
-  ['Fotos das seções',[['mentoring_image_url','Imagem da seção mentorias'],['editorial_image_url','Foto da seção editorial']]],
+  ['Fotos das seções',[['editorial_image_url','Foto da seção editorial']]],
   ['Acompanhamento terapêutico',[['accompaniment_title','Título da seção'],['accompaniment_intro','Apresentação do acompanhamento'],['accompaniment_goal','Objetivo e benefícios propostos'],['accompaniment_topics','Temas: um por linha, no formato Nome|Descrição'],['accompaniment_format','Formato: uma informação por linha'],['accompaniment_packages','Pacotes: um por linha, sem preços']]],
-  ['Mentorias e contato',[['journey_title','Título da jornada'],['journey_text','Texto introdutório'],['whatsapp','Número WhatsApp com 55 e DDD'],['instagram','Link do Instagram'],['contact_email','E-mail'],['footer_note','Texto do rodapé']]],
+  ['Contatos e rodapé',[['whatsapp','Número WhatsApp com 55 e DDD'],['instagram','Link do Instagram'],['contact_email','E-mail'],['footer_note','Texto do rodapé']]],
   ['SEO',[['seo_title','Título das buscas'],['seo_description','Descrição das buscas']]]
  ];
  const mantraPreview=parseMantraWords(site.mantra_words ?? DEFAULT_MANTRA_WORDS);
- const type=(tab==='atendimento'||tab==='mentoria')?'services':tab;
+ const type=tab==='atendimento'?'services':tab;
  const changeLocal = (id, field, value) => updateListItem(type, id, field, value);
  return <div className="admin-body">
  <header className="admin-header">
@@ -453,7 +453,35 @@ export default function Admin(){
   <div className="admin-save-explainer"><Save size={19}/><div><strong>Publicar alterações</strong><small>Edite os campos acima e salve para atualizar a página da Carolina.</small></div></div>
   <button type="button" className="admin-btn" disabled={busy} onClick={saveSite}><Save size={17}/>{busy?'Salvando...':'Salvar alterações'}</button>
  </div></>}
- {(tab==='atendimento'||tab==='mentoria')&&<section className="admin-panel"><div className="admin-heading-row"><h2>{tab==='atendimento'?'Atendimentos':'Mentorias'}</h2><button className="admin-btn" onClick={()=>addItem('services')}><Plus size={15}/> Adicionar</button></div>
+ {tab==='mentoria'&&<section className="admin-panel">
+  <h2>Comunidade Bota a Mão na Consciência</h2>
+  <p className="admin-note">Personalize a seção da comunidade. Os textos e imagens serão atualizados no site após salvar. O botão abre a página da Hotmart quando houver um link válido; caso contrário, abre o WhatsApp da Carolina.</p>
+  <div className="admin-grid">
+    <Field label="Título da comunidade" wide value={site.journey_title} onChange={v=>changeSite('journey_title',v)}/>
+    <Field label="Descrição da comunidade (separe parágrafos com uma linha em branco)" wide textarea value={site.journey_text} onChange={v=>changeSite('journey_text',v)}/>
+    <Field label="O que a comunidade oferece (um benefício por linha)" wide textarea value={site.community_features} onChange={v=>changeSite('community_features',v)}/>
+    <Field label="Frase de destaque" wide textarea value={site.community_tagline} onChange={v=>changeSite('community_tagline',v)}/>
+    <Field label="Texto do botão" value={site.community_cta_label} onChange={v=>changeSite('community_cta_label',v)}/>
+    <div className="wide">
+      <div className="admin-field-label">Fotografia da comunidade</div>
+      <MediaUploader url={site.mentoring_image_url} label="Fotografia da Comunidade BMC" onUploaded={url=>changeSite('mentoring_image_url',url)}/>
+      <details className="admin-advanced-url"><summary>Endereço da fotografia (avançado)</summary><Field label="URL da fotografia" value={site.mentoring_image_url} onChange={v=>changeSite('mentoring_image_url',v)}/></details>
+    </div>
+    <div className="wide">
+      <div className="admin-field-label">Logo ou arte da comunidade</div>
+      <MediaUploader url={site.community_logo_url||'/images/comunidade-bmc/assinatura.svg'} label="Logo da Comunidade BMC" onUploaded={url=>changeSite('community_logo_url',url)}/>
+      <details className="admin-advanced-url"><summary>Endereço da arte (avançado)</summary><Field label="URL da arte" value={site.community_logo_url} onChange={v=>changeSite('community_logo_url',v)}/></details>
+    </div>
+    <Field label="Link oficial da venda na Hotmart (opcional)" wide value={site.bmc_hotmart_url} onChange={v=>changeSite('bmc_hotmart_url',v)}/>
+    <div className="wide admin-hotmart-info">{safeHotmartUrl(site.bmc_hotmart_url)?<a href={safeHotmartUrl(site.bmc_hotmart_url)} target="_blank" rel="noopener noreferrer">Testar página da Hotmart <ArrowUpRight size={15}/></a>:<span>Sem um link válido, o botão abrirá o WhatsApp para esclarecer dúvidas sobre a comunidade.</span>}</div>
+  </div>
+  <div className="admin-sticky-save">
+    <div className="admin-save-explainer"><Save size={19}/><div><strong>Publicar comunidade</strong><small>Atualiza a seção 03 e os links do site.</small></div></div>
+    <button type="button" className="admin-btn" disabled={busy} onClick={saveSite}><Save size={17}/>{busy?'Salvando...':'Salvar comunidade'}</button>
+  </div>
+</section>}
+ 
+ {tab==='atendimento'&&<section className="admin-panel"><div className="admin-heading-row"><h2>Atendimentos</h2><button className="admin-btn" onClick={()=>addItem('services')}><Plus size={15}/> Adicionar</button></div>
  {services.filter(x=>x.category===tab).map(item=><div key={item.id} className="admin-card"><div className="admin-card-head"><h3>{item.title||'Novo serviço'}</h3><button className="admin-btn danger" onClick={()=>removeItem('services',item)}><Trash2 size={14}/> Excluir</button></div>
  <div className="admin-grid"><Field label="Nome" value={item.title} onChange={v=>changeLocal(item.id,'title',v)}/><Field label="Etiqueta" value={item.label} onChange={v=>changeLocal(item.id,'label',v)}/><Field label="Descrição" wide textarea value={item.description} onChange={v=>changeLocal(item.id,'description',v)}/><Field label="Detalhes" wide textarea value={item.details} onChange={v=>changeLocal(item.id,'details',v)}/><div className="wide"><div className="admin-field-label">Imagem do serviço</div><MediaUploader url={item.image_url} label={'Imagem de '+item.title} onUploaded={v=>changeLocal(item.id,'image_url',v)}/><details className="admin-advanced-url"><summary>Endereço da imagem <span>(avançado)</span></summary><Field label="URL da imagem" value={item.image_url} onChange={v=>changeLocal(item.id,'image_url',v)}/></details></div>
  <Field label="Posição" type="number" value={item.position} onChange={v=>changeLocal(item.id,'position',v)}/><label className="admin-check"><input type="checkbox" checked={item.is_published} onChange={e=>changeLocal(item.id,'is_published',e.target.checked)}/>Publicado</label></div>

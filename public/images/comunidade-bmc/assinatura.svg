@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-label="Bota a Mão na Consciência">
+ <defs>
+  <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#fff1dc"/><stop offset="1" stop-color="#dfbfa4"/></linearGradient>
+  <radialGradient id="lit"><stop stop-color="#fff7e8" stop-opacity=".8"/><stop offset="1" stop-color="#dfbfa4" stop-opacity="0"/></radialGradient>
+ </defs>
+ <rect width="1280" height="720" fill="url(#bg)"/>
+ <ellipse cx="450" cy="260" rx="680" ry="490" fill="url(#lit)"/>
+ <circle cx="1220" cy="-70" r="330" fill="#a64f34"/>
+ <circle cx="-120" cy="740" r="205" fill="#b66548"/>
+ <g fill="none" stroke="#d7a77f" stroke-width="4" opacity=".65">
+ <circle cx="1220" cy="-70" r="390"/><circle cx="-120" cy="740" r="258"/>
+ </g>
+ <g text-anchor="middle">
+  <text x="640" y="245" fill="#32160e" font-family="Georgia,serif" font-size="118" font-weight="bold" font-style="italic" letter-spacing="-6">Bota a Mão</text>
+  <text x="640" y="321" fill="#66311d" font-family="Georgia,serif" font-size="61" font-style="italic">na</text>
+  <text x="640" y="460" fill="#a65035" font-family="Georgia,serif" font-size="138" font-weight="bold" letter-spacing="-6">Consciência</text>
+  <path d="M365 486 Q650 531 928 482" stroke="#c78d60" stroke-width="9" stroke-linecap="round" fill="none"/>
+  <text x="640" y="592" fill="#4d3327" font-family="Arial,sans-serif" font-size="26" letter-spacing="3">AUTOCONHECIMENTO · PRESENÇA · TRANSFORMAÇÃO</text>
+ </g>
+</svg>

@@ -67,9 +67,7 @@
 .accompaniment-format h3{font-size:29px;margin-bottom:20px}
 .accompaniment-format ul{margin:0;padding-left:19px;display:grid;gap:12px}
 .accompaniment-format li{font-size:14px;color:#705d50;line-height:1.6}
-.accompaniment-options{padding:90px max(7vw,25px);display:grid;grid-template-columns:1fr 1.25fr;gap:8vw;align-items:center;background:#fff}
-.accompaniment-options h2{font-size:clamp(2.6rem,4vw,4.2rem);margin:20px 0}
-.accompaniment-options p{color:#705d50;line-height:1.8;max-width:470px}
+.accompaniment-options{padding:65px max(7vw,25px);background:#fff}
 .accompaniment-plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:15px}
 .accompaniment-plan{border:1px solid #dfd2bf;background:#fbf9f5;min-height:245px;padding:28px;display:flex;flex-direction:column}
 .accompaniment-plan>span{font:italic 34px 'Radley',serif;color:#aa8b62}
@@ -84,7 +82,7 @@
 .testimonial-image-card span{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 19px;color:#321d14;font-size:12px;font-weight:700}
 .testimonial-disclaimer{max-width:850px;margin:35px auto 0;text-align:center;line-height:1.7;font-size:12px;color:#7b6958}
 @media(max-width:1100px){.accompaniment-section{gap:5vw}.accompaniment-detail{padding:34px}.testimonials-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:760px){.accompaniment-section,.accompaniment-options{grid-template-columns:1fr;padding:75px 24px;gap:35px}.accompaniment-options h2{font-size:2.8rem}.accompaniment-detail{padding:28px 24px}.testimonials-showcase{padding:80px 22px}.testimonials-gallery{gap:12px;grid-template-columns:1fr;margin-top:35px}.testimonial-image-card img{max-height:420px;object-fit:contain}}
+@media(max-width:760px){.accompaniment-section,.accompaniment-options{grid-template-columns:1fr;padding:75px 24px;gap:35px}.accompaniment-options{padding:40px 24px 65px}.accompaniment-detail{padding:28px 24px}.testimonials-showcase{padding:80px 22px}.testimonials-gallery{gap:12px;grid-template-columns:1fr;margin-top:35px}.testimonial-image-card img{max-height:420px;object-fit:contain}}
 
 /* Navegação segura com as novas seções: evitar que links transbordem no tablet. */
 @media (min-width:761px) and (max-width:1180px){

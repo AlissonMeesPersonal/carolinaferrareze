@@ -121,6 +121,7 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
     </div>
    </section>
    <section className="accompaniment-options" aria-label="Pacotes de acompanhamento">
+    <span className="eyebrow">ESCOLHA SEU PROCESSO</span>
     <h2>Um acompanhamento no seu ritmo.</h2>
     <div className="accompaniment-plans">{packageEntries.map((plan,i)=><div className="accompaniment-plan" key={i}><span>0{i+1}</span><h3>{plan}</h3><a href="#contato">Consultar investimento <ArrowUpRight size={18}/></a></div>)}</div>
    </section>

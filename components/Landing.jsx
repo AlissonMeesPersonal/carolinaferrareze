@@ -120,8 +120,7 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
      </div>
     </div>
    </section>
-   <section className="accompaniment-options" aria-label="Opções do acompanhamento">
-    <div><span className="eyebrow">ESCOLHA SEU PROCESSO</span><h2>Um acompanhamento no seu ritmo.</h2><p>Você pode conhecer as opções de acompanhamento e conversar diretamente com a Carolina para saber sobre o investimento.</p></div>
+   <section className="accompaniment-options" aria-label="Pacotes de acompanhamento">
     <div className="accompaniment-plans">{packageEntries.map((plan,i)=><div className="accompaniment-plan" key={i}><span>0{i+1}</span><h3>{plan}</h3><a href="#contato">Consultar investimento <ArrowUpRight size={18}/></a></div>)}</div>
    </section>
    <section id="mentorias" className="mentoring"><div className="mentoring-decor"><EditorialPhoto src={site.mentoring_image_url} variant="consultorio" alt="Carolina Ferrareze em pé no consultório, diante da identidade visual"/></div><div className="mentoring-content"><span className="eyebrow">03 · MENTORIAS TERAPÊUTICAS</span><h2>{site.journey_title}</h2><p>{site.journey_text}</p>{mentorias.map(item=><div className="mentoring-item" key={item.id}><span><Sparkles size={19}/></span><div><h3>{item.title}</h3><p>{item.description}</p>{item.details&&<small>{item.details}</small>}</div></div>)}<a className="btn btn-light" href="#contato">Quero saber mais <ArrowUpRight size={17}/></a></div></section>

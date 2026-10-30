@@ -3,6 +3,7 @@ import { ArrowUpRight, ExternalLink, Leaf, Sparkles, Instagram, MessageCircle, Q
 import { Fragment, useEffect, useState } from 'react';
 import LeadForm from './LeadForm';
 import { whatsappUrl } from '@/lib/config';
+import { WHATSAPP_MESSAGES, serviceWhatsAppMessage, packageWhatsAppMessage } from '@/lib/whatsapp-messages.mjs';
 import { DEFAULT_MANTRA_WORDS, parseMantraWords } from '@/lib/mantra';
 import { DEFAULT_HERO_CTA_LABELS, heroCtaLabel, safeHotmartUrl } from '@/lib/hero-ctas.mjs';
 import CommunityBanner from '@/components/CommunityBanner';
@@ -45,7 +46,7 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
  },[]);
  const atendimento=services.filter(s=>s.category==='atendimento');
  const mentorias=services.filter(s=>s.category==='mentoria');
- const wa=whatsappUrl(site.whatsapp);
+ const wa=whatsappUrl(site.whatsapp,WHATSAPP_MESSAGES.general);
  const hasWhatsApp=Boolean((site.whatsapp||'').replace(/\D/g,''));
  const formEnabled=site.form_enabled===true;
  const waProps=hasWhatsApp?{target:'_blank',rel:'noopener noreferrer'}:{};
@@ -69,25 +70,22 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
      <img className="brand-image brand-image-dark" src="/images/originais/logo_preta.jpeg" alt="" width="1200" height="675" decoding="async"/>
     </span>
    </a>
-   <nav className={mobile?'nav open':'nav'} aria-label="Navegação principal"><a onClick={close} href="#sobre">Sobre mim</a><a onClick={close} href="#atendimentos">Atendimentos</a><a onClick={close} href="#acompanhamento">Acompanhamento</a><a onClick={close} href="#comunidade">Comunidade BMC</a><a onClick={close} href="#depoimentos">Depoimentos</a>{faqs.length>0&&<a onClick={close} href="#duvidas">Dúvidas</a>}<a onClick={close} className="nav-contact" href="#contato">Vamos conversar <ArrowUpRight size={16}/></a></nav>
+   <nav className={mobile?'nav open':'nav'} aria-label="Navegação principal"><a onClick={close} href="#sobre">Sobre mim</a><a onClick={close} href="#atendimentos">Atendimentos</a><a onClick={close} href="#acompanhamento">Acompanhamento</a><a onClick={close} href="#comunidade">Comunidade BMC</a><a onClick={close} href="#depoimentos">Depoimentos</a>{faqs.length>0&&<a onClick={close} href="#duvidas">Dúvidas</a>}<a onClick={close} className="nav-contact" href={whatsappUrl(site.whatsapp,WHATSAPP_MESSAGES.general)} {...waProps}>Vamos conversar <ArrowUpRight size={16}/></a></nav>
    <button type="button" className="nav-toggle" aria-label={mobile?'Fechar menu':'Abrir menu'} aria-expanded={mobile} onClick={()=>setMobile(!mobile)}>{mobile?<X/>:<Menu/>}</button>
   </header>
   <main>
    <section id="inicio" className="hero"><div className="hero-content"><span className="eyebrow"><span className="eyebrow-dot"/> {site.hero_eyebrow}</span><h1>{site.hero_title}</h1><p className="hero-desc">{site.hero_description}</p><div className="hero-actions hero-actions-three" aria-label="Escolha seu próximo passo">
-    <a className="btn btn-dark hero-choice" href="#acompanhamento">
+    <a className="btn btn-dark hero-choice" href={whatsappUrl(site.whatsapp,WHATSAPP_MESSAGES.individual)} {...waProps}>
       <span>{heroLabels.individual}</span><ArrowUpRight size={20} aria-hidden="true"/>
     </a>
-    <a className="btn btn-ghost hero-choice" href={constelacaoService?'#constelacao':'#atendimentos'}>
+    <a className="btn btn-ghost hero-choice" href={whatsappUrl(site.whatsapp,WHATSAPP_MESSAGES.constelacao)} {...waProps}>
       <span>{heroLabels.constelacao}</span><ArrowUpRight size={20} aria-hidden="true"/>
     </a>
-    {hotmartCheckout?
-      <a className="btn hero-choice hero-choice-bmc" href={hotmartCheckout} target="_blank" rel="noopener noreferrer"
-       aria-label={heroLabels.bmc+' — acessar a página de venda na Hotmart'}>
-        <span>{heroLabels.bmc}</span><ExternalLink size={19} aria-hidden="true"/>
-      </a>:
-      <a className="btn hero-choice hero-choice-bmc" href="#comunidade" aria-label="Conhecer a Comunidade BMC">
-        <span>{heroLabels.bmc}</span><ArrowUpRight size={19} aria-hidden="true"/>
-      </a>}
+    <a className="btn hero-choice hero-choice-bmc"
+      href={whatsappUrl(site.whatsapp,WHATSAPP_MESSAGES.community)} {...waProps}
+      aria-label={heroLabels.bmc+' — conversar pelo WhatsApp sobre a comunidade'}>
+      <span>{heroLabels.bmc}</span><ArrowUpRight size={19} aria-hidden="true"/>
+    </a>
    </div></div>
     <div className="hero-art"><EditorialPhoto src={site.hero_image_url} variant="hero" alt="Carolina Ferrareze sentada em seu consultório, com a marca ao fundo"/></div>
    </section>
@@ -97,9 +95,9 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
       {index<mantraWords.length-1&&<i aria-hidden="true"/>}
     </Fragment>)}
    </section>}
-   <section id="sobre" className="section about"><div className="about-visual"><EditorialPhoto src={site.about_image_url} variant="about" alt="Retrato profissional de Carolina Ferrareze sentada no sofá do consultório"/></div><div className="section-copy"><span className="eyebrow">01 · SOBRE MIM</span><h2>{site.about_title}</h2><div className="accent-line"/><p>{site.about_text}</p><a className="underlined-link about-contact-attention" href="#contato">Entre em contato <ArrowUpRight size={18}/></a></div></section>
+   <section id="sobre" className="section about"><div className="about-visual"><EditorialPhoto src={site.about_image_url} variant="about" alt="Retrato profissional de Carolina Ferrareze sentada no sofá do consultório"/></div><div className="section-copy"><span className="eyebrow">01 · SOBRE MIM</span><h2>{site.about_title}</h2><div className="accent-line"/><p>{site.about_text}</p><a className="underlined-link about-contact-attention" href={whatsappUrl(site.whatsapp,WHATSAPP_MESSAGES.about)} {...waProps}>Entre em contato <ArrowUpRight size={18}/></a></div></section>
    {atendimento.length>0&&<section className="section paths" id="atendimentos"><div className="section-heading"><span className="eyebrow">02 · ATENDIMENTOS</span></div>
-    <div className="cards">{atendimento.map((item,index)=><article className="service-card" key={item.id} id={item.id===constelacaoService?.id?'constelacao':undefined}>{item.image_url&&<div className="service-visual"><img src={item.image_url} loading="lazy" alt={item.title}/></div>}<div className="service-number">0{index+1} <Leaf size={19}/></div><span className="service-tag">{item.label||'ATENDIMENTO'}</span><h3>{item.title}</h3><p>{item.description}</p>{item.details&&<div className="service-details">{item.details}</div>}<a href="#contato" className="card-link">Tenho interesse <ArrowUpRight size={19}/></a></article>)}</div>
+    <div className="cards">{atendimento.map((item,index)=><article className="service-card" key={item.id} id={item.id===constelacaoService?.id?'constelacao':undefined}>{item.image_url&&<div className="service-visual"><img src={item.image_url} loading="lazy" alt={item.title}/></div>}<div className="service-number">0{index+1} <Leaf size={19}/></div><span className="service-tag">{item.label||'ATENDIMENTO'}</span><h3>{item.title}</h3><p>{item.description}</p>{item.details&&<div className="service-details">{item.details}</div>}<a href={whatsappUrl(site.whatsapp,serviceWhatsAppMessage(item.title))} {...waProps} className="card-link">Tenho interesse <ArrowUpRight size={19}/></a></article>)}</div>
    </section>}
    <section className="accompaniment-section" id="acompanhamento">
     {atendimento.length===0&&<span id="atendimentos" className="section-anchor" aria-hidden="true"/>}
@@ -108,7 +106,7 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
      <h2>{site.accompaniment_title||'Acompanhamento Terapêutico'}</h2>
      <p>{site.accompaniment_intro}</p>
      <p>{site.accompaniment_goal}</p>
-     <a className="btn btn-dark booking-cta-pulse" href={whatsappUrl(site.whatsapp,'Quero agendar minha sessão.')} {...waProps} aria-label="Agendar sessão com Carolina pelo WhatsApp">Agende sua sessão agora <ArrowUpRight size={17}/></a>
+     <a className="btn btn-dark booking-cta-pulse" href={whatsappUrl(site.whatsapp,WHATSAPP_MESSAGES.booking)} {...waProps} aria-label="Agendar sessão com Carolina pelo WhatsApp">Agende sua sessão agora <ArrowUpRight size={17}/></a>
     </div>
     <div className="accompaniment-detail">
      <h3>O que abordaremos?</h3>
@@ -123,7 +121,7 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
    </section>
    <section className="accompaniment-options" aria-label="Pacotes de acompanhamento">
     <span className="eyebrow">ESCOLHA SEU PROCESSO</span>
-    <div className="accompaniment-plans">{packageEntries.map((plan,i)=><div className="accompaniment-plan" key={i}><span>0{i+1}</span><h3>{plan}</h3><a href="#contato">Consultar investimento <ArrowUpRight size={18}/></a></div>)}</div>
+    <div className="accompaniment-plans">{packageEntries.map((plan,i)=><div className="accompaniment-plan" key={i}><span>0{i+1}</span><h3>{plan}</h3><a href={whatsappUrl(site.whatsapp,packageWhatsAppMessage(plan))} {...waProps}>Consultar investimento <ArrowUpRight size={18}/></a></div>)}</div>
    </section>
    <section id="comunidade" className="community-section" aria-labelledby="community-heading">
     <span id="mentorias" className="community-legacy-anchor" aria-hidden="true"/>
@@ -139,16 +137,19 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
         {String(site.community_features||'').split('\n').map(x=>x.trim()).filter(Boolean).slice(0,8).map((feature,index)=><span key={index}><Sparkles size={17} aria-hidden="true"/>{feature}</span>)}
       </div>
       {site.community_tagline&&<p className="community-tagline">“{site.community_tagline}”</p>}
-      {hotmartCheckout?
-        <a className="btn community-action" href={hotmartCheckout} target="_blank" rel="noopener noreferrer">{site.community_cta_label||'Conhecer a comunidade'} <ExternalLink size={18}/></a>:
-        <a className="btn community-action" href={whatsappUrl(site.whatsapp,'Olá, Carolina! Quero saber mais sobre a Comunidade Bota a Mão na Consciência.')} {...waProps}>{site.community_cta_label||'Conhecer a comunidade'} <ArrowUpRight size={18}/></a>}
+      <a className="btn community-action" href={whatsappUrl(site.whatsapp,WHATSAPP_MESSAGES.community)} {...waProps}>
+        {site.community_cta_label||'Conhecer a comunidade'} <ArrowUpRight size={18}/>
+      </a>
+      {hotmartCheckout&&<a className="community-store-link" href={hotmartCheckout} target="_blank" rel="noopener noreferrer" aria-label="Comprar a Comunidade BMC na Hotmart">
+        Acessar compra na Hotmart <ExternalLink size={16}/>
+      </a>}
     </div>
    </section>
    <section className="editorial-story" aria-label="Uma mensagem da Carolina">
-    <div className="story-text"><span className="eyebrow">UM CONVITE PARA VOCÊ</span><h2>O seu processo merece <em>ser vivido com presença.</em></h2><p>Não é sobre fazer tudo de uma vez. É sobre dar espaço para compreender sua história e descobrir novos caminhos.</p><a className="underlined-link" href="#contato">Conversar com a Carolina <ArrowUpRight size={17}/></a></div>
+    <div className="story-text"><span className="eyebrow">UM CONVITE PARA VOCÊ</span><h2>O seu processo merece <em>ser vivido com presença.</em></h2><p>Não é sobre fazer tudo de uma vez. É sobre dar espaço para compreender sua história e descobrir novos caminhos.</p><a className="underlined-link" href={whatsappUrl(site.whatsapp,WHATSAPP_MESSAGES.editorial)} {...waProps}>Conversar com a Carolina <ArrowUpRight size={17}/></a></div>
     <div className="story-portrait"><EditorialPhoto src={site.editorial_image_url} variant="perfil" alt="Retrato em perfil de Carolina Ferrareze com luz natural"/></div>
    </section>
-   <section className="section process"><div className="section-heading"><span className="eyebrow">04 · COMO FUNCIONA</span><h2>O primeiro passo pode<br/><em>ser simples.</em></h2></div><div className="steps"><div><span>01</span><h3>Escolha seu caminho</h3><p>Explore as opções de atendimentos e mentorias.</p></div><div><span>02</span><h3>Entre em contato</h3><p>Preencha o formulário para receber informações.</p></div><div><span>03</span><h3>Converse com a Carolina</h3><p>Entenda disponibilidade, condições e próximos passos.</p></div></div></section>
+   <section className="section process"><div className="section-heading"><span className="eyebrow">04 · COMO FUNCIONA</span><h2>O primeiro passo pode<br/><em>ser simples.</em></h2></div><div className="steps"><div><span>01</span><h3>Escolha seu caminho</h3><p>Explore as opções de atendimentos e a Comunidade BMC.</p></div><div><span>02</span><h3>Entre em contato</h3><p>{formEnabled?'Preencha o formulário para receber informações.':'Inicie uma conversa diretamente pelo WhatsApp.'}</p></div><div><span>03</span><h3>Converse com a Carolina</h3><p>Entenda disponibilidade, condições e próximos passos.</p></div></div></section>
    <section id="depoimentos" className="testimonials-showcase">
      <div className="section-heading"><span className="eyebrow">EXPERIÊNCIAS COMPARTILHADAS</span><h2>Palavras de quem <em>viveu esse processo.</em></h2><p>Trechos de mensagens compartilhadas por pessoas atendidas, com a identidade preservada. Cada experiência é única.</p></div>
      <div className="testimonials-gallery" aria-label="Depoimentos recebidos">
@@ -176,10 +177,10 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
         ? 'Preencha o formulário e a Carolina poderá entrar em contato com você para conversar sobre o que procura.'
         : 'Entre em contato diretamente pelo WhatsApp para conversar com a Carolina sobre atendimentos e disponibilidade.'}</p>
       {formEnabled&&<div className="contact-side">
-        <a className="contact-whatsapp-mark" href={wa} {...waProps}
+        <a className="contact-whatsapp-mark" href={whatsappUrl(site.whatsapp,WHATSAPP_MESSAGES.contact)} {...waProps}
           aria-label={hasWhatsApp?'Chamar Carolina diretamente no WhatsApp':'Ir para o formulário de contato'}
           title={hasWhatsApp?'Chamar Carolina pelo WhatsApp':'Ir para o formulário'}><WhatsAppIcon size={25}/></a>
-        <div><strong>Prefere o WhatsApp?</strong><a href={wa} {...waProps}>{hasWhatsApp?'Iniciar uma conversa':'Deixe seu contato pelo formulário'} <ArrowUpRight size={16}/></a></div>
+        <div><strong>Prefere o WhatsApp?</strong><a href={whatsappUrl(site.whatsapp,WHATSAPP_MESSAGES.contact)} {...waProps}>{hasWhatsApp?'Iniciar uma conversa':'Deixe seu contato pelo formulário'} <ArrowUpRight size={16}/></a></div>
       </div>}
     </div>
     {formEnabled
@@ -189,7 +190,7 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
           <h3>Fale diretamente com a Carolina.</h3>
           <p>Inicie uma conversa pelo WhatsApp para tirar suas dúvidas e saber mais sobre os atendimentos.</p>
           <a className="btn btn-dark contact-direct-button"
-            href={whatsappUrl(site.whatsapp,'Olá, Carolina! Gostaria de conversar sobre seus atendimentos.')}
+            href={whatsappUrl(site.whatsapp,WHATSAPP_MESSAGES.contact)}
             {...waProps}
             aria-label="Conversar com Carolina no WhatsApp">
             <WhatsAppIcon size={23}/> <span>Conversar no WhatsApp</span><ArrowUpRight size={19}/>

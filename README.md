@@ -123,3 +123,18 @@ No painel **Editor do site → Formulário de contato**, a Carolina poderá habi
 - O histórico de contatos anteriores continua disponível no painel; **desativar não exclui registros**.
 
 Migration: `neon/migrations/20261030_form_enabled.sql`. O controle deve ser alterado pelo painel, não por modificações no código.
+
+## WhatsApp com mensagem específica para cada botão
+
+As mensagens públicas são definidas em `lib/whatsapp-messages.mjs` e os links
+são criados por `whatsappUrl`, com telefone editável no painel do site.
+
+- Hero: acompanhamento individual, constelação e Comunidade BMC.
+- Cabeçalho, sobre e contato: textos apropriados à seção.
+- Serviços: mensagem contém o nome do atendimento.
+- Pacotes: mensagem contém o nome do pacote, como 3 ou 6 sessões, para consultar investimento.
+- Agendamento: texto direto de marcação da sessão.
+- Comunidade: botão principal abre WhatsApp; o link secundário **Acessar compra na Hotmart** preserva a venda.
+- Navegação interna, depoimentos, privacidade e redes sociais não são botões de contato e mantêm os próprios destinos.
+
+Execute `npm run test` para validar os assuntos.

@@ -311,41 +311,35 @@
 }
 
 
-/* CTA da seção Sobre mim: dois realces discretos a cada cinco segundos.
-   O texto permanece legível e o efeito não desloca o layout. */
+/* CTA Sobre mim: duas iluminações douradas claramente visíveis a cada 4s.
+   Sem mudanças de escala, posição ou largura em desktop e mobile. */
 .about .about-contact-attention{
-  transform-origin:left center;
-  animation:about-contact-blink 5s ease-in-out infinite;
+  border-bottom:2px solid #b08141;
+  border-radius:4px;
+  color:#321d14;
+  animation:about-cta-highlight 4s ease-in-out infinite;
 }
-@keyframes about-contact-blink{
-  0%,24%,48%,75%,100%{
+@keyframes about-cta-highlight{
+  0%,7%,45%,59%,95%,100%{
     color:#321d14;
-    border-bottom-color:#b99b71;
+    background-color:transparent;
     text-shadow:none;
-    box-shadow:none;
+    box-shadow:0 0 0 0 rgba(156,117,47,0);
   }
-  12%,60%{
-    color:#a36c27;
-    border-bottom-color:#a36c27;
-    text-shadow:0 0 5px rgba(163,108,39,.28);
-    box-shadow:0 3px 0 rgba(163,108,39,.40);
+  17%,34%,71%,86%{
+    color:#92521c;
+    background-color:rgba(184,142,89,.20);
+    text-shadow:0 0 9px rgba(156,117,47,.22);
+    box-shadow:0 0 0 8px rgba(184,142,89,.22),0 0 17px rgba(156,117,47,.18);
   }
 }
-/* No desktop, manter a animação mesmo com o mouse sobre o CTA. */
+/* Mouse não interrompe o efeito. Teclado recebe destaque de foco estático. */
 .about .about-contact-attention:hover{
   animation-play-state:running;
 }
 .about .about-contact-attention:focus-visible{
-  animation-play-state:paused;
-  outline:2px solid #a36c27;
-  outline-offset:5px;
-}
-@media(prefers-reduced-motion:reduce){
-  .about .about-contact-attention{
-    animation:none;
-    color:#321d14;
-    border-bottom:2px solid #a36c27;
-  }
+  outline:3px solid #9c752f;
+  outline-offset:7px;
 }
 
 /* Todas as aberturas de seção ficam alinhadas à esquerda, como em Sobre mim. */
@@ -357,25 +351,46 @@
   position:absolute;top:0;left:0;scroll-margin-top:90px
 }
 @media(max-width:760px){.accompaniment-section .section-anchor{scroll-margin-top:75px}}
-/* Sinal visual leve no CTA de agendamento sem afetar o layout. */
-.accompaniment-intro .booking-cta-pulse{animation:booking-button-attention 5s ease-in-out infinite}
-@keyframes booking-button-attention{
-  0%,24%,48%,75%,100%{background-color:#321d14;box-shadow:0 0 0 0 rgba(156,117,47,0)}
-  12%,60%{background-color:#916b38;box-shadow:0 0 0 7px rgba(156,117,47,.22),0 0 17px rgba(156,117,47,.15)}
+/* Acompanhamento: halo dourado nítido e temporário (duas vezes a cada 4s).
+   Animar apenas cores e sombra: sem layout shift nem animação pesada. */
+.accompaniment-intro .booking-cta-pulse{
+  border:1px solid #98703c;
+  background-color:#321d14;
+  animation:booking-cta-highlight 4s ease-in-out infinite;
 }
-/* O hover do mouse não pode congelar os dois pulsos de destaque. */
+@keyframes booking-cta-highlight{
+  0%,7%,45%,59%,95%,100%{
+    background-color:#321d14;
+    box-shadow:0 0 0 0 rgba(156,117,47,0);
+  }
+  17%,34%,71%,86%{
+    background-color:#a47730;
+    box-shadow:0 0 0 10px rgba(156,117,47,.28),0 0 27px rgba(156,117,47,.22);
+  }
+}
 .accompaniment-intro .booking-cta-pulse:hover{
   animation-play-state:running;
 }
 .accompaniment-intro .booking-cta-pulse:focus-visible{
-  animation-play-state:paused;
-  outline:2px solid #916b38;
-  outline-offset:5px
+  outline:3px solid #9c752f;
+  outline-offset:6px;
 }
+
+/* Compatível com a preferência de acessibilidade do sistema:
+   se o desktop bloquear animações, a chamada continua visualmente destacada. */
 @media(prefers-reduced-motion:reduce){
- .accompaniment-intro .booking-cta-pulse{
-  animation:none;background-color:#321d14;box-shadow:0 0 0 2px rgba(156,117,47,.35)
- }
+  .about .about-contact-attention{
+    animation:none;
+    color:#92521c;
+    border-bottom:2px solid #9c752f;
+    background-color:rgba(184,142,89,.20);
+    box-shadow:0 0 0 6px rgba(184,142,89,.18);
+  }
+  .accompaniment-intro .booking-cta-pulse{
+    animation:none;
+    background-color:#8f642b;
+    box-shadow:0 0 0 6px rgba(156,117,47,.24);
+  }
 }
 
 /* Seção Comunidade BMC: paleta inspirada na identidade oficial enviada.

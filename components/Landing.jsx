@@ -75,15 +75,17 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
   </header>
   <main>
    <section id="inicio" className="hero"><div className="hero-content"><span className="eyebrow"><span className="eyebrow-dot"/> {site.hero_eyebrow}</span><h1>{site.hero_title}</h1><p className="hero-desc">{site.hero_description}</p><div className="hero-actions hero-actions-three" aria-label="Escolha seu próximo passo">
-    <a className="btn btn-dark hero-choice" href={whatsappUrl(site.whatsapp,WHATSAPP_MESSAGES.individual)} {...waProps}>
+    <a className="btn btn-dark hero-choice" href="#acompanhamento">
       <span>{heroLabels.individual}</span><ArrowUpRight size={20} aria-hidden="true"/>
     </a>
     <a className="btn btn-ghost hero-choice" href={whatsappUrl(site.whatsapp,WHATSAPP_MESSAGES.constelacao)} {...waProps}>
       <span>{heroLabels.constelacao}</span><ArrowUpRight size={20} aria-hidden="true"/>
     </a>
     <a className="btn hero-choice hero-choice-bmc"
-      href={whatsappUrl(site.whatsapp,WHATSAPP_MESSAGES.community)} {...waProps}
-      aria-label={heroLabels.bmc+' — conversar pelo WhatsApp sobre a comunidade'}>
+      href={hotmartCheckout || undefined} target="_blank" rel="noopener noreferrer"
+      aria-disabled={!hotmartCheckout}
+      onClick={event=>{if(!hotmartCheckout)event.preventDefault();}}
+      aria-label={heroLabels.bmc+' — ir para o pagamento da Hotmart'}>
       <span>{heroLabels.bmc}</span><ArrowUpRight size={19} aria-hidden="true"/>
     </a>
    </div></div>
@@ -137,12 +139,14 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
         {String(site.community_features||'').split('\n').map(x=>x.trim()).filter(Boolean).slice(0,8).map((feature,index)=><span key={index}><Sparkles size={17} aria-hidden="true"/>{feature}</span>)}
       </div>
       {site.community_tagline&&<p className="community-tagline">“{site.community_tagline}”</p>}
-      <a className="btn community-action" href={whatsappUrl(site.whatsapp,WHATSAPP_MESSAGES.community)} {...waProps}>
+      <a className="btn community-action" href={hotmartCheckout || undefined} target="_blank" rel="noopener noreferrer"
+      aria-disabled={!hotmartCheckout}
+      onClick={event=>{if(!hotmartCheckout)event.preventDefault();}}> 
         {site.community_cta_label||'Conhecer a comunidade'} <ArrowUpRight size={18}/>
       </a>
-      {hotmartCheckout&&<a className="community-store-link" href={hotmartCheckout} target="_blank" rel="noopener noreferrer" aria-label="Comprar a Comunidade BMC na Hotmart">
-        Acessar compra na Hotmart <ExternalLink size={16}/>
-      </a>}
+      <a className="community-store-link" href={whatsappUrl(site.whatsapp,WHATSAPP_MESSAGES.community)} {...waProps}>
+        Tirar dúvidas pelo WhatsApp <ArrowUpRight size={16}/>
+      </a>
     </div>
    </section>
    <section className="editorial-story" aria-label="Uma mensagem da Carolina">

@@ -318,24 +318,27 @@
   animation:about-contact-blink 5s ease-in-out infinite;
 }
 @keyframes about-contact-blink{
-  0%,7%,14%,21%,100%{
+  0%,24%,48%,75%,100%{
     color:#321d14;
     border-bottom-color:#b99b71;
     text-shadow:none;
     box-shadow:none;
   }
-  3.5%,10.5%,17.5%{
+  12%,60%{
     color:#a36c27;
     border-bottom-color:#a36c27;
-    text-shadow:0 0 1px rgba(163,108,39,.35);
-    box-shadow:0 2px 0 rgba(163,108,39,.33);
+    text-shadow:0 0 5px rgba(163,108,39,.28);
+    box-shadow:0 3px 0 rgba(163,108,39,.40);
   }
 }
-.about .about-contact-attention:hover,
+/* No desktop, manter a animação mesmo com o mouse sobre o CTA. */
+.about .about-contact-attention:hover{
+  animation-play-state:running;
+}
 .about .about-contact-attention:focus-visible{
   animation-play-state:paused;
-  color:#a36c27;
-  border-bottom-color:#a36c27;
+  outline:2px solid #a36c27;
+  outline-offset:5px;
 }
 @media(prefers-reduced-motion:reduce){
   .about .about-contact-attention{
@@ -357,12 +360,17 @@
 /* Sinal visual leve no CTA de agendamento sem afetar o layout. */
 .accompaniment-intro .booking-cta-pulse{animation:booking-button-attention 5s ease-in-out infinite}
 @keyframes booking-button-attention{
-  0%,7%,14%,100%{background-color:#321d14;box-shadow:0 0 0 0 rgba(156,117,47,0)}
-  3.5%,10.5%{background-color:#916b38;box-shadow:0 0 0 6px rgba(156,117,47,.16)}
+  0%,24%,48%,75%,100%{background-color:#321d14;box-shadow:0 0 0 0 rgba(156,117,47,0)}
+  12%,60%{background-color:#916b38;box-shadow:0 0 0 7px rgba(156,117,47,.22),0 0 17px rgba(156,117,47,.15)}
 }
-.accompaniment-intro .booking-cta-pulse:hover,
+/* O hover do mouse não pode congelar os dois pulsos de destaque. */
+.accompaniment-intro .booking-cta-pulse:hover{
+  animation-play-state:running;
+}
 .accompaniment-intro .booking-cta-pulse:focus-visible{
-  animation-play-state:paused;background-color:#513428
+  animation-play-state:paused;
+  outline:2px solid #916b38;
+  outline-offset:5px
 }
 @media(prefers-reduced-motion:reduce){
  .accompaniment-intro .booking-cta-pulse{

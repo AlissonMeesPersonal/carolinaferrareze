@@ -7,7 +7,7 @@ import { WHATSAPP_MESSAGES, serviceWhatsAppMessage, packageWhatsAppMessage } fro
 import { DEFAULT_MANTRA_WORDS, parseMantraWords } from '@/lib/mantra';
 import { DEFAULT_HERO_CTA_LABELS, heroCtaLabel, safeHotmartUrl } from '@/lib/hero-ctas.mjs';
 import CommunityBanner from '@/components/CommunityBanner';
-import CommunityPhonesCarousel from '@/components/CommunityPhonesCarousel';
+import CommunitySingleImage from '@/components/CommunitySingleImage';
 // Ícone oficial de forma vetorial, sem dependência de imagens externas.
 function WhatsAppIcon({size=24}) {
  return <svg aria-hidden="true" focusable="false" width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -150,7 +150,7 @@ export default function Landing({site,services,testimonials,faqs,gallery=[]}){
       </a>
     </div>
    </section>
-   <CommunityPhonesCarousel/>
+   <CommunitySingleImage/>
    <section className="editorial-story" aria-label="Uma mensagem da Carolina">
     <div className="story-text"><span className="eyebrow">UM CONVITE PARA VOCÊ</span><h2>O seu processo merece <em>ser vivido com presença.</em></h2><p>Não é sobre fazer tudo de uma vez. É sobre dar espaço para compreender sua história e descobrir novos caminhos.</p><a className="underlined-link" href={whatsappUrl(site.whatsapp,WHATSAPP_MESSAGES.editorial)} {...waProps}>Conversar com a Carolina <ArrowUpRight size={17}/></a></div>
     <div className="story-portrait"><EditorialPhoto src={site.editorial_image_url} variant="perfil" alt="Retrato em perfil de Carolina Ferrareze com luz natural"/></div>

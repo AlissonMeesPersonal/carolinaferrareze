@@ -94,7 +94,7 @@ export default function CommunityPhonesCarousel() {
   }
 
   return (
-    <section className="bmc-phones-section" aria-label="Prévia das aulas e da plataforma da Comunidade BMC">
+    <section id="aulas-comunidade" className="bmc-phones-section" aria-label="Prévia das aulas e da plataforma da Comunidade BMC">
       <div className="bmc-phones-carousel" role="region" aria-roledescription="carrossel" aria-label="Três visualizações da comunidade"
         onTouchStart={event=>{touchStartX.current=event.touches[0].clientX;}}
         onTouchEnd={handleTouchEnd}

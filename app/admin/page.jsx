@@ -476,6 +476,7 @@ export default function Admin(){
     <Field label="Título da comunidade" wide value={site.journey_title} onChange={v=>changeSite('journey_title',v)}/>
     <Field label="Descrição da comunidade (separe parágrafos com uma linha em branco)" wide textarea value={site.journey_text} onChange={v=>changeSite('journey_text',v)}/>
     <Field label="O que a comunidade oferece (um benefício por linha)" wide textarea value={site.community_features} onChange={v=>changeSite('community_features',v)}/>
+    <Field label="Blocos “O que você vai encontrar?” (um texto por linha, até 5 blocos)" wide textarea value={site.community_takeaways} onChange={v=>changeSite('community_takeaways',v)}/>
     <Field label="Frase de destaque" wide textarea value={site.community_tagline} onChange={v=>changeSite('community_tagline',v)}/>
     <Field label="Texto do botão" value={site.community_cta_label} onChange={v=>changeSite('community_cta_label',v)}/>
     <div className="wide">

@@ -551,3 +551,124 @@
   .bmc-single-image-section{padding:14px 0 48px;scroll-margin-top:75px}
   .bmc-single-image{width:100%;height:auto;max-width:100%}
 }
+
+
+/* Comunidade BMC — cinco cartões editoriais de cores alternadas,
+   conforme os textos e a referência enviados pela cliente. */
+.bmc-takeaways-section{
+  background:linear-gradient(180deg,#f8ece3 0%,#f6f0e9 63%,#fff 100%);
+  padding:clamp(48px,6vw,88px) clamp(18px,5.1vw,86px) clamp(74px,8vw,130px);
+  scroll-margin-top:96px;
+}
+.bmc-takeaways-inner{max-width:1330px;margin-inline:auto}
+.bmc-takeaways-heading{max-width:880px;margin-bottom:clamp(30px,4vw,54px)}
+.bmc-takeaways-heading .eyebrow{
+  display:block;color:#975537;letter-spacing:.22em;
+  font-weight:700;font-size:11px;
+}
+.bmc-takeaways-heading h2{
+  font-family:'Radley',Georgia,serif;
+  color:#321d14;
+  font-size:clamp(40px,5vw,76px);
+  font-weight:400;
+  line-height:1.12;
+  letter-spacing:-.035em;
+  margin:17px 0 0;
+}
+.bmc-takeaways-heading h2 em{
+  font-style:italic;
+  font-weight:400;
+  color:#a45137;
+}
+.bmc-takeaways-grid{
+  display:grid;
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  gap:18px;
+}
+.bmc-takeaway-card{
+  grid-column:span 4;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  gap:40px;
+  position:relative;
+  min-width:0;
+  min-height:245px;
+  padding:clamp(25px,3vw,39px);
+  border-radius:16px;
+  overflow:hidden;
+  background:#fffaf3;
+  border:1px solid rgba(85,47,28,.10);
+  color:#321d14;
+}
+.bmc-takeaway-card:nth-child(-n+2){
+  grid-column:span 6;
+  min-height:258px;
+}
+.bmc-takeaway-card:nth-child(1){background:#321d14;color:#fff9f0}
+.bmc-takeaway-card:nth-child(2){background:#f2d8c5;color:#321d14}
+.bmc-takeaway-card:nth-child(3){background:#fffaf3;color:#321d14}
+.bmc-takeaway-card:nth-child(4){background:#a45137;color:#fff9f0}
+.bmc-takeaway-card:nth-child(5){background:#dfc29d;color:#321d14}
+.bmc-takeaway-card::after{
+  content:"";
+  position:absolute;
+  width:145px;
+  height:145px;
+  border-radius:50%;
+  top:-89px;
+  right:-62px;
+  border:1px solid currentColor;
+  opacity:.19;
+  pointer-events:none;
+}
+.bmc-takeaway-meta{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  opacity:.84;
+  position:relative;
+  z-index:1;
+}
+.bmc-takeaway-meta span{
+  font:italic 22px/1 'Radley',Georgia,serif;
+}
+.bmc-takeaway-card p{
+  position:relative;
+  z-index:1;
+  font-family:'DM Sans',Arial,sans-serif;
+  font-weight:500;
+  font-size:clamp(18px,1.48vw,23px);
+  line-height:1.48;
+  letter-spacing:-.01em;
+  margin:0;
+  overflow-wrap:break-word;
+  max-width:52ch;
+}
+@media(max-width:1050px){
+  .bmc-takeaway-card,.bmc-takeaway-card:nth-child(-n+2){
+    grid-column:span 6;
+    min-height:235px;
+  }
+  .bmc-takeaway-card:nth-child(5){grid-column:span 12}
+}
+@media(max-width:760px){
+  .bmc-takeaways-section{
+    padding:54px 17px 72px;
+    scroll-margin-top:75px;
+  }
+  .bmc-takeaways-heading{margin-bottom:26px}
+  .bmc-takeaways-heading h2{font-size:clamp(37px,9.7vw,54px)}
+  .bmc-takeaways-grid{gap:13px}
+  .bmc-takeaway-card,
+  .bmc-takeaway-card:nth-child(-n+2),
+  .bmc-takeaway-card:nth-child(5){
+    grid-column:span 12;
+    min-height:0;
+    padding:25px 23px 28px;
+    gap:27px;
+    border-radius:13px;
+  }
+  .bmc-takeaway-card p{font-size:18px;line-height:1.5}
+}

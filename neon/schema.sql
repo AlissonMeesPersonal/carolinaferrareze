@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS public.cf_site (
  journey_title TEXT NOT NULL DEFAULT 'Comunidade Bota a Mão na Consciência',
  journey_text TEXT NOT NULL DEFAULT 'Uma comunidade para o autoconhecimento e a responsabilidade pela própria vida.',
  community_features TEXT NOT NULL DEFAULT 'Vídeos novos toda semana\nReflexões\nExercícios\nMeditações\nEncontros',
+ community_takeaways TEXT NOT NULL DEFAULT '',
  community_tagline TEXT NOT NULL DEFAULT 'Um espaço sem meias palavras, para quem quer ir além do superficial e construir uma vida com mais consciência, paz e alegria.',
  community_cta_label TEXT NOT NULL DEFAULT 'Conhecer a comunidade',
  community_logo_url TEXT NOT NULL DEFAULT '',

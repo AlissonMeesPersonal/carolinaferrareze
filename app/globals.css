@@ -553,10 +553,13 @@
 }
 
 
-/* Comunidade BMC — cinco cartões editoriais de cores alternadas,
-   conforme os textos e a referência enviados pela cliente. */
+/* Comunidade BMC — degradês editoriais sutis entre creme, terracota e
+   marrom. Textos permanecem em negrito e a estrutura continua responsiva. */
 .bmc-takeaways-section{
-  background:linear-gradient(180deg,#f8ece3 0%,#f6f0e9 63%,#fff 100%);
+  background:
+    radial-gradient(circle at 95% 12%,rgba(185,112,72,.17) 0%,transparent 40%),
+    radial-gradient(circle at 8% 90%,rgba(216,174,132,.22) 0%,transparent 45%),
+    linear-gradient(140deg,#fff8f1 0%,#f2e0d3 53%,#fff8f3 100%);
   padding:clamp(48px,6vw,88px) clamp(18px,5.1vw,86px) clamp(74px,8vw,130px);
   scroll-margin-top:96px;
 }
@@ -583,7 +586,7 @@
 .bmc-takeaways-grid{
   display:grid;
   grid-template-columns:repeat(12,minmax(0,1fr));
-  gap:18px;
+  gap:20px;
 }
 .bmc-takeaway-card{
   grid-column:span 4;
@@ -595,31 +598,46 @@
   min-width:0;
   min-height:245px;
   padding:clamp(25px,3vw,39px);
-  border-radius:16px;
+  border-radius:25px;
   overflow:hidden;
-  background:#fffaf3;
-  border:1px solid rgba(85,47,28,.10);
+  background:linear-gradient(135deg,#fff8ef 0%,#edcfb7 100%);
+  border:1px solid rgba(255,255,255,.55);
+  box-shadow:0 14px 35px rgba(83,42,28,.085),inset 0 1px rgba(255,255,255,.20);
   color:#321d14;
 }
 .bmc-takeaway-card:nth-child(-n+2){
   grid-column:span 6;
   min-height:258px;
 }
-.bmc-takeaway-card:nth-child(1){background:#321d14;color:#fff9f0}
-.bmc-takeaway-card:nth-child(2){background:#f2d8c5;color:#321d14}
-.bmc-takeaway-card:nth-child(3){background:#fffaf3;color:#321d14}
-.bmc-takeaway-card:nth-child(4){background:#a45137;color:#fff9f0}
-.bmc-takeaway-card:nth-child(5){background:#dfc29d;color:#321d14}
+.bmc-takeaway-card:nth-child(1){
+  background:linear-gradient(125deg,#321d14 0%,#603723 58%,#8c5138 100%);
+  color:#fff9f0;
+}
+.bmc-takeaway-card:nth-child(2){
+  background:linear-gradient(130deg,#fff8f0 0%,#edccba 62%,#dba88d 100%);
+  color:#321d14;
+}
+.bmc-takeaway-card:nth-child(3){
+  background:linear-gradient(140deg,#fffdfa 0%,#f0e0ca 63%,#e8cba8 100%);
+  color:#321d14;
+}
+.bmc-takeaway-card:nth-child(4){
+  background:linear-gradient(130deg,#783c2b 0%,#985039 58%,#a86243 100%);
+  color:#fff9f0;
+}
+.bmc-takeaway-card:nth-child(5){
+  background:linear-gradient(135deg,#dcc09c 0%,#ecd6b7 58%,#f9ecdb 100%);
+  color:#321d14;
+}
 .bmc-takeaway-card::after{
   content:"";
   position:absolute;
-  width:145px;
-  height:145px;
+  width:250px;
+  height:250px;
   border-radius:50%;
-  top:-89px;
-  right:-62px;
-  border:1px solid currentColor;
-  opacity:.19;
+  top:-135px;
+  right:-100px;
+  background:radial-gradient(circle,rgba(255,255,255,.22),transparent 72%);
   pointer-events:none;
 }
 .bmc-takeaway-meta{
@@ -627,7 +645,7 @@
   align-items:center;
   justify-content:space-between;
   gap:15px;
-  opacity:.84;
+  opacity:.87;
   position:relative;
   z-index:1;
 }
@@ -668,7 +686,7 @@
     min-height:0;
     padding:25px 23px 28px;
     gap:27px;
-    border-radius:13px;
+    border-radius:19px;
   }
   .bmc-takeaway-card p{font-size:18px;line-height:1.5}
 }

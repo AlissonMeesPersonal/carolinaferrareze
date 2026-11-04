@@ -690,3 +690,102 @@
   }
   .bmc-takeaway-card p{font-size:18px;line-height:1.5}
 }
+
+/* Cabeçalho premium: degradê que respeita os JPEGs originais da marca. */
+/* Os JPEGs originais e a transição branca/preta permanecem intocados.
+   A porção inicial plana coincide com o fundo marrom da logo original. */
+.topbar:not(.is-scrolled){
+  background:linear-gradient(108deg,
+    #543426 0%,#543426 28%,#67402f 51%,#7e4b36 74%,#975c44 100%);
+  border-bottom:1px solid rgba(245,220,192,.26);
+  box-shadow:0 9px 26px rgba(50,29,20,.13);
+}
+.topbar.is-scrolled{
+  background:linear-gradient(108deg,
+    #ffffff 0%,#ffffff 34%,#fdfaf7 62%,#f3e8dc 100%);
+  border-bottom:1px solid #e9d8c8;
+  box-shadow:0 8px 24px rgba(50,29,20,.085);
+}
+/* A marca usa seus próprios arquivos originais: sem alterações nem recorte adicional. */
+.topbar .brand-with-logo{position:relative;z-index:2}
+@media(min-width:1201px){
+  .topbar .nav{gap:clamp(15px,1.5vw,29px)}
+  .topbar .nav>a:not(.nav-contact){
+    position:relative;
+    padding:12px 0;
+    font-size:12px;
+    font-weight:500;
+    letter-spacing:.025em;
+    text-decoration:none;
+    background-image:linear-gradient(90deg,#d9b58a,#f5dfc7);
+    background-position:bottom center;
+    background-repeat:no-repeat;
+    background-size:0 1.5px;
+    transition:background-size .2s ease,color .2s ease;
+  }
+  .topbar .nav>a:not(.nav-contact):hover,
+  .topbar .nav>a:not(.nav-contact):focus-visible{
+    background-size:100% 1.5px;
+  }
+  .topbar.is-scrolled .nav>a:not(.nav-contact){
+    color:#503122;
+    background-image:linear-gradient(90deg,#9b603d,#c8a077);
+  }
+}
+.topbar:not(.is-scrolled) .nav .nav-contact,
+.topbar.is-scrolled .nav .nav-contact{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+  background:#f4f1e8;
+  color:#321d14;
+  border:1px solid rgba(255,255,255,.48);
+  border-radius:10px;
+  padding:14px 21px;
+  box-shadow:0 5px 14px rgba(35,31,32,.09);
+  font-weight:700;
+  transition:background-color .2s ease,box-shadow .2s ease;
+}
+.topbar .nav .nav-contact:hover{
+  background:#fffaf2;
+  color:#321d14;
+  box-shadow:0 7px 18px rgba(35,31,32,.14);
+}
+.topbar .nav .nav-contact:focus-visible,
+.topbar .nav-toggle:focus-visible{
+  outline:3px solid #d7b083;
+  outline-offset:3px;
+}
+@media(max-width:1200px){
+  /* O dropdown continua claro, evitando conflito com o degradê do header. */
+  .topbar .nav{
+    background:#fffaf5;
+    border-bottom:1px solid #e9d8c8;
+  }
+  .topbar .nav>a:not(.nav-contact){
+    color:#321d14;
+  }
+  .topbar .nav .nav-contact{
+    width:100%;
+    justify-content:space-between;
+    background:#f4f1e8;
+    border-color:#e8d7c5;
+    box-shadow:none;
+    margin-top:8px;
+  }
+  .topbar:not(.is-scrolled) .nav-toggle{color:#fffaf2}
+}
+@media(max-width:760px){
+  /* O lado esquerdo permanece marrom, igual à base do JPEG da logo branca. */
+  .topbar:not(.is-scrolled){
+    background:linear-gradient(100deg,#543426 0%,#543426 72%,#86513d 100%);
+  }
+  .topbar.is-scrolled{
+    background:linear-gradient(100deg,#fff 0%,#fff 72%,#f6eae0 100%);
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .topbar .nav>a:not(.nav-contact),
+  .topbar .nav .nav-contact{transition:none}
+}

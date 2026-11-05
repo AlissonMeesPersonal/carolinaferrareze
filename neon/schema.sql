@@ -115,3 +115,6 @@ ALTER TABLE public.cf_site
  ADD COLUMN IF NOT EXISTS accompaniment_topics text NOT NULL DEFAULT E'Mundo interno|Olhar para suas sombras, a maneira como você vê o mundo, autoestima e merecimento.\\nDesbloqueio emocional|Reconhecer feridas, traumas e bloqueios que podem estar limitando sua prosperidade.\\nMentalidade|Desenvolver recursos para lidar com situações e cultivar mais paz mental.',
  ADD COLUMN IF NOT EXISTS accompaniment_format text NOT NULL DEFAULT E'Frequência mensal ou quinzenal.\\nSessões de uma hora.\\nAtendimento online via Zoom ou WhatsApp.',
  ADD COLUMN IF NOT EXISTS accompaniment_packages text NOT NULL DEFAULT E'Pacote de 3 sessões\\nPacote de 6 sessões';
+
+-- Migration 2026-11-05: frase editorial final editável.
+ALTER TABLE public.cf_site ADD COLUMN IF NOT EXISTS closing_phrase TEXT NOT NULL DEFAULT 'Seus sonhos merecem sua disciplina';

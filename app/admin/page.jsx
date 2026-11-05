@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import {
   ArrowUpRight,
@@ -105,6 +105,10 @@ export default function Admin(){
  const [testimonials, setTestimonials] = useState([]);
  const [faqs, setFaqs] = useState([]);
  const [gallery, setGallery] = useState([]);
+ const galleryBulkRef = useRef(null);
+ const [galleryBatchConsent, setGalleryBatchConsent] = useState(false);
+ const [galleryBatchProgress, setGalleryBatchProgress] = useState('');
+ const [galleryBatchUploading, setGalleryBatchUploading] = useState(false);
 
  // Contatos, filtros e usuários administrativos.
  const [leads, setLeads] = useState([]);
@@ -249,8 +253,65 @@ export default function Admin(){
   if(type==='services')setServices(p=>[...p,{id,category:tab,title:'',description:'',details:'',image_url:'',label:'',is_published:false,position:p.filter(x=>x.category===tab).length+1}]);
   if(type==='testimonials')setTestimonials(p=>[...p,{id,display_name:'',quote:'',permission_confirmed:false,is_published:false,position:p.length+1}]);
   if(type==='faqs')setFaqs(p=>[...p,{id,question:'',answer:'',is_published:false,position:p.length+1}]);
-  if(type==='gallery')setGallery(p=>[...p,{id,url:'',caption:'',alt_text:'',consent_confirmed:false,is_published:false,position:p.length+1}]);
+  if(type==='gallery'){
+    setGallery(p=>[{id,url:'',caption:'',alt_text:'',consent_confirmed:false,is_published:false,position:p.length+1},...p]);
+    setMessage('Novo depoimento criado no topo. Envie a imagem, confirme a autorização e clique em Salvar imagem.');
+  }
  }
+
+ // Permite cadastrar várias fotos sem limite global de depoimentos.
+ // Cada lote aceita até 12 arquivos e cada item é salvo como rascunho
+ // após envio ao Neon Storage. Nada fica público sem revisão individual.
+ async function uploadGalleryMany(fileList){
+  const photos=Array.from(fileList||[]);
+  if(!photos.length)return;
+  if(!galleryBatchConsent){setMessage('Confirme a autorização e a ocultação de dados pessoais antes do envio.');return;}
+  if(photos.length>12){setMessage('Escolha até 12 imagens por envio. Você poderá fazer quantos lotes quiser.');return;}
+  setBusy(true);
+  setGalleryBatchUploading(true);
+  setMessage('');
+  let completed=0;
+  const errors=[];
+  try{
+   for(let i=0;i<photos.length;i++){
+    const file=photos[i];
+    setGalleryBatchProgress('Enviando '+(i+1)+' de '+photos.length+' imagens...');
+    if(!['image/jpeg','image/png','image/webp','image/avif'].includes(file.type)||file.size===0||file.size>8*1024*1024){
+     errors.push('Arquivo '+(i+1)+': formato inválido ou maior que 8 MB.');
+     continue;
+    }
+    try{
+     const body=new FormData();
+     body.append('file',file);
+     const uploaded=await fetch('/api/admin/media',{method:'POST',body,credentials:'same-origin'});
+     const media=await uploaded.json();
+     if(!uploaded.ok||!media.url)throw new Error(media.error||'Falha no envio.');
+     const item={
+      url:media.url,
+      caption:'Depoimento autorizado',
+      alt_text:'Imagem de depoimento autorizado',
+      position:gallery.length+i+1,
+      consent_confirmed:true,
+      is_published:false
+     };
+     const saved=await api('/api/admin/data','POST',{type:'gallery',item});
+     if(!saved?.item)throw new Error('Não foi possível cadastrar a imagem.');
+     setGallery(p=>[saved.item,...p]);
+     completed++;
+    }catch(error){
+     errors.push('Imagem '+(i+1)+': '+(error.message||'Falha inesperada.'));
+    }
+   }
+   const result=completed+' imagem(ns) cadastrada(s) como rascunho. Revise cada uma e marque Publicado para aparecer no site.';
+   setMessage(result+(errors.length?' Falhas: '+errors.join(' | '):''));
+  }finally{
+   setGalleryBatchProgress('');
+   setGalleryBatchUploading(false);
+   setBusy(false);
+   if(galleryBulkRef.current)galleryBulkRef.current.value='';
+  }
+ }
+
  async function saveItem(type, item) {
   await run(async () => {
    const isDraft = item.id.startsWith('draft_');
@@ -357,7 +418,7 @@ export default function Admin(){
   ['Botões principais',[['hero_cta_individual_label','Botão 1 — Acompanhamento Individual'],['hero_cta_constelacao_label','Botão 2 — Quero Constelar'],['hero_cta_bmc_label','Botão 3 — Comunidade BMC'],['bmc_hotmart_url','Link de venda da Comunidade BMC na Hotmart']]],
   ['Palavras da faixa',[['mantra_words','Palavras exibidas abaixo da foto principal']]],
   ['Sobre mim',[['about_title','Título de apresentação'],['about_text','Sua trajetória e formações'],['about_image_url','URL da sua foto']]],
-  ['Fotos das seções',[['editorial_image_url','Foto da seção editorial']]],
+  ['Mensagem final',[['closing_phrase','Frase exibida antes do contato']]],
   ['Acompanhamento terapêutico',[['accompaniment_title','Título da seção'],['accompaniment_intro','Apresentação do acompanhamento'],['accompaniment_goal','Objetivo e benefícios propostos'],['accompaniment_topics','Temas: um por linha, no formato Nome|Descrição'],['accompaniment_format','Formato: uma informação por linha'],['accompaniment_packages','Pacotes: um por linha, sem preços']]],
   ['Contatos e rodapé',[['whatsapp','Número WhatsApp com 55 e DDD'],['instagram','Link do Instagram'],['contact_email','E-mail'],['footer_note','Texto do rodapé']]],
   ['SEO',[['seo_title','Título das buscas'],['seo_description','Descrição das buscas']]]
@@ -516,8 +577,14 @@ export default function Admin(){
  <label className="admin-check"><input type="checkbox" checked={item.is_published} onChange={e=>changeLocal(item.id,'is_published',e.target.checked)}/>Publicado</label></div>
  <div className="admin-toolbar"><button className="admin-btn" disabled={busy||!item.quote?.trim()||!item.display_name?.trim()} onClick={()=>saveItem('testimonials',item)}>Salvar</button><button className="admin-btn danger" onClick={()=>removeItem('testimonials',item)}>Excluir</button></div></div>)}</section>}
  {tab==='gallery'&&<section className="admin-panel">
-  <div className="admin-heading-row"><h2>Imagens dos depoimentos</h2><button className="admin-btn" onClick={()=>addItem('gallery')}><Plus size={14}/> Adicionar imagem</button></div>
-  <p className="admin-note">Envie os prints ou imagens, ocultando nomes, números e qualquer dado pessoal. Cada imagem só será publicada se houver autorização de divulgação confirmada. Os cinco cartões de demonstração serão substituídos pelas imagens autorizadas publicadas aqui.</p>
+  <div className="admin-heading-row"><h2>Imagens dos depoimentos ({gallery.length})</h2><button type="button" className="admin-btn" disabled={busy} onClick={()=>addItem('gallery')}><Plus size={14}/> Adicionar imagem</button></div>
+  <p className="admin-note">Não existe limite de quantidade de depoimentos. Para adicionar uma foto individual, use “Adicionar imagem”; o novo cartão aparece no topo. Use o envio em lote para cadastrar até 12 imagens por vez. Imagens novas ficam como rascunho até você revisar e marcar “Publicado”.</p>
+  <div className="admin-gallery-batch">
+   <label className="admin-check"><input type="checkbox" checked={galleryBatchConsent} disabled={galleryBatchUploading} onChange={e=>setGalleryBatchConsent(e.target.checked)}/> Confirmo que os relatos têm autorização de divulgação e que removi nomes, telefones e dados pessoais.</label>
+   <input type="file" ref={galleryBulkRef} hidden multiple accept="image/jpeg,image/png,image/webp,image/avif" onChange={e=>uploadGalleryMany(e.target.files)} aria-label="Selecionar várias imagens de depoimento"/>
+   <button type="button" className="admin-btn secondary" disabled={busy||!galleryBatchConsent} onClick={()=>galleryBulkRef.current?.click()}><Images size={15}/> {galleryBatchUploading?'Enviando fotos...':'Enviar várias fotos'}</button>
+   {galleryBatchProgress&&<p role="status" className="admin-note">{galleryBatchProgress}</p>}
+  </div>
   {gallery.map(item=><div className="admin-card" key={item.id}>
    <div className="admin-card-head"><div><span className="admin-card-overline">DEPOIMENTO VISUAL</span><h3>{item.caption||'Novo depoimento visual'}</h3></div><button type="button" className="admin-btn danger" onClick={()=>removeItem('gallery',item)}><Trash2 size={16}/> Excluir</button></div>
    <div className="admin-grid">

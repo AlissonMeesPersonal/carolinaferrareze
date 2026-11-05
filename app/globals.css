@@ -789,3 +789,48 @@
   .topbar .nav>a:not(.nav-contact),
   .topbar .nav .nav-contact{transition:none}
 }
+
+/* 2026-11-05 — nova ordem de conversão: serviços, comunidade, biografia.
+   A marca e os CTAs existentes não são alterados. */
+.closing-statement{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:clamp(70px,8vw,120px) max(22px,6vw);
+  min-height:245px;
+  background:linear-gradient(115deg,#321d14 0%,#65412f 58%,#a45b40 100%);
+  text-align:center;
+}
+.closing-statement p{
+  max-width:1050px;
+  margin:0;
+  font:400 clamp(38px,5.6vw,76px)/1.18 'Radley',Georgia,serif;
+  letter-spacing:-.025em;
+  color:#fff8ef;
+  text-wrap:balance;
+}
+.contact-section.contact-direct-only{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:clamp(70px,7vw,115px) 22px;
+  background:linear-gradient(160deg,#fcf7f1 0%,#f3e7dc 65%,#fffaf6 100%);
+}
+.contact-section.contact-direct-only .contact-direct-card{
+  width:min(100%,730px);
+  max-width:730px;
+  margin-inline:auto;
+  padding:clamp(30px,4.5vw,65px);
+  border-radius:22px;
+  border:1px solid #e6d0bc;
+  box-shadow:0 16px 45px rgba(80,47,33,.08);
+}
+.contact-section.contact-direct-only .contact-direct-card h3{
+  font-size:clamp(32px,3.5vw,51px);
+}
+@media(max-width:760px){
+  .closing-statement{padding:66px 22px;min-height:200px}
+  .closing-statement p{font-size:clamp(37px,9.3vw,55px)}
+  .contact-section.contact-direct-only{padding:65px 16px}
+  .contact-section.contact-direct-only .contact-direct-card{width:100%;padding:30px 24px;border-radius:16px}
+}

@@ -138,3 +138,19 @@ são criados por `whatsappUrl`, com telefone editável no painel do site.
 - Navegação interna, depoimentos, privacidade e redes sociais não são botões de contato e mantêm os próprios destinos.
 
 Execute `npm run test` para validar os assuntos.
+
+
+## Migração Supabase → Neon (estado de produção)
+
+A landing da Carolina usa **Neon PostgreSQL** para o conteúdo, formulário, contatos, sessões e contas do painel. As imagens enviadas pelo editor utilizam **Neon Object Storage**, no bucket `carolina-midias`.
+
+Na Vercel, os únicos valores de infraestrutura necessários em produção são:
+
+- `DATABASE_URL` (PostgreSQL Neon, exclusivamente no servidor)
+- `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_ENDPOINT_URL_S3`, `AWS_REGION` e `NEON_MEDIA_BUCKET` (Neon Object Storage, exclusivamente no servidor)
+
+A variável legada `NEXT_PUBLIC_SUPABASE_URL` foi esvaziada na Vercel e **não é usada pelo código**. Pode ser excluída manualmente da lista de variáveis do projeto para limpeza total.
+
+**Importante:** esta aplicação não usa Supabase. Isso não autoriza apagar outros projetos do Supabase — principalmente projetos independentes de outros aplicativos. Antes de excluir algum projeto antigo, identifique seu project ref no dashboard e confirme se possui dados, autenticação, mídia ou integrações que ainda precisem de cópia.
+
+Verificação segura antes de um desligamento definitivo: publicar novo deploy, abrir o site, testar o login do painel e conferir as imagens e registros já salvos. O controle do formulário pode continuar desativado sem que o banco seja afetado.
